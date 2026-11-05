@@ -1,0 +1,104 @@
+import { Injectable, NotFoundException } from '@nestjs/common';
+
+import { PrismaService } from '../prisma/prisma.service.js';
+import { CreateServicioDto } from './dto/create-servicio.dto.js';
+
+@Injectable()
+export class ServiciosService {
+  constructor(private readonly prisma: PrismaService) {}
+
+  //Crea un nuevo servicio en la barbería especificada
+  async create(
+    barberiaId: number,
+    createServicioDto: CreateServicioDto,
+  ) {
+    const barberia = await this.prisma.barberia.findUnique({
+      where: { id: barberiaId },
+      select: { id: true },
+    });
+
+    if (!barberia) {
+      throw new NotFoundException(
+        `No existe una barbería con el ID ${barberiaId}`,
+      );
+    }
+
+    return this.prisma.servicio.create({
+      data: {
+        nombre: createServicioDto.nombre.trim(),
+        duracionMinutos: createServicioDto.duracionMinutos,
+        precio: createServicioDto.precio,
+        barberiaId,
+      },
+    });
+  }
+    //Obtiene todos los servicios de la barbería especificada
+    async findAll(barberiaId: number) {
+    const barberia = await this.prisma.barberia.findUnique({
+      where: { id: barberiaId },
+      select: { id: true },
+    });
+
+    if (!barberia) {
+      throw new NotFoundException(
+        `No existe una barbería con el ID ${barberiaId}`,
+      );
+    }
+
+    return this.prisma.servicio.findMany({
+      where: { barberiaId },
+      orderBy: { id: 'asc' },
+    });
+  }
+  //Cambia el estado de un servicio en la barbería especificada
+    async cambiarEstado(
+    barberiaId: number,
+    servicioId: number,
+    activo: boolean,
+  ) {
+    const resultado = await this.prisma.servicio.updateMany({
+      where: {
+        id: servicioId,
+        barberiaId,
+      },
+      data: {
+        activo,
+      },
+    });
+
+    if (resultado.count === 0) {
+      throw new NotFoundException(
+        'El servicio no existe en esta barbería',
+      );
+    }
+
+    return {
+      id: servicioId,
+      barberiaId,
+      activo,
+    };
+  }
+  //Obtiene todos los servicios activos de la barbería especificada
+    async findDisponibles(barberiaId: number) {
+    const barberia = await this.prisma.barberia.findUnique({
+      where: { id: barberiaId },
+      select: { id: true },
+    });
+
+    if (!barberia) {
+      throw new NotFoundException(
+        `No existe una barbería con el ID ${barberiaId}`,
+      );
+    }
+
+    return this.prisma.servicio.findMany({
+      where: {
+        barberiaId,
+        activo: true,
+      },
+      orderBy: {
+        id: 'asc',
+      },
+    });
+  }
+}

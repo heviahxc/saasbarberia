@@ -1,0 +1,45 @@
+# Dependencias
+node_modules/
+
+# Compilación y pruebas
+dist/
+build/
+coverage/
+.nyc_output/
+*.tsbuildinfo
+
+# Variables de entorno y secretos
+.env
+.env.*
+!.env.example
+
+# Prisma Client generado
+/backend/src/generated/prisma/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Archivos temporales
+.cache/
+.tmp/
+tmp/
+*.swp
+*.swo
+
+# Configuración local del editor
+.idea/
+.vscode/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Copias locales de bases de datos
+*.dump
+*.backup

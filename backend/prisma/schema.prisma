@@ -1,0 +1,149 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Barberia {
+  id            Int               @id @default(autoincrement())
+  nombre        String
+  ciudad        String
+  profesionales Profesional[]
+  servicios     Servicio[]
+  miembros      MiembroBarberia[]
+  zonaHoraria   String            @default("America/Santiago")
+  reservas      Reserva[]
+}
+
+model Profesional {
+  id     Int     @id @default(autoincrement())
+  nombre String
+  activo Boolean @default(true)
+
+  barberiaId Int
+  barberia   Barberia @relation(fields: [barberiaId], references: [id], onDelete: Restrict)
+
+  servicios ProfesionalServicio[]
+  miembros  MiembroBarberia[]
+  horarios  HorarioProfesional[]
+  reservas  Reserva[]
+
+  @@unique([id, barberiaId])
+  @@index([barberiaId])
+}
+
+model Servicio {
+  id              Int     @id @default(autoincrement())
+  nombre          String
+  duracionMinutos Int
+  precio          Decimal @db.Decimal(10, 2)
+  activo          Boolean @default(true)
+
+  barberiaId    Int
+  barberia      Barberia              @relation(fields: [barberiaId], references: [id], onDelete: Restrict)
+  profesionales ProfesionalServicio[]
+  reservas      Reserva[]
+
+  @@unique([id, barberiaId])
+  @@index([barberiaId])
+}
+
+model ProfesionalServicio {
+  barberiaId    Int
+  profesionalId Int
+  servicioId    Int
+
+  profesional Profesional @relation(fields: [profesionalId, barberiaId], references: [id, barberiaId], onDelete: Restrict, onUpdate: Restrict)
+  servicio    Servicio    @relation(fields: [servicioId, barberiaId], references: [id, barberiaId], onDelete: Restrict, onUpdate: Restrict)
+
+  @@id([barberiaId, profesionalId, servicioId])
+  @@index([profesionalId, barberiaId])
+  @@index([servicioId, barberiaId])
+}
+
+enum RolBarberia {
+  ADMINISTRADOR
+  MIEMBRO
+}
+
+model Usuario {
+  id           Int               @id @default(autoincrement())
+  nombre       String
+  email        String            @unique
+  passwordHash String
+  activo       Boolean           @default(true)
+  creadoEn     DateTime          @default(now())
+  reservas     Reserva[]
+  membresias   MiembroBarberia[]
+}
+
+model MiembroBarberia {
+  usuarioId  Int
+  barberiaId Int
+  rol        RolBarberia @default(MIEMBRO)
+  activo     Boolean     @default(true)
+
+  usuario       Usuario      @relation(fields: [usuarioId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  barberia      Barberia     @relation(fields: [barberiaId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  profesional   Profesional? @relation(fields: [profesionalId, barberiaId], references: [id, barberiaId], onDelete: Restrict, onUpdate: Restrict)
+  profesionalId Int?
+
+  @@id([usuarioId, barberiaId])
+  @@index([barberiaId])
+  @@index([profesionalId, barberiaId])
+}
+
+model HorarioProfesional {
+  id            Int @id @default(autoincrement())
+  barberiaId    Int
+  profesionalId Int
+  diaSemana     Int
+  inicioMinuto  Int
+  finMinuto     Int
+
+  profesional Profesional @relation(fields: [profesionalId, barberiaId], references: [id, barberiaId], onDelete: Restrict, onUpdate: Restrict)
+
+  @@unique([barberiaId, profesionalId, diaSemana, inicioMinuto])
+}
+
+enum EstadoReserva {
+  CONFIRMADA
+  CANCELADA
+}
+
+model Reserva {
+  id            Int @id @default(autoincrement())
+  clienteId     Int
+  barberiaId    Int
+  profesionalId Int
+  servicioId    Int
+
+  inicio          DateTime @db.Timestamptz(3)
+  fin             DateTime @db.Timestamptz(3)
+  duracionMinutos Int
+  precioAcordado  Decimal  @db.Decimal(10, 2)
+  nombreServicio  String
+  zonaHoraria     String
+
+  estado      EstadoReserva @default(CONFIRMADA)
+  creadoEn    DateTime      @default(now()) @db.Timestamptz(3)
+  canceladoEn DateTime?     @db.Timestamptz(3)
+
+  cliente     Usuario     @relation(fields: [clienteId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  barberia    Barberia    @relation(fields: [barberiaId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  profesional Profesional @relation(fields: [profesionalId, barberiaId], references: [id, barberiaId], onDelete: Restrict, onUpdate: Restrict)
+  servicio    Servicio    @relation(fields: [servicioId, barberiaId], references: [id, barberiaId], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([clienteId, inicio])
+  @@index([barberiaId, inicio])
+  @@index([profesionalId, barberiaId, inicio])
+  @@index([servicioId, barberiaId])
+}
