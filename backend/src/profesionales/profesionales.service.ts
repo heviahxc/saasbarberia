@@ -8,6 +8,7 @@ import { PrismaService } from '../prisma/prisma.service.js';
 import { CreateProfesionalDto } from './dto/create-profesional.dto.js';
 import { HorarioProfesional, Prisma } from '../generated/prisma/client.js';
 import { CreateHorarioDto } from './dto/create-horario.dto.js';
+import { CreateBloqueoDto } from './dto/create-bloqueo.dto.js';
 @Injectable()
 export class ProfesionalesService {
   constructor(private readonly prisma: PrismaService) {}
@@ -347,5 +348,254 @@ export class ProfesionalesService {
         isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted,
       },
     );
+  }
+
+    async crearBloqueo(
+    barberiaId: number,
+    profesionalId: number,
+    dto: CreateBloqueoDto,
+  ) {
+    const inicio = new Date(dto.inicio);
+    const fin = new Date(dto.fin);
+
+    if (
+      !Number.isFinite(inicio.getTime()) ||
+      !Number.isFinite(fin.getTime()) ||
+      fin.getTime() <= inicio.getTime()
+    ) {
+      throw new BadRequestException(
+        'El intervalo del bloqueo no es válido',
+      );
+    }
+
+    return this.prisma.$transaction(
+      async (tx) => {
+        const profesionales = await tx.$queryRaw<{ id: number }[]>`
+          SELECT "id"
+          FROM "public"."Profesional"
+          WHERE "id" = ${profesionalId}
+            AND "barberiaId" = ${barberiaId}
+          FOR UPDATE
+        `;
+
+        if (profesionales.length === 0) {
+          throw new NotFoundException(
+            'El profesional no existe en esta barbería',
+          );
+        }
+
+        // Permite bloquear una ausencia ya iniciada,
+        // siempre que todavía no haya terminado.
+        if (fin.getTime() <= Date.now()) {
+          throw new BadRequestException(
+            'El bloqueo debe terminar en el futuro',
+          );
+        }
+
+        const reserva = await tx.reserva.findFirst({
+          where: {
+            barberiaId,
+            profesionalId,
+            estado: 'CONFIRMADA',
+            inicio: {
+              lt: fin,
+            },
+            fin: {
+              gt: inicio,
+            },
+          },
+          select: {
+            id: true,
+          },
+        });
+
+        if (reserva) {
+          throw new ConflictException(
+            'El bloqueo se cruza con una reserva confirmada',
+          );
+        }
+
+        return tx.bloqueoProfesional.create({
+          data: {
+            barberiaId,
+            profesionalId,
+            inicio,
+            fin,
+            motivo: dto.motivo?.trim() || null,
+          },
+        });
+      },
+      {
+        isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted,
+      },
+    );
+  }
+
+    async findBloqueos(
+    barberiaId: number,
+    profesionalId: number,
+  ) {
+    const profesional = await this.prisma.profesional.findUnique({
+      where: {
+        id_barberiaId: {
+          id: profesionalId,
+          barberiaId,
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!profesional) {
+      throw new NotFoundException(
+        'El profesional no existe en esta barbería',
+      );
+    }
+
+    return this.prisma.bloqueoProfesional.findMany({
+      where: {
+        barberiaId,
+        profesionalId,
+      },
+      orderBy: [
+        { inicio: 'asc' },
+        { id: 'asc' },
+      ],
+    });
+  }
+
+  async eliminarBloqueo(
+    barberiaId: number,
+    profesionalId: number,
+    bloqueoId: number,
+  ) {
+    return this.prisma.$transaction(
+      async (tx) => {
+        const profesionales = await tx.$queryRaw<{ id: number }[]>`
+          SELECT "id"
+          FROM "public"."Profesional"
+          WHERE "id" = ${profesionalId}
+            AND "barberiaId" = ${barberiaId}
+          FOR UPDATE
+        `;
+
+        if (profesionales.length === 0) {
+          throw new NotFoundException(
+            'El profesional no existe en esta barbería',
+          );
+        }
+
+        const resultado = await tx.bloqueoProfesional.deleteMany({
+          where: {
+            id: bloqueoId,
+            barberiaId,
+            profesionalId,
+          },
+        });
+
+        if (resultado.count === 0) {
+          throw new NotFoundException(
+            'El bloqueo no existe para este profesional en esta barbería',
+          );
+        }
+      },
+      {
+        isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted,
+      },
+    );
+  }
+
+    async consultarImpactoBloqueo(
+    barberiaId: number,
+    profesionalId: number,
+    dto: CreateBloqueoDto,
+  ) {
+    const inicio = new Date(dto.inicio);
+    const fin = new Date(dto.fin);
+
+    if (
+      !Number.isFinite(inicio.getTime()) ||
+      !Number.isFinite(fin.getTime()) ||
+      fin.getTime() <= inicio.getTime()
+    ) {
+      throw new BadRequestException(
+        'El intervalo del bloqueo no es válido',
+      );
+    }
+
+    if (fin.getTime() <= Date.now()) {
+      throw new BadRequestException(
+        'El bloqueo debe terminar en el futuro',
+      );
+    }
+
+    const profesional = await this.prisma.profesional.findUnique({
+      where: {
+        id_barberiaId: {
+          id: profesionalId,
+          barberiaId,
+        },
+      },
+      select: {
+        id: true,
+        nombre: true,
+        barberia: {
+          select: {
+            zonaHoraria: true,
+          },
+        },
+      },
+    });
+
+    if (!profesional) {
+      throw new NotFoundException(
+        'El profesional no existe en esta barbería',
+      );
+    }
+
+    const reservas = await this.prisma.reserva.findMany({
+      where: {
+        barberiaId,
+        profesionalId,
+        estado: 'CONFIRMADA',
+        inicio: {
+          lt: fin,
+        },
+        fin: {
+          gt: inicio,
+        },
+      },
+      select: {
+        id: true,
+        inicio: true,
+        fin: true,
+        nombreServicio: true,
+        estado: true,
+        cliente: {
+          select: {
+            id: true,
+            nombre: true,
+          },
+        },
+      },
+      orderBy: [
+        { inicio: 'asc' },
+        { id: 'asc' },
+      ],
+    });
+
+    return {
+      profesional: {
+        id: profesional.id,
+        nombre: profesional.nombre,
+      },
+      zonaHoraria: profesional.barberia.zonaHoraria,
+      inicio,
+      fin,
+      cantidadReservasAfectadas: reservas.length,
+      sinConflictosConReservas: reservas.length === 0,
+      reservas,
+    };
   }
 }

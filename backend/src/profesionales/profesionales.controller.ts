@@ -18,6 +18,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 import { MiembroBarberiaGuard } from '../auth/guards/miembro-barberia.guard.js';
 import { AdministradorBarberiaGuard } from '../auth/guards/administrador-barberia.guard.js';
 import { CreateHorarioDto } from './dto/create-horario.dto.js';
+import { CreateBloqueoDto } from './dto/create-bloqueo.dto.js';
 @Controller('barberias/:barberiaId/profesionales')
 @UseGuards(JwtAuthGuard, MiembroBarberiaGuard)
 export class ProfesionalesController {
@@ -144,6 +145,73 @@ export class ProfesionalesController {
       barberiaId,
       profesionalId,
       horarioId,
+    );
+  }
+
+    @Post(':profesionalId/bloqueos')
+  @UseGuards(AdministradorBarberiaGuard)
+  crearBloqueo(
+    @Param('barberiaId', ParseIntPipe) barberiaId: number,
+    @Param('profesionalId', ParseIntPipe) profesionalId: number,
+    @Body(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+      }),
+    )
+    dto: CreateBloqueoDto,
+  ) {
+    return this.profesionalesService.crearBloqueo(
+      barberiaId,
+      profesionalId,
+      dto,
+    );
+  }
+
+    @Get(':profesionalId/bloqueos')
+  findBloqueos(
+    @Param('barberiaId', ParseIntPipe) barberiaId: number,
+    @Param('profesionalId', ParseIntPipe) profesionalId: number,
+  ) {
+    return this.profesionalesService.findBloqueos(
+      barberiaId,
+      profesionalId,
+    );
+  }
+
+  @Delete(':profesionalId/bloqueos/:bloqueoId')
+  @UseGuards(AdministradorBarberiaGuard)
+  @HttpCode(204)
+  async eliminarBloqueo(
+    @Param('barberiaId', ParseIntPipe) barberiaId: number,
+    @Param('profesionalId', ParseIntPipe) profesionalId: number,
+    @Param('bloqueoId', ParseIntPipe) bloqueoId: number,
+  ) {
+    await this.profesionalesService.eliminarBloqueo(
+      barberiaId,
+      profesionalId,
+      bloqueoId,
+    );
+  }
+
+    @Post(':profesionalId/bloqueos/impacto')
+  @UseGuards(AdministradorBarberiaGuard)
+  @HttpCode(200)
+  consultarImpactoBloqueo(
+    @Param('barberiaId', ParseIntPipe) barberiaId: number,
+    @Param('profesionalId', ParseIntPipe) profesionalId: number,
+    @Body(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+      }),
+    )
+    dto: CreateBloqueoDto,
+  ) {
+    return this.profesionalesService.consultarImpactoBloqueo(
+      barberiaId,
+      profesionalId,
+      dto,
     );
   }
 }

@@ -119,7 +119,27 @@ export class ReservasService {
             'El servicio completo no cabe en la jornada del profesional',
           );
         }
+                const bloqueo = await tx.bloqueoProfesional.findFirst({
+          where: {
+            barberiaId,
+            profesionalId: dto.profesionalId,
+            inicio: {
+              lt: intervalo.fin,
+            },
+            fin: {
+              gt: intervalo.inicio,
+            },
+          },
+          select: {
+            id: true,
+          },
+        });
 
+        if (bloqueo) {
+          throw new ConflictException(
+            'El profesional no está disponible en ese intervalo',
+          );
+        }
         // Strings ISO con zona explícita para PostgreSQL.
         const inicioISO = intervalo.inicio.toISOString();
         const finISO = intervalo.fin.toISOString();
@@ -453,15 +473,35 @@ export class ReservasService {
         fin: true,
       },
     });
+        const bloqueos = await this.prisma.bloqueoProfesional.findMany({
+      where: {
+        barberiaId,
+        profesionalId: query.profesionalId,
+        inicio: {
+          lt: siguienteDia.toJSDate(),
+        },
+        fin: {
+          gt: inicioDia.toJSDate(),
+        },
+      },
+      select: {
+        inicio: true,
+        fin: true,
+      },
+    });
+    const intervalosOcupados = [
+      ...reservas,
+      ...bloqueos,
+    ];
 
     const disponibles = opciones.filter((opcion) => {
       const inicio = Date.parse(opcion.inicio);
       const fin = Date.parse(opcion.fin);
 
-      return !reservas.some(
-        (reserva) =>
-          inicio < reserva.fin.getTime() &&
-          fin > reserva.inicio.getTime(),
+      return !intervalosOcupados.some(
+        (ocupado) =>
+          inicio < ocupado.fin.getTime() &&
+          fin > ocupado.inicio.getTime(),
       );
     });
 

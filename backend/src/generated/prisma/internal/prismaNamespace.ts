@@ -404,7 +404,8 @@ export const ModelName = {
   Usuario: 'Usuario',
   MiembroBarberia: 'MiembroBarberia',
   HorarioProfesional: 'HorarioProfesional',
-  Reserva: 'Reserva'
+  Reserva: 'Reserva',
+  BloqueoProfesional: 'BloqueoProfesional'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -420,7 +421,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "barberia" | "profesional" | "servicio" | "profesionalServicio" | "usuario" | "miembroBarberia" | "horarioProfesional" | "reserva"
+    modelProps: "barberia" | "profesional" | "servicio" | "profesionalServicio" | "usuario" | "miembroBarberia" | "horarioProfesional" | "reserva" | "bloqueoProfesional"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1016,6 +1017,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    BloqueoProfesional: {
+      payload: Prisma.$BloqueoProfesionalPayload<ExtArgs>
+      fields: Prisma.BloqueoProfesionalFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BloqueoProfesionalFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BloqueoProfesionalPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BloqueoProfesionalFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BloqueoProfesionalPayload>
+        }
+        findFirst: {
+          args: Prisma.BloqueoProfesionalFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BloqueoProfesionalPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BloqueoProfesionalFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BloqueoProfesionalPayload>
+        }
+        findMany: {
+          args: Prisma.BloqueoProfesionalFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BloqueoProfesionalPayload>[]
+        }
+        create: {
+          args: Prisma.BloqueoProfesionalCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BloqueoProfesionalPayload>
+        }
+        createMany: {
+          args: Prisma.BloqueoProfesionalCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BloqueoProfesionalCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BloqueoProfesionalPayload>[]
+        }
+        delete: {
+          args: Prisma.BloqueoProfesionalDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BloqueoProfesionalPayload>
+        }
+        update: {
+          args: Prisma.BloqueoProfesionalUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BloqueoProfesionalPayload>
+        }
+        deleteMany: {
+          args: Prisma.BloqueoProfesionalDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BloqueoProfesionalUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BloqueoProfesionalUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BloqueoProfesionalPayload>[]
+        }
+        upsert: {
+          args: Prisma.BloqueoProfesionalUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BloqueoProfesionalPayload>
+        }
+        aggregate: {
+          args: Prisma.BloqueoProfesionalAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBloqueoProfesional>
+        }
+        groupBy: {
+          args: Prisma.BloqueoProfesionalGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BloqueoProfesionalGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BloqueoProfesionalCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BloqueoProfesionalCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1149,6 +1224,19 @@ export const ReservaScalarFieldEnum = {
 } as const
 
 export type ReservaScalarFieldEnum = (typeof ReservaScalarFieldEnum)[keyof typeof ReservaScalarFieldEnum]
+
+
+export const BloqueoProfesionalScalarFieldEnum = {
+  id: 'id',
+  barberiaId: 'barberiaId',
+  profesionalId: 'profesionalId',
+  inicio: 'inicio',
+  fin: 'fin',
+  motivo: 'motivo',
+  creadoEn: 'creadoEn'
+} as const
+
+export type BloqueoProfesionalScalarFieldEnum = (typeof BloqueoProfesionalScalarFieldEnum)[keyof typeof BloqueoProfesionalScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1444,6 +1532,7 @@ export type GlobalOmitConfig = {
   miembroBarberia?: Prisma.MiembroBarberiaOmit
   horarioProfesional?: Prisma.HorarioProfesionalOmit
   reserva?: Prisma.ReservaOmit
+  bloqueoProfesional?: Prisma.BloqueoProfesionalOmit
 }
 
 /* Types for Logging */

@@ -35,6 +35,7 @@ model Profesional {
   miembros  MiembroBarberia[]
   horarios  HorarioProfesional[]
   reservas  Reserva[]
+  bloqueos  BloqueoProfesional[]
 
   @@unique([id, barberiaId])
   @@index([barberiaId])
@@ -146,4 +147,19 @@ model Reserva {
   @@index([barberiaId, inicio])
   @@index([profesionalId, barberiaId, inicio])
   @@index([servicioId, barberiaId])
+}
+
+model BloqueoProfesional {
+  id            Int @id @default(autoincrement())
+  barberiaId    Int
+  profesionalId Int
+
+  inicio   DateTime @db.Timestamptz(3)
+  fin      DateTime @db.Timestamptz(3)
+  motivo   String?
+  creadoEn DateTime @default(now()) @db.Timestamptz(3)
+
+  profesional Profesional @relation(fields: [profesionalId, barberiaId], references: [id, barberiaId], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([barberiaId, profesionalId, inicio])
 }

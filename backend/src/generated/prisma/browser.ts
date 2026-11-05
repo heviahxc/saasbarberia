@@ -57,3 +57,8 @@ export type HorarioProfesional = Prisma.HorarioProfesionalModel
  * 
  */
 export type Reserva = Prisma.ReservaModel
+/**
+ * Model BloqueoProfesional
+ * 
+ */
+export type BloqueoProfesional = Prisma.BloqueoProfesionalModel
