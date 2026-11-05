@@ -76,14 +76,15 @@ enum RolBarberia {
 }
 
 model Usuario {
-  id           Int               @id @default(autoincrement())
-  nombre       String
-  email        String            @unique
-  passwordHash String
-  activo       Boolean           @default(true)
-  creadoEn     DateTime          @default(now())
-  reservas     Reserva[]
-  membresias   MiembroBarberia[]
+  id                        Int                     @id @default(autoincrement())
+  nombre                    String
+  email                     String                  @unique
+  passwordHash              String
+  activo                    Boolean                 @default(true)
+  creadoEn                  DateTime                @default(now())
+  reservas                  Reserva[]
+  membresias                MiembroBarberia[]
+  reagendamientosRealizados ReagendamientoReserva[]
 }
 
 model MiembroBarberia {
@@ -138,10 +139,11 @@ model Reserva {
   creadoEn    DateTime      @default(now()) @db.Timestamptz(3)
   canceladoEn DateTime?     @db.Timestamptz(3)
 
-  cliente     Usuario     @relation(fields: [clienteId], references: [id], onDelete: Restrict, onUpdate: Restrict)
-  barberia    Barberia    @relation(fields: [barberiaId], references: [id], onDelete: Restrict, onUpdate: Restrict)
-  profesional Profesional @relation(fields: [profesionalId, barberiaId], references: [id, barberiaId], onDelete: Restrict, onUpdate: Restrict)
-  servicio    Servicio    @relation(fields: [servicioId, barberiaId], references: [id, barberiaId], onDelete: Restrict, onUpdate: Restrict)
+  cliente         Usuario                 @relation(fields: [clienteId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  barberia        Barberia                @relation(fields: [barberiaId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  profesional     Profesional             @relation(fields: [profesionalId, barberiaId], references: [id, barberiaId], onDelete: Restrict, onUpdate: Restrict)
+  servicio        Servicio                @relation(fields: [servicioId, barberiaId], references: [id, barberiaId], onDelete: Restrict, onUpdate: Restrict)
+  reagendamientos ReagendamientoReserva[]
 
   @@index([clienteId, inicio])
   @@index([barberiaId, inicio])
@@ -162,4 +164,22 @@ model BloqueoProfesional {
   profesional Profesional @relation(fields: [profesionalId, barberiaId], references: [id, barberiaId], onDelete: Restrict, onUpdate: Restrict)
 
   @@index([barberiaId, profesionalId, inicio])
+}
+
+model ReagendamientoReserva {
+  id        Int @id @default(autoincrement())
+  reservaId Int
+  actorId   Int
+
+  inicioAnterior DateTime @db.Timestamptz(3)
+  finAnterior    DateTime @db.Timestamptz(3)
+  inicioNuevo    DateTime @db.Timestamptz(3)
+  finNuevo       DateTime @db.Timestamptz(3)
+  creadoEn       DateTime @default(now()) @db.Timestamptz(3)
+
+  reserva Reserva @relation(fields: [reservaId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  actor   Usuario @relation(fields: [actorId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([reservaId, creadoEn])
+  @@index([actorId])
 }

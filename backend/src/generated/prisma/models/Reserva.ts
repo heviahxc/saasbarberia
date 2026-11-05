@@ -316,6 +316,7 @@ export type ReservaWhereInput = {
   barberia?: Prisma.XOR<Prisma.BarberiaScalarRelationFilter, Prisma.BarberiaWhereInput>
   profesional?: Prisma.XOR<Prisma.ProfesionalScalarRelationFilter, Prisma.ProfesionalWhereInput>
   servicio?: Prisma.XOR<Prisma.ServicioScalarRelationFilter, Prisma.ServicioWhereInput>
+  reagendamientos?: Prisma.ReagendamientoReservaListRelationFilter
 }
 
 export type ReservaOrderByWithRelationInput = {
@@ -337,6 +338,7 @@ export type ReservaOrderByWithRelationInput = {
   barberia?: Prisma.BarberiaOrderByWithRelationInput
   profesional?: Prisma.ProfesionalOrderByWithRelationInput
   servicio?: Prisma.ServicioOrderByWithRelationInput
+  reagendamientos?: Prisma.ReagendamientoReservaOrderByRelationAggregateInput
 }
 
 export type ReservaWhereUniqueInput = Prisma.AtLeast<{
@@ -361,6 +363,7 @@ export type ReservaWhereUniqueInput = Prisma.AtLeast<{
   barberia?: Prisma.XOR<Prisma.BarberiaScalarRelationFilter, Prisma.BarberiaWhereInput>
   profesional?: Prisma.XOR<Prisma.ProfesionalScalarRelationFilter, Prisma.ProfesionalWhereInput>
   servicio?: Prisma.XOR<Prisma.ServicioScalarRelationFilter, Prisma.ServicioWhereInput>
+  reagendamientos?: Prisma.ReagendamientoReservaListRelationFilter
 }, "id">
 
 export type ReservaOrderByWithAggregationInput = {
@@ -419,6 +422,7 @@ export type ReservaCreateInput = {
   barberia: Prisma.BarberiaCreateNestedOneWithoutReservasInput
   profesional: Prisma.ProfesionalCreateNestedOneWithoutReservasInput
   servicio: Prisma.ServicioCreateNestedOneWithoutReservasInput
+  reagendamientos?: Prisma.ReagendamientoReservaCreateNestedManyWithoutReservaInput
 }
 
 export type ReservaUncheckedCreateInput = {
@@ -436,6 +440,7 @@ export type ReservaUncheckedCreateInput = {
   estado?: $Enums.EstadoReserva
   creadoEn?: Date | string
   canceladoEn?: Date | string | null
+  reagendamientos?: Prisma.ReagendamientoReservaUncheckedCreateNestedManyWithoutReservaInput
 }
 
 export type ReservaUpdateInput = {
@@ -452,6 +457,7 @@ export type ReservaUpdateInput = {
   barberia?: Prisma.BarberiaUpdateOneRequiredWithoutReservasNestedInput
   profesional?: Prisma.ProfesionalUpdateOneRequiredWithoutReservasNestedInput
   servicio?: Prisma.ServicioUpdateOneRequiredWithoutReservasNestedInput
+  reagendamientos?: Prisma.ReagendamientoReservaUpdateManyWithoutReservaNestedInput
 }
 
 export type ReservaUncheckedUpdateInput = {
@@ -469,6 +475,7 @@ export type ReservaUncheckedUpdateInput = {
   estado?: Prisma.EnumEstadoReservaFieldUpdateOperationsInput | $Enums.EstadoReserva
   creadoEn?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   canceladoEn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reagendamientos?: Prisma.ReagendamientoReservaUncheckedUpdateManyWithoutReservaNestedInput
 }
 
 export type ReservaCreateManyInput = {
@@ -596,6 +603,11 @@ export type ReservaSumOrderByAggregateInput = {
   servicioId?: Prisma.SortOrder
   duracionMinutos?: Prisma.SortOrder
   precioAcordado?: Prisma.SortOrder
+}
+
+export type ReservaScalarRelationFilter = {
+  is?: Prisma.ReservaWhereInput
+  isNot?: Prisma.ReservaWhereInput
 }
 
 export type ReservaCreateNestedManyWithoutBarberiaInput = {
@@ -774,6 +786,20 @@ export type NullableDateTimeFieldUpdateOperationsInput = {
   set?: Date | string | null
 }
 
+export type ReservaCreateNestedOneWithoutReagendamientosInput = {
+  create?: Prisma.XOR<Prisma.ReservaCreateWithoutReagendamientosInput, Prisma.ReservaUncheckedCreateWithoutReagendamientosInput>
+  connectOrCreate?: Prisma.ReservaCreateOrConnectWithoutReagendamientosInput
+  connect?: Prisma.ReservaWhereUniqueInput
+}
+
+export type ReservaUpdateOneRequiredWithoutReagendamientosNestedInput = {
+  create?: Prisma.XOR<Prisma.ReservaCreateWithoutReagendamientosInput, Prisma.ReservaUncheckedCreateWithoutReagendamientosInput>
+  connectOrCreate?: Prisma.ReservaCreateOrConnectWithoutReagendamientosInput
+  upsert?: Prisma.ReservaUpsertWithoutReagendamientosInput
+  connect?: Prisma.ReservaWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ReservaUpdateToOneWithWhereWithoutReagendamientosInput, Prisma.ReservaUpdateWithoutReagendamientosInput>, Prisma.ReservaUncheckedUpdateWithoutReagendamientosInput>
+}
+
 export type ReservaCreateWithoutBarberiaInput = {
   inicio: Date | string
   fin: Date | string
@@ -787,6 +813,7 @@ export type ReservaCreateWithoutBarberiaInput = {
   cliente: Prisma.UsuarioCreateNestedOneWithoutReservasInput
   profesional: Prisma.ProfesionalCreateNestedOneWithoutReservasInput
   servicio: Prisma.ServicioCreateNestedOneWithoutReservasInput
+  reagendamientos?: Prisma.ReagendamientoReservaCreateNestedManyWithoutReservaInput
 }
 
 export type ReservaUncheckedCreateWithoutBarberiaInput = {
@@ -803,6 +830,7 @@ export type ReservaUncheckedCreateWithoutBarberiaInput = {
   estado?: $Enums.EstadoReserva
   creadoEn?: Date | string
   canceladoEn?: Date | string | null
+  reagendamientos?: Prisma.ReagendamientoReservaUncheckedCreateNestedManyWithoutReservaInput
 }
 
 export type ReservaCreateOrConnectWithoutBarberiaInput = {
@@ -864,6 +892,7 @@ export type ReservaCreateWithoutProfesionalInput = {
   cliente: Prisma.UsuarioCreateNestedOneWithoutReservasInput
   barberia: Prisma.BarberiaCreateNestedOneWithoutReservasInput
   servicio: Prisma.ServicioCreateNestedOneWithoutReservasInput
+  reagendamientos?: Prisma.ReagendamientoReservaCreateNestedManyWithoutReservaInput
 }
 
 export type ReservaUncheckedCreateWithoutProfesionalInput = {
@@ -879,6 +908,7 @@ export type ReservaUncheckedCreateWithoutProfesionalInput = {
   estado?: $Enums.EstadoReserva
   creadoEn?: Date | string
   canceladoEn?: Date | string | null
+  reagendamientos?: Prisma.ReagendamientoReservaUncheckedCreateNestedManyWithoutReservaInput
 }
 
 export type ReservaCreateOrConnectWithoutProfesionalInput = {
@@ -920,6 +950,7 @@ export type ReservaCreateWithoutServicioInput = {
   cliente: Prisma.UsuarioCreateNestedOneWithoutReservasInput
   barberia: Prisma.BarberiaCreateNestedOneWithoutReservasInput
   profesional: Prisma.ProfesionalCreateNestedOneWithoutReservasInput
+  reagendamientos?: Prisma.ReagendamientoReservaCreateNestedManyWithoutReservaInput
 }
 
 export type ReservaUncheckedCreateWithoutServicioInput = {
@@ -935,6 +966,7 @@ export type ReservaUncheckedCreateWithoutServicioInput = {
   estado?: $Enums.EstadoReserva
   creadoEn?: Date | string
   canceladoEn?: Date | string | null
+  reagendamientos?: Prisma.ReagendamientoReservaUncheckedCreateNestedManyWithoutReservaInput
 }
 
 export type ReservaCreateOrConnectWithoutServicioInput = {
@@ -976,6 +1008,7 @@ export type ReservaCreateWithoutClienteInput = {
   barberia: Prisma.BarberiaCreateNestedOneWithoutReservasInput
   profesional: Prisma.ProfesionalCreateNestedOneWithoutReservasInput
   servicio: Prisma.ServicioCreateNestedOneWithoutReservasInput
+  reagendamientos?: Prisma.ReagendamientoReservaCreateNestedManyWithoutReservaInput
 }
 
 export type ReservaUncheckedCreateWithoutClienteInput = {
@@ -992,6 +1025,7 @@ export type ReservaUncheckedCreateWithoutClienteInput = {
   estado?: $Enums.EstadoReserva
   creadoEn?: Date | string
   canceladoEn?: Date | string | null
+  reagendamientos?: Prisma.ReagendamientoReservaUncheckedCreateNestedManyWithoutReservaInput
 }
 
 export type ReservaCreateOrConnectWithoutClienteInput = {
@@ -1018,6 +1052,88 @@ export type ReservaUpdateWithWhereUniqueWithoutClienteInput = {
 export type ReservaUpdateManyWithWhereWithoutClienteInput = {
   where: Prisma.ReservaScalarWhereInput
   data: Prisma.XOR<Prisma.ReservaUpdateManyMutationInput, Prisma.ReservaUncheckedUpdateManyWithoutClienteInput>
+}
+
+export type ReservaCreateWithoutReagendamientosInput = {
+  inicio: Date | string
+  fin: Date | string
+  duracionMinutos: number
+  precioAcordado: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nombreServicio: string
+  zonaHoraria: string
+  estado?: $Enums.EstadoReserva
+  creadoEn?: Date | string
+  canceladoEn?: Date | string | null
+  cliente: Prisma.UsuarioCreateNestedOneWithoutReservasInput
+  barberia: Prisma.BarberiaCreateNestedOneWithoutReservasInput
+  profesional: Prisma.ProfesionalCreateNestedOneWithoutReservasInput
+  servicio: Prisma.ServicioCreateNestedOneWithoutReservasInput
+}
+
+export type ReservaUncheckedCreateWithoutReagendamientosInput = {
+  id?: number
+  clienteId: number
+  barberiaId: number
+  profesionalId: number
+  servicioId: number
+  inicio: Date | string
+  fin: Date | string
+  duracionMinutos: number
+  precioAcordado: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nombreServicio: string
+  zonaHoraria: string
+  estado?: $Enums.EstadoReserva
+  creadoEn?: Date | string
+  canceladoEn?: Date | string | null
+}
+
+export type ReservaCreateOrConnectWithoutReagendamientosInput = {
+  where: Prisma.ReservaWhereUniqueInput
+  create: Prisma.XOR<Prisma.ReservaCreateWithoutReagendamientosInput, Prisma.ReservaUncheckedCreateWithoutReagendamientosInput>
+}
+
+export type ReservaUpsertWithoutReagendamientosInput = {
+  update: Prisma.XOR<Prisma.ReservaUpdateWithoutReagendamientosInput, Prisma.ReservaUncheckedUpdateWithoutReagendamientosInput>
+  create: Prisma.XOR<Prisma.ReservaCreateWithoutReagendamientosInput, Prisma.ReservaUncheckedCreateWithoutReagendamientosInput>
+  where?: Prisma.ReservaWhereInput
+}
+
+export type ReservaUpdateToOneWithWhereWithoutReagendamientosInput = {
+  where?: Prisma.ReservaWhereInput
+  data: Prisma.XOR<Prisma.ReservaUpdateWithoutReagendamientosInput, Prisma.ReservaUncheckedUpdateWithoutReagendamientosInput>
+}
+
+export type ReservaUpdateWithoutReagendamientosInput = {
+  inicio?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  duracionMinutos?: Prisma.IntFieldUpdateOperationsInput | number
+  precioAcordado?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nombreServicio?: Prisma.StringFieldUpdateOperationsInput | string
+  zonaHoraria?: Prisma.StringFieldUpdateOperationsInput | string
+  estado?: Prisma.EnumEstadoReservaFieldUpdateOperationsInput | $Enums.EstadoReserva
+  creadoEn?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  canceladoEn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cliente?: Prisma.UsuarioUpdateOneRequiredWithoutReservasNestedInput
+  barberia?: Prisma.BarberiaUpdateOneRequiredWithoutReservasNestedInput
+  profesional?: Prisma.ProfesionalUpdateOneRequiredWithoutReservasNestedInput
+  servicio?: Prisma.ServicioUpdateOneRequiredWithoutReservasNestedInput
+}
+
+export type ReservaUncheckedUpdateWithoutReagendamientosInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  clienteId?: Prisma.IntFieldUpdateOperationsInput | number
+  barberiaId?: Prisma.IntFieldUpdateOperationsInput | number
+  profesionalId?: Prisma.IntFieldUpdateOperationsInput | number
+  servicioId?: Prisma.IntFieldUpdateOperationsInput | number
+  inicio?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  duracionMinutos?: Prisma.IntFieldUpdateOperationsInput | number
+  precioAcordado?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nombreServicio?: Prisma.StringFieldUpdateOperationsInput | string
+  zonaHoraria?: Prisma.StringFieldUpdateOperationsInput | string
+  estado?: Prisma.EnumEstadoReservaFieldUpdateOperationsInput | $Enums.EstadoReserva
+  creadoEn?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  canceladoEn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ReservaCreateManyBarberiaInput = {
@@ -1049,6 +1165,7 @@ export type ReservaUpdateWithoutBarberiaInput = {
   cliente?: Prisma.UsuarioUpdateOneRequiredWithoutReservasNestedInput
   profesional?: Prisma.ProfesionalUpdateOneRequiredWithoutReservasNestedInput
   servicio?: Prisma.ServicioUpdateOneRequiredWithoutReservasNestedInput
+  reagendamientos?: Prisma.ReagendamientoReservaUpdateManyWithoutReservaNestedInput
 }
 
 export type ReservaUncheckedUpdateWithoutBarberiaInput = {
@@ -1065,6 +1182,7 @@ export type ReservaUncheckedUpdateWithoutBarberiaInput = {
   estado?: Prisma.EnumEstadoReservaFieldUpdateOperationsInput | $Enums.EstadoReserva
   creadoEn?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   canceladoEn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reagendamientos?: Prisma.ReagendamientoReservaUncheckedUpdateManyWithoutReservaNestedInput
 }
 
 export type ReservaUncheckedUpdateManyWithoutBarberiaInput = {
@@ -1111,6 +1229,7 @@ export type ReservaUpdateWithoutProfesionalInput = {
   cliente?: Prisma.UsuarioUpdateOneRequiredWithoutReservasNestedInput
   barberia?: Prisma.BarberiaUpdateOneRequiredWithoutReservasNestedInput
   servicio?: Prisma.ServicioUpdateOneRequiredWithoutReservasNestedInput
+  reagendamientos?: Prisma.ReagendamientoReservaUpdateManyWithoutReservaNestedInput
 }
 
 export type ReservaUncheckedUpdateWithoutProfesionalInput = {
@@ -1126,6 +1245,7 @@ export type ReservaUncheckedUpdateWithoutProfesionalInput = {
   estado?: Prisma.EnumEstadoReservaFieldUpdateOperationsInput | $Enums.EstadoReserva
   creadoEn?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   canceladoEn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reagendamientos?: Prisma.ReagendamientoReservaUncheckedUpdateManyWithoutReservaNestedInput
 }
 
 export type ReservaUncheckedUpdateManyWithoutProfesionalInput = {
@@ -1171,6 +1291,7 @@ export type ReservaUpdateWithoutServicioInput = {
   cliente?: Prisma.UsuarioUpdateOneRequiredWithoutReservasNestedInput
   barberia?: Prisma.BarberiaUpdateOneRequiredWithoutReservasNestedInput
   profesional?: Prisma.ProfesionalUpdateOneRequiredWithoutReservasNestedInput
+  reagendamientos?: Prisma.ReagendamientoReservaUpdateManyWithoutReservaNestedInput
 }
 
 export type ReservaUncheckedUpdateWithoutServicioInput = {
@@ -1186,6 +1307,7 @@ export type ReservaUncheckedUpdateWithoutServicioInput = {
   estado?: Prisma.EnumEstadoReservaFieldUpdateOperationsInput | $Enums.EstadoReserva
   creadoEn?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   canceladoEn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reagendamientos?: Prisma.ReagendamientoReservaUncheckedUpdateManyWithoutReservaNestedInput
 }
 
 export type ReservaUncheckedUpdateManyWithoutServicioInput = {
@@ -1232,6 +1354,7 @@ export type ReservaUpdateWithoutClienteInput = {
   barberia?: Prisma.BarberiaUpdateOneRequiredWithoutReservasNestedInput
   profesional?: Prisma.ProfesionalUpdateOneRequiredWithoutReservasNestedInput
   servicio?: Prisma.ServicioUpdateOneRequiredWithoutReservasNestedInput
+  reagendamientos?: Prisma.ReagendamientoReservaUpdateManyWithoutReservaNestedInput
 }
 
 export type ReservaUncheckedUpdateWithoutClienteInput = {
@@ -1248,6 +1371,7 @@ export type ReservaUncheckedUpdateWithoutClienteInput = {
   estado?: Prisma.EnumEstadoReservaFieldUpdateOperationsInput | $Enums.EstadoReserva
   creadoEn?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   canceladoEn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reagendamientos?: Prisma.ReagendamientoReservaUncheckedUpdateManyWithoutReservaNestedInput
 }
 
 export type ReservaUncheckedUpdateManyWithoutClienteInput = {
@@ -1266,6 +1390,35 @@ export type ReservaUncheckedUpdateManyWithoutClienteInput = {
   canceladoEn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
+
+/**
+ * Count Type ReservaCountOutputType
+ */
+
+export type ReservaCountOutputType = {
+  reagendamientos: number
+}
+
+export type ReservaCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  reagendamientos?: boolean | ReservaCountOutputTypeCountReagendamientosArgs
+}
+
+/**
+ * ReservaCountOutputType without action
+ */
+export type ReservaCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ReservaCountOutputType
+   */
+  select?: Prisma.ReservaCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * ReservaCountOutputType without action
+ */
+export type ReservaCountOutputTypeCountReagendamientosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ReagendamientoReservaWhereInput
+}
 
 
 export type ReservaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1287,6 +1440,8 @@ export type ReservaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   barberia?: boolean | Prisma.BarberiaDefaultArgs<ExtArgs>
   profesional?: boolean | Prisma.ProfesionalDefaultArgs<ExtArgs>
   servicio?: boolean | Prisma.ServicioDefaultArgs<ExtArgs>
+  reagendamientos?: boolean | Prisma.Reserva$reagendamientosArgs<ExtArgs>
+  _count?: boolean | Prisma.ReservaCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["reserva"]>
 
 export type ReservaSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1354,6 +1509,8 @@ export type ReservaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   barberia?: boolean | Prisma.BarberiaDefaultArgs<ExtArgs>
   profesional?: boolean | Prisma.ProfesionalDefaultArgs<ExtArgs>
   servicio?: boolean | Prisma.ServicioDefaultArgs<ExtArgs>
+  reagendamientos?: boolean | Prisma.Reserva$reagendamientosArgs<ExtArgs>
+  _count?: boolean | Prisma.ReservaCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ReservaIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   cliente?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
@@ -1375,6 +1532,7 @@ export type $ReservaPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     barberia: Prisma.$BarberiaPayload<ExtArgs>
     profesional: Prisma.$ProfesionalPayload<ExtArgs>
     servicio: Prisma.$ServicioPayload<ExtArgs>
+    reagendamientos: Prisma.$ReagendamientoReservaPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1789,6 +1947,7 @@ export interface Prisma__ReservaClient<T, Null = never, ExtArgs extends runtime.
   barberia<T extends Prisma.BarberiaDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BarberiaDefaultArgs<ExtArgs>>): Prisma.Prisma__BarberiaClient<runtime.Types.Result.GetResult<Prisma.$BarberiaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   profesional<T extends Prisma.ProfesionalDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProfesionalDefaultArgs<ExtArgs>>): Prisma.Prisma__ProfesionalClient<runtime.Types.Result.GetResult<Prisma.$ProfesionalPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   servicio<T extends Prisma.ServicioDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ServicioDefaultArgs<ExtArgs>>): Prisma.Prisma__ServicioClient<runtime.Types.Result.GetResult<Prisma.$ServicioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  reagendamientos<T extends Prisma.Reserva$reagendamientosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Reserva$reagendamientosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReagendamientoReservaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2230,6 +2389,30 @@ export type ReservaDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Limit how many Reservas to delete.
    */
   limit?: number
+}
+
+/**
+ * Reserva.reagendamientos
+ */
+export type Reserva$reagendamientosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ReagendamientoReserva
+   */
+  select?: Prisma.ReagendamientoReservaSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ReagendamientoReserva
+   */
+  omit?: Prisma.ReagendamientoReservaOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ReagendamientoReservaInclude<ExtArgs> | null
+  where?: Prisma.ReagendamientoReservaWhereInput
+  orderBy?: Prisma.ReagendamientoReservaOrderByWithRelationInput | Prisma.ReagendamientoReservaOrderByWithRelationInput[]
+  cursor?: Prisma.ReagendamientoReservaWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ReagendamientoReservaScalarFieldEnum | Prisma.ReagendamientoReservaScalarFieldEnum[]
 }
 
 /**

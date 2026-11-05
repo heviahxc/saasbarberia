@@ -59,7 +59,8 @@ export const ModelName = {
   MiembroBarberia: 'MiembroBarberia',
   HorarioProfesional: 'HorarioProfesional',
   Reserva: 'Reserva',
-  BloqueoProfesional: 'BloqueoProfesional'
+  BloqueoProfesional: 'BloqueoProfesional',
+  ReagendamientoReserva: 'ReagendamientoReserva'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -185,6 +186,20 @@ export const BloqueoProfesionalScalarFieldEnum = {
 } as const
 
 export type BloqueoProfesionalScalarFieldEnum = (typeof BloqueoProfesionalScalarFieldEnum)[keyof typeof BloqueoProfesionalScalarFieldEnum]
+
+
+export const ReagendamientoReservaScalarFieldEnum = {
+  id: 'id',
+  reservaId: 'reservaId',
+  actorId: 'actorId',
+  inicioAnterior: 'inicioAnterior',
+  finAnterior: 'finAnterior',
+  inicioNuevo: 'inicioNuevo',
+  finNuevo: 'finNuevo',
+  creadoEn: 'creadoEn'
+} as const
+
+export type ReagendamientoReservaScalarFieldEnum = (typeof ReagendamientoReservaScalarFieldEnum)[keyof typeof ReagendamientoReservaScalarFieldEnum]
 
 
 export const SortOrder = {

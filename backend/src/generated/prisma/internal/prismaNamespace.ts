@@ -405,7 +405,8 @@ export const ModelName = {
   MiembroBarberia: 'MiembroBarberia',
   HorarioProfesional: 'HorarioProfesional',
   Reserva: 'Reserva',
-  BloqueoProfesional: 'BloqueoProfesional'
+  BloqueoProfesional: 'BloqueoProfesional',
+  ReagendamientoReserva: 'ReagendamientoReserva'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -421,7 +422,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "barberia" | "profesional" | "servicio" | "profesionalServicio" | "usuario" | "miembroBarberia" | "horarioProfesional" | "reserva" | "bloqueoProfesional"
+    modelProps: "barberia" | "profesional" | "servicio" | "profesionalServicio" | "usuario" | "miembroBarberia" | "horarioProfesional" | "reserva" | "bloqueoProfesional" | "reagendamientoReserva"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1091,6 +1092,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ReagendamientoReserva: {
+      payload: Prisma.$ReagendamientoReservaPayload<ExtArgs>
+      fields: Prisma.ReagendamientoReservaFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ReagendamientoReservaFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReagendamientoReservaPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ReagendamientoReservaFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReagendamientoReservaPayload>
+        }
+        findFirst: {
+          args: Prisma.ReagendamientoReservaFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReagendamientoReservaPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ReagendamientoReservaFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReagendamientoReservaPayload>
+        }
+        findMany: {
+          args: Prisma.ReagendamientoReservaFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReagendamientoReservaPayload>[]
+        }
+        create: {
+          args: Prisma.ReagendamientoReservaCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReagendamientoReservaPayload>
+        }
+        createMany: {
+          args: Prisma.ReagendamientoReservaCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ReagendamientoReservaCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReagendamientoReservaPayload>[]
+        }
+        delete: {
+          args: Prisma.ReagendamientoReservaDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReagendamientoReservaPayload>
+        }
+        update: {
+          args: Prisma.ReagendamientoReservaUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReagendamientoReservaPayload>
+        }
+        deleteMany: {
+          args: Prisma.ReagendamientoReservaDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ReagendamientoReservaUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ReagendamientoReservaUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReagendamientoReservaPayload>[]
+        }
+        upsert: {
+          args: Prisma.ReagendamientoReservaUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReagendamientoReservaPayload>
+        }
+        aggregate: {
+          args: Prisma.ReagendamientoReservaAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateReagendamientoReserva>
+        }
+        groupBy: {
+          args: Prisma.ReagendamientoReservaGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ReagendamientoReservaGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ReagendamientoReservaCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ReagendamientoReservaCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1237,6 +1312,20 @@ export const BloqueoProfesionalScalarFieldEnum = {
 } as const
 
 export type BloqueoProfesionalScalarFieldEnum = (typeof BloqueoProfesionalScalarFieldEnum)[keyof typeof BloqueoProfesionalScalarFieldEnum]
+
+
+export const ReagendamientoReservaScalarFieldEnum = {
+  id: 'id',
+  reservaId: 'reservaId',
+  actorId: 'actorId',
+  inicioAnterior: 'inicioAnterior',
+  finAnterior: 'finAnterior',
+  inicioNuevo: 'inicioNuevo',
+  finNuevo: 'finNuevo',
+  creadoEn: 'creadoEn'
+} as const
+
+export type ReagendamientoReservaScalarFieldEnum = (typeof ReagendamientoReservaScalarFieldEnum)[keyof typeof ReagendamientoReservaScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1533,6 +1622,7 @@ export type GlobalOmitConfig = {
   horarioProfesional?: Prisma.HorarioProfesionalOmit
   reserva?: Prisma.ReservaOmit
   bloqueoProfesional?: Prisma.BloqueoProfesionalOmit
+  reagendamientoReserva?: Prisma.ReagendamientoReservaOmit
 }
 
 /* Types for Logging */

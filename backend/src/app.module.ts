@@ -13,8 +13,9 @@ import { ReservasModule } from './reservas/reservas.module.js';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
+        ConfigModule.forRoot({
       isGlobal: true,
+      ignoreEnvFile: process.env.NODE_ENV === 'test',
     }),
     BarberiasModule,
     ProfesionalesModule,

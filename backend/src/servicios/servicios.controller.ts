@@ -16,7 +16,7 @@ import { CambiarEstadoServicioDto } from './dto/cambiar-estado-servicio.dto.js';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 import { MiembroBarberiaGuard } from '../auth/guards/miembro-barberia.guard.js';
 import { AdministradorBarberiaGuard } from '../auth/guards/administrador-barberia.guard.js';
-
+import { CambiarDuracionServicioDto } from './dto/cambiar-duracion-servicio.dto.js';
 @Controller('barberias/:barberiaId/servicios')
 @UseGuards(JwtAuthGuard, MiembroBarberiaGuard)
 export class ServiciosController {
@@ -70,5 +70,24 @@ export class ServiciosController {
     @Param('barberiaId', ParseIntPipe) barberiaId: number,
   ) {
     return this.serviciosService.findDisponibles(barberiaId);
+  }
+    @Patch(':servicioId/duracion')
+  @UseGuards(AdministradorBarberiaGuard)
+  cambiarDuracion(
+    @Param('barberiaId', ParseIntPipe) barberiaId: number,
+    @Param('servicioId', ParseIntPipe) servicioId: number,
+    @Body(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+      }),
+    )
+    dto: CambiarDuracionServicioDto,
+  ) {
+    return this.serviciosService.cambiarDuracion(
+      barberiaId,
+      servicioId,
+      dto.duracionMinutos,
+    );
   }
 }

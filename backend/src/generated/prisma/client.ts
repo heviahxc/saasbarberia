@@ -86,3 +86,8 @@ export type Reserva = Prisma.ReservaModel
  * 
  */
 export type BloqueoProfesional = Prisma.BloqueoProfesionalModel
+/**
+ * Model ReagendamientoReserva
+ * 
+ */
+export type ReagendamientoReserva = Prisma.ReagendamientoReservaModel

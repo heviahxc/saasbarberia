@@ -50,11 +50,11 @@ export class ProfesionalesController {
   }
      @Get()
   @UseGuards(JwtAuthGuard, MiembroBarberiaGuard)
-  findAll(
-    @Param('barberiaId', ParseIntPipe) barberiaId: number,
-  ) {
-    return this.profesionalesService.findAll(barberiaId);
-  }
+findAll(
+  @Param('barberiaId', ParseIntPipe) barberiaId: number,
+) {
+  return this.profesionalesService.findAll(barberiaId);
+}
 
     @Post(':profesionalId/servicios')
     @UseGuards(AdministradorBarberiaGuard)

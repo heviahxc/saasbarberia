@@ -1,4 +1,5 @@
 import {
+    Body,
   Controller,
   Get,
   Param,
@@ -16,8 +17,9 @@ import type {
 } from '../auth/types/request-autenticada.type.js';
 
 import { ReservasService } from './reservas.service.js';
-import { MiembroBarberiaGuard } from '../auth/guards/miembro-barberia.guard.js';
 import { ConsultarAgendaDto } from './dto/consultar-agenda.dto.js';
+import { ReagendarReservaDto } from './dto/reagendar-reserva.dto.js';
+
 @Controller('reservas')
 @UseGuards(JwtAuthGuard)
 export class MisReservasController {
@@ -43,5 +45,53 @@ export class MisReservasController {
     );
   }
 
-   
+     @Patch(':reservaId/reagendar')
+  reagendarMia(
+    @Param('reservaId', ParseIntPipe) reservaId: number,
+    @Req() request: RequestAutenticada,
+    @Body(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+      }),
+    )
+    dto: ReagendarReservaDto,
+  ) {
+    return this.reservasService.reagendarMia(
+      reservaId,
+      request.usuario.id,
+      dto.inicio,
+    );
+  }
+
+    @Get(':reservaId/disponibilidad')
+  findDisponibilidadReagendar(
+    @Param('reservaId', ParseIntPipe) reservaId: number,
+    @Req() request: RequestAutenticada,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        whitelist: true,
+        forbidNonWhitelisted: true,
+      }),
+    )
+    query: ConsultarAgendaDto,
+  ) {
+    return this.reservasService.findDisponibilidadReagendar(
+      reservaId,
+      request.usuario.id,
+      query.fecha,
+    );
+  }
+
+    @Get(':reservaId/historial')
+  findHistorialMio(
+    @Param('reservaId', ParseIntPipe) reservaId: number,
+    @Req() request: RequestAutenticada,
+  ) {
+    return this.reservasService.findHistorialMio(
+      reservaId,
+      request.usuario.id,
+    );
+  }
 }

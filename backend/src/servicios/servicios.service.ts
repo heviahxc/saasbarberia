@@ -101,4 +101,32 @@ export class ServiciosService {
       },
     });
   }
+
+    async cambiarDuracion(
+    barberiaId: number,
+    servicioId: number,
+    duracionMinutos: number,
+  ) {
+    const resultado = await this.prisma.servicio.updateMany({
+      where: {
+        id: servicioId,
+        barberiaId,
+      },
+      data: {
+        duracionMinutos,
+      },
+    });
+
+    if (resultado.count === 0) {
+      throw new NotFoundException(
+        'El servicio no existe en esta barbería',
+      );
+    }
+
+    return {
+      id: servicioId,
+      barberiaId,
+      duracionMinutos,
+    };
+  }
 }

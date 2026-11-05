@@ -15,9 +15,7 @@ import { DateTime, IANAZone } from 'luxon';
 import { ConsultarDisponibilidadDto } from './dto/consultar-disponibilidad.dto.js';
 import { generarInicios } from './utils/generar-inicios.js';
 
-
-
-
+import { intervalosSeSuperponen } from './utils/intervalos-se-superponen.js';
 
 type ServicioReservable = {
   nombre: string;
@@ -30,11 +28,7 @@ type ServicioReservable = {
 export class ReservasService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(
-    barberiaId: number,
-    clienteId: number,
-    dto: CreateReservaDto,
-  ) {
+  async create(barberiaId: number, clienteId: number, dto: CreateReservaDto) {
     if (
       !Number.isInteger(barberiaId) ||
       barberiaId < 1 ||
@@ -119,7 +113,7 @@ export class ReservasService {
             'El servicio completo no cabe en la jornada del profesional',
           );
         }
-                const bloqueo = await tx.bloqueoProfesional.findFirst({
+        const bloqueo = await tx.bloqueoProfesional.findFirst({
           where: {
             barberiaId,
             profesionalId: dto.profesionalId,
@@ -189,7 +183,7 @@ export class ReservasService {
     );
   }
 
-    async findMias(clienteId: number) {
+  async findMias(clienteId: number) {
     return this.prisma.reserva.findMany({
       where: {
         clienteId,
@@ -219,14 +213,11 @@ export class ReservasService {
           },
         },
       },
-      orderBy: [
-        { inicio: 'desc' },
-        { id: 'desc' },
-      ],
+      orderBy: [{ inicio: 'desc' }, { id: 'desc' }],
     });
   }
 
-    async cancelarMia(reservaId: number, clienteId: number) {
+  async cancelarMia(reservaId: number, clienteId: number) {
     if (
       !Number.isInteger(reservaId) ||
       reservaId < 1 ||
@@ -274,7 +265,7 @@ export class ReservasService {
     );
   }
 
-    async findAgenda(barberiaId: number, fecha: string) {
+  async findAgenda(barberiaId: number, fecha: string) {
     const barberia = await this.prisma.barberia.findUnique({
       where: {
         id: barberiaId,
@@ -335,10 +326,7 @@ export class ReservasService {
           },
         },
       },
-      orderBy: [
-        { inicio: 'asc' },
-        { id: 'asc' },
-      ],
+      orderBy: [{ inicio: 'asc' }, { id: 'asc' }],
     });
 
     return {
@@ -347,8 +335,8 @@ export class ReservasService {
       reservas,
     };
   }
-  
-    async findDisponibilidad(
+
+  async findDisponibilidad(
     barberiaId: number,
     query: ConsultarDisponibilidadDto,
   ) {
@@ -418,9 +406,7 @@ export class ReservasService {
       servicio.duracionMinutos < 1 ||
       servicio.duracionMinutos > 1440
     ) {
-      throw new ConflictException(
-        'El servicio no tiene una duración válida',
-      );
+      throw new ConflictException('El servicio no tiene una duración válida');
     }
 
     const dia = DateTime.fromISO(query.fecha, {
@@ -473,7 +459,7 @@ export class ReservasService {
         fin: true,
       },
     });
-        const bloqueos = await this.prisma.bloqueoProfesional.findMany({
+    const bloqueos = await this.prisma.bloqueoProfesional.findMany({
       where: {
         barberiaId,
         profesionalId: query.profesionalId,
@@ -489,19 +475,19 @@ export class ReservasService {
         fin: true,
       },
     });
-    const intervalosOcupados = [
-      ...reservas,
-      ...bloqueos,
-    ];
+    const intervalosOcupados = [...reservas, ...bloqueos];
 
     const disponibles = opciones.filter((opcion) => {
       const inicio = Date.parse(opcion.inicio);
       const fin = Date.parse(opcion.fin);
 
-      return !intervalosOcupados.some(
-        (ocupado) =>
-          inicio < ocupado.fin.getTime() &&
-          fin > ocupado.inicio.getTime(),
+      return !intervalosOcupados.some((ocupado) =>
+        intervalosSeSuperponen(
+          inicio,
+          fin,
+          ocupado.inicio.getTime(),
+          ocupado.fin.getTime(),
+        ),
       );
     });
 
@@ -513,5 +499,484 @@ export class ReservasService {
       duracionMinutos: servicio.duracionMinutos,
       opciones: disponibles,
     };
+  }
+
+  async reagendarMia(
+    reservaId: number,
+    clienteId: number,
+    nuevoInicio: string,
+  ) {
+    if (
+      !Number.isInteger(reservaId) ||
+      reservaId < 1 ||
+      reservaId > 2147483647
+    ) {
+      throw new BadRequestException('El ID de reserva no es válido');
+    }
+
+    // Esta lectura identifica qué profesional debemos bloquear.
+    const referencia = await this.prisma.reserva.findFirst({
+      where: {
+        id: reservaId,
+        clienteId,
+      },
+      select: {
+        profesionalId: true,
+        barberiaId: true,
+      },
+    });
+
+    if (!referencia) {
+      throw new NotFoundException('La reserva no existe');
+    }
+
+    return this.prisma.$transaction(
+      async (tx) => {
+        // Mantener el mismo orden: profesional y después reserva.
+        const profesionales = await tx.$queryRaw<
+          { activo: boolean; zonaHoraria: string }[]
+        >`
+          SELECT p."activo", b."zonaHoraria"
+          FROM "public"."Profesional" AS p
+          JOIN "public"."Barberia" AS b
+            ON b."id" = p."barberiaId"
+          WHERE p."id" = ${referencia.profesionalId}
+            AND p."barberiaId" = ${referencia.barberiaId}
+          FOR UPDATE OF p
+          FOR SHARE OF b
+        `;
+
+        const profesional = profesionales[0];
+
+        if (!profesional?.activo) {
+          throw new ConflictException('El profesional ya no está disponible');
+        }
+
+        // Releer y bloquear la reserva, coordinando también
+        // con una posible cancelación simultánea.
+        const filas = await tx.$queryRaw<Reserva[]>`
+          SELECT *
+          FROM "public"."Reserva"
+          WHERE "id" = ${reservaId}
+            AND "clienteId" = ${clienteId}
+          FOR UPDATE
+        `;
+
+        const reserva = filas[0];
+
+        if (!reserva) {
+          throw new NotFoundException('La reserva no existe');
+        }
+
+        if (
+          reserva.profesionalId !== referencia.profesionalId ||
+          reserva.barberiaId !== referencia.barberiaId
+        ) {
+          throw new ConflictException(
+            'La reserva cambió. Vuelve a consultarla',
+          );
+        }
+
+        if (
+          reserva.estado !== 'CONFIRMADA' ||
+          reserva.inicio.getTime() <= Date.now()
+        ) {
+          throw new ConflictException(
+            'Solo puedes reagendar reservas confirmadas que no hayan comenzado',
+          );
+        }
+
+        const servicios = await tx.$queryRaw<{ id: number }[]>`
+          SELECT s."id"
+          FROM "public"."Servicio" AS s
+          JOIN "public"."ProfesionalServicio" AS ps
+            ON ps."servicioId" = s."id"
+            AND ps."barberiaId" = s."barberiaId"
+          WHERE s."id" = ${reserva.servicioId}
+            AND s."barberiaId" = ${reserva.barberiaId}
+            AND s."activo" = true
+            AND ps."profesionalId" = ${reserva.profesionalId}
+          FOR SHARE OF s, ps
+        `;
+
+        if (servicios.length === 0) {
+          throw new ConflictException(
+            'El servicio ya no está disponible para este profesional',
+          );
+        }
+
+        const intervalo = calcularIntervalo(
+          nuevoInicio,
+          reserva.duracionMinutos,
+          profesional.zonaHoraria,
+        );
+
+        if (intervalo.inicio.getTime() === reserva.inicio.getTime()) {
+          throw new BadRequestException('Debes elegir un horario diferente');
+        }
+
+        const horario = await tx.horarioProfesional.findFirst({
+          where: {
+            barberiaId: reserva.barberiaId,
+            profesionalId: reserva.profesionalId,
+            diaSemana: intervalo.diaSemana,
+            inicioMinuto: { lte: intervalo.inicioMinuto },
+            finMinuto: { gte: intervalo.finMinuto },
+          },
+          select: { id: true },
+        });
+
+        if (!horario) {
+          throw new ConflictException(
+            'La cita completa no cabe en la jornada del profesional',
+          );
+        }
+
+        const bloqueo = await tx.bloqueoProfesional.findFirst({
+          where: {
+            barberiaId: reserva.barberiaId,
+            profesionalId: reserva.profesionalId,
+            inicio: { lt: intervalo.fin },
+            fin: { gt: intervalo.inicio },
+          },
+          select: { id: true },
+        });
+
+        if (bloqueo) {
+          throw new ConflictException(
+            'El profesional tiene un bloqueo en ese intervalo',
+          );
+        }
+
+        const otraReserva = await tx.reserva.findFirst({
+          where: {
+            id: { not: reserva.id },
+            barberiaId: reserva.barberiaId,
+            profesionalId: reserva.profesionalId,
+            estado: 'CONFIRMADA',
+            inicio: { lt: intervalo.fin },
+            fin: { gt: intervalo.inicio },
+          },
+          select: { id: true },
+        });
+
+        if (otraReserva) {
+          throw new ConflictException('El nuevo horario ya está ocupado');
+        }
+
+        const actualizada = await tx.reserva.update({
+          where: {
+            id: reserva.id,
+          },
+          data: {
+            inicio: intervalo.inicio,
+            fin: intervalo.fin,
+            zonaHoraria: profesional.zonaHoraria,
+          },
+        });
+
+        await tx.reagendamientoReserva.create({
+          data: {
+            reservaId: reserva.id,
+            actorId: clienteId,
+            inicioAnterior: reserva.inicio,
+            finAnterior: reserva.fin,
+            inicioNuevo: intervalo.inicio,
+            finNuevo: intervalo.fin,
+          },
+        });
+
+        return actualizada;
+      },
+      {
+        isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted,
+      },
+    );
+  }
+
+  async findDisponibilidadReagendar(
+    reservaId: number,
+    clienteId: number,
+    fecha: string,
+  ) {
+    if (
+      !Number.isInteger(reservaId) ||
+      reservaId < 1 ||
+      reservaId > 2147483647
+    ) {
+      throw new BadRequestException('El ID de reserva no es válido');
+    }
+
+    const reserva = await this.prisma.reserva.findFirst({
+      where: {
+        id: reservaId,
+        clienteId,
+      },
+      select: {
+        id: true,
+        barberiaId: true,
+        profesionalId: true,
+        servicioId: true,
+        inicio: true,
+        estado: true,
+        duracionMinutos: true,
+        profesional: {
+          select: {
+            activo: true,
+          },
+        },
+        barberia: {
+          select: {
+            zonaHoraria: true,
+          },
+        },
+      },
+    });
+
+    if (!reserva) {
+      throw new NotFoundException('La reserva no existe');
+    }
+
+    if (
+      reserva.estado !== 'CONFIRMADA' ||
+      reserva.inicio.getTime() <= Date.now()
+    ) {
+      throw new ConflictException(
+        'Solo puedes reagendar reservas confirmadas que no hayan comenzado',
+      );
+    }
+
+    if (!reserva.profesional.activo) {
+      throw new ConflictException('El profesional ya no está disponible');
+    }
+
+    const servicio = await this.prisma.servicio.findFirst({
+      where: {
+        id: reserva.servicioId,
+        barberiaId: reserva.barberiaId,
+        activo: true,
+        profesionales: {
+          some: {
+            barberiaId: reserva.barberiaId,
+            profesionalId: reserva.profesionalId,
+          },
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!servicio) {
+      throw new ConflictException(
+        'El servicio ya no está disponible para este profesional',
+      );
+    }
+
+    const zonaHoraria = reserva.barberia.zonaHoraria;
+
+    if (!IANAZone.isValidZone(zonaHoraria)) {
+      throw new InternalServerErrorException(
+        'La barbería no tiene una zona horaria válida',
+      );
+    }
+
+    const dia = DateTime.fromISO(fecha, {
+      zone: zonaHoraria,
+    });
+
+    if (!dia.isValid || dia.toISODate() !== fecha) {
+      throw new BadRequestException('La fecha no es válida');
+    }
+
+    const tramos = await this.prisma.horarioProfesional.findMany({
+      where: {
+        barberiaId: reserva.barberiaId,
+        profesionalId: reserva.profesionalId,
+        diaSemana: dia.weekday,
+      },
+      select: {
+        inicioMinuto: true,
+        finMinuto: true,
+      },
+      orderBy: {
+        inicioMinuto: 'asc',
+      },
+    });
+
+    const opciones = generarInicios(
+      fecha,
+      zonaHoraria,
+      reserva.duracionMinutos,
+      tramos,
+    );
+
+    const inicioDia = dia.startOf('day');
+    const siguienteDia = inicioDia.plus({ days: 1 }).startOf('day');
+
+    const filtroIntervalo = {
+      barberiaId: reserva.barberiaId,
+      profesionalId: reserva.profesionalId,
+      inicio: {
+        lt: siguienteDia.toJSDate(),
+      },
+      fin: {
+        gt: inicioDia.toJSDate(),
+      },
+    };
+
+    const [otrasReservas, bloqueos] = await Promise.all([
+      this.prisma.reserva.findMany({
+        where: {
+          ...filtroIntervalo,
+          id: { not: reserva.id },
+          estado: 'CONFIRMADA',
+        },
+        select: {
+          inicio: true,
+          fin: true,
+        },
+      }),
+      this.prisma.bloqueoProfesional.findMany({
+        where: filtroIntervalo,
+        select: {
+          inicio: true,
+          fin: true,
+        },
+      }),
+    ]);
+
+    const ocupados = [...otrasReservas, ...bloqueos];
+
+    const disponibles = opciones.filter((opcion) => {
+      const inicio = Date.parse(opcion.inicio);
+      const fin = Date.parse(opcion.fin);
+
+      // No ofrecer el horario actual como un cambio.
+      if (inicio === reserva.inicio.getTime()) {
+        return false;
+      }
+
+            return !ocupados.some((ocupado) =>
+        intervalosSeSuperponen(
+          inicio,
+          fin,
+          ocupado.inicio.getTime(),
+          ocupado.fin.getTime(),
+        ),
+      );
+    });
+
+    return {
+      reservaId: reserva.id,
+      inicioActual: reserva.inicio,
+      fecha,
+      zonaHoraria,
+      duracionMinutos: reserva.duracionMinutos,
+      opciones: disponibles,
+    };
+  }
+
+  async findHistorialMio(reservaId: number, clienteId: number) {
+    if (
+      !Number.isInteger(reservaId) ||
+      reservaId < 1 ||
+      reservaId > 2147483647
+    ) {
+      throw new BadRequestException('El ID de reserva no es válido');
+    }
+
+    const reserva = await this.prisma.reserva.findFirst({
+      where: {
+        id: reservaId,
+        clienteId,
+      },
+      select: {
+        id: true,
+        nombreServicio: true,
+        estado: true,
+        inicio: true,
+        fin: true,
+        zonaHoraria: true,
+        reagendamientos: {
+          select: {
+            id: true,
+            inicioAnterior: true,
+            finAnterior: true,
+            inicioNuevo: true,
+            finNuevo: true,
+            creadoEn: true,
+          },
+          orderBy: [{ creadoEn: 'asc' }, { id: 'asc' }],
+        },
+      },
+    });
+
+    if (!reserva) {
+      throw new NotFoundException('La reserva no existe');
+    }
+
+    return reserva;
+  }
+
+  async findHistorialAdministrativo(barberiaId: number, reservaId: number) {
+    if (
+      !Number.isInteger(reservaId) ||
+      reservaId < 1 ||
+      reservaId > 2147483647
+    ) {
+      throw new BadRequestException('El ID de reserva no es válido');
+    }
+
+    const reserva = await this.prisma.reserva.findFirst({
+      where: {
+        id: reservaId,
+        barberiaId,
+      },
+      select: {
+        id: true,
+        nombreServicio: true,
+        estado: true,
+        inicio: true,
+        fin: true,
+        zonaHoraria: true,
+        canceladoEn: true,
+        cliente: {
+          select: {
+            id: true,
+            nombre: true,
+          },
+        },
+        profesional: {
+          select: {
+            id: true,
+            nombre: true,
+          },
+        },
+        reagendamientos: {
+          select: {
+            id: true,
+            inicioAnterior: true,
+            finAnterior: true,
+            inicioNuevo: true,
+            finNuevo: true,
+            creadoEn: true,
+            actor: {
+              select: {
+                id: true,
+                nombre: true,
+              },
+            },
+          },
+          orderBy: [{ creadoEn: 'asc' }, { id: 'asc' }],
+        },
+      },
+    });
+
+    if (!reserva) {
+      throw new NotFoundException('La reserva no existe en esta barbería');
+    }
+
+    return reserva;
   }
 }
