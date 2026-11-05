@@ -1,0 +1,86 @@
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+  ValidationPipe,
+} from '@nestjs/common';
+
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
+import type {
+  RequestAutenticada,
+} from '../auth/types/request-autenticada.type.js';
+
+import { CreateReservaDto } from './dto/create-reserva.dto.js';
+import { ReservasService } from './reservas.service.js';
+import { ConsultarAgendaDto } from './dto/consultar-agenda.dto.js';
+import { MiembroBarberiaGuard } from '../auth/guards/miembro-barberia.guard.js';
+import { ConsultarDisponibilidadDto } from './dto/consultar-disponibilidad.dto.js';
+@Controller('barberias/:barberiaId/reservas')
+@UseGuards(JwtAuthGuard)
+export class ReservasController {
+  constructor(
+    private readonly reservasService: ReservasService,
+  ) {}
+
+  @Post()
+  create(
+    @Param('barberiaId', ParseIntPipe) barberiaId: number,
+    @Req() request: RequestAutenticada,
+    @Body(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+      }),
+    )
+    dto: CreateReservaDto,
+  ) {
+    return this.reservasService.create(
+      barberiaId,
+      request.usuario.id,
+      dto,
+    );
+  }
+
+   @Get()
+  @UseGuards(MiembroBarberiaGuard)
+  findAgenda(
+    @Param('barberiaId', ParseIntPipe) barberiaId: number,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        whitelist: true,
+        forbidNonWhitelisted: true,
+      }),
+    )
+    query: ConsultarAgendaDto,
+  ) {
+    return this.reservasService.findAgenda(
+      barberiaId,
+      query.fecha,
+    );
+  }
+
+    @Get('disponibilidad')
+  findDisponibilidad(
+    @Param('barberiaId', ParseIntPipe) barberiaId: number,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        whitelist: true,
+        forbidNonWhitelisted: true,
+      }),
+    )
+    query: ConsultarDisponibilidadDto,
+  ) {
+    return this.reservasService.findDisponibilidad(
+      barberiaId,
+      query,
+    );
+  }
+}

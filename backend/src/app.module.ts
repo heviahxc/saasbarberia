@@ -9,6 +9,7 @@ import { ProfesionalesModule } from './profesionales/profesionales.module.js';
 import { ServiciosModule } from './servicios/servicios.module.js';
 import { AuthModule } from './auth/auth.module.js';
 import { CatalogoModule } from './catalogo/catalogo.module.js';
+import { ReservasModule } from './reservas/reservas.module.js';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { CatalogoModule } from './catalogo/catalogo.module.js';
     ServiciosModule,
     AuthModule,
     CatalogoModule,
+    ReservasModule,
   ],
   controllers: [AppController],
   providers: [AppService],

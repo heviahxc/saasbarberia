@@ -15,10 +15,11 @@ export class PrismaService
   implements OnModuleInit, OnModuleDestroy
 {
   constructor(configService: ConfigService) {
-    const adapter = new PrismaPg({
-      connectionString:
-        configService.getOrThrow<string>('DATABASE_URL'),
-    });
+ const adapter = new PrismaPg({
+  connectionString:
+    configService.getOrThrow<string>('DATABASE_URL'),
+  options: '-c TimeZone=UTC',
+});
 
     super({ adapter });
   }

@@ -279,23 +279,73 @@ export class ProfesionalesService {
     });
   }
 
-  async eliminarHorario(
+    async eliminarHorario(
     barberiaId: number,
     profesionalId: number,
     horarioId: number,
   ) {
-    const resultado = await this.prisma.horarioProfesional.deleteMany({
-      where: {
-        id: horarioId,
-        barberiaId,
-        profesionalId,
-      },
-    });
+    return this.prisma.$transaction(
+      async (tx) => {
+        const profesionales = await tx.$queryRaw<{ id: number }[]>`
+          SELECT "id"
+          FROM "public"."Profesional"
+          WHERE "id" = ${profesionalId}
+            AND "barberiaId" = ${barberiaId}
+          FOR UPDATE
+        `;
 
-    if (resultado.count === 0) {
-      throw new NotFoundException(
-        'El tramo no existe para este profesional en esta barbería',
-      );
-    }
+        if (profesionales.length === 0) {
+          throw new NotFoundException(
+            'El profesional no existe en esta barbería',
+          );
+        }
+
+        const horario = await tx.horarioProfesional.findFirst({
+          where: {
+            id: horarioId,
+            barberiaId,
+            profesionalId,
+          },
+          select: {
+            id: true,
+          },
+        });
+
+        if (!horario) {
+          throw new NotFoundException(
+            'El tramo no existe para este profesional en esta barbería',
+          );
+        }
+
+        const reservaPendiente = await tx.reserva.findFirst({
+          where: {
+            barberiaId,
+            profesionalId,
+            estado: 'CONFIRMADA',
+            fin: {
+              gt: new Date(),
+            },
+          },
+          select: {
+            id: true,
+          },
+        });
+
+        if (reservaPendiente) {
+          throw new ConflictException(
+            'No puedes eliminar horarios mientras el profesional tenga reservas confirmadas pendientes o en curso',
+          );
+        }
+
+        await tx.horarioProfesional.delete({
+          where: {
+            id: horario.id,
+          },
+        });
+      },
+      {
+        isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted,
+      },
+    );
   }
 }
