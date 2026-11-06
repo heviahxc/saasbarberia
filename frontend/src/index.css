@@ -595,3 +595,45 @@ button:focus-visible {
   background: #fff1f1;
   color: #9b1c1c;
 }
+
+.campo input[aria-invalid='true'] {
+  border-color: #a82020;
+}
+
+.campo .error-campo {
+  color: #9b1c1c;
+}
+
+.aviso-perfil {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+  padding: 24px;
+  border: 1px solid #e5cd8c;
+  border-radius: 16px;
+  background: #fff8e8;
+  color: #634b16;
+}
+
+.aviso-perfil h2 {
+  margin: 0 0 8px;
+  font-size: 1.15rem;
+}
+
+.aviso-perfil p {
+  margin: 6px 0 0;
+}
+
+.aviso-perfil button {
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .aviso-perfil {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 20px;
+  }
+}

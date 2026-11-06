@@ -7,12 +7,14 @@ import {
   Req,
   UseGuards,
   ValidationPipe,
+  Patch
 } from '@nestjs/common';
 
 import { AuthService } from './auth.service.js';
 import { RegistroDto } from './dto/registro.dto.js';
 import { LoginDto } from './dto/login.dto.js';
 import { JwtAuthGuard } from './guards/jwt-auth.guard.js';
+import { ActualizarPerfilDto } from './dto/actualizar-perfil.dto.js';
 import type {
   RequestAutenticada,
 } from './types/request-autenticada.type.js';
@@ -52,11 +54,30 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
   //Devuelve la información del usuario autenticado
-    @Get('me')
-  @UseGuards(JwtAuthGuard)
-  me(@Req() request: RequestAutenticada) {
-    return request.usuario;
-  }
+   @Get('me')
+@UseGuards(JwtAuthGuard)
+me(@Req() request: RequestAutenticada) {
+  return this.authService.obtenerPerfil(request.usuario.id);
+}
+
+@Patch('me')
+@UseGuards(JwtAuthGuard)
+actualizarPerfil(
+  @Req() request: RequestAutenticada,
+  @Body(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  )
+  dto: ActualizarPerfilDto,
+) {
+  return this.authService.actualizarPerfil(
+    request.usuario.id,
+    dto,
+  );
+}
 
   //Obtiene todas las barberías a las que pertenece el usuario autenticado
     @Get('me/barberias')

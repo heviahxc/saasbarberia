@@ -453,10 +453,6 @@ export type BloqueoProfesionalUncheckedUpdateManyWithoutProfesionalNestedInput =
   deleteMany?: Prisma.BloqueoProfesionalScalarWhereInput | Prisma.BloqueoProfesionalScalarWhereInput[]
 }
 
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
-}
-
 export type BloqueoProfesionalCreateWithoutProfesionalInput = {
   inicio: Date | string
   fin: Date | string

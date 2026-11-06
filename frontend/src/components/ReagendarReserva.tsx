@@ -1,10 +1,8 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { api, ApiError } from '../lib/api.js';
-import {
-  formatearFechaHora,
-  formatearPrecio,
-} from '../lib/formatos.js';
+import { api, ApiError } from "../lib/api.js";
+import { formatearFechaHora, formatearPrecio } from "../lib/formatos.js";
+import EstadoContenido from './EstadoContenido.js';
 type Opcion = {
   horaLocal: string;
   inicio: string;
@@ -52,109 +50,102 @@ export default function ReagendarReserva({
   const [confirmando, setConfirmando] = useState(false);
   const [reservaActualizada, setReservaActualizada] =
     useState<ReservaActualizada | null>(null);
- async function consultarHorarios(
-  evento: FormEvent<HTMLFormElement>,
-) {
-  evento.preventDefault();
+  async function consultarHorarios(evento: FormEvent<HTMLFormElement>) {
+    evento.preventDefault();
 
-  if (cargando || confirmando) return;
+    if (cargando || confirmando) return;
 
-  setCargando(true);
-  setError('');
-  setDisponibilidad(null);
-  setSeleccionada(null);
+    setCargando(true);
+    setError("");
+    setDisponibilidad(null);
+    setSeleccionada(null);
 
-  try {
-    const parametros = new URLSearchParams({ fecha });
+    try {
+      const parametros = new URLSearchParams({ fecha });
 
-    const datos = await api<Disponibilidad>(
-      `/reservas/${reservaId}/disponibilidad?${parametros}`,
-      {
-        token: accessToken,
-      },
-    );
-
-    setDisponibilidad(datos);
-  } catch (error) {
-    if (error instanceof ApiError && error.status === 401) {
-      setError(
-        'Tu sesión no es válida o ha vencido. Cierra sesión e ingresa nuevamente.',
-      );
-    } else {
-      setError(
-        error instanceof TypeError
-          ? 'No se pudo conectar con el servidor.'
-          : error instanceof Error
-            ? error.message
-            : 'No se pudieron consultar los horarios.',
-      );
-    }
-  } finally {
-    setCargando(false);
-  }
-}
- async function confirmarCambio() {
-  if (
-    !seleccionada ||
-    !disponibilidad ||
-    confirmando ||
-    cargando
-  ) {
-    return;
-  }
-
-  setConfirmando(true);
-  setError('');
-
-  try {
-    const datos = await api<ReservaActualizada>(
-      `/reservas/${reservaId}/reagendar`,
-      {
-        method: 'PATCH',
-        token: accessToken,
-        body: {
-          inicio: seleccionada.inicio,
+      const datos = await api<Disponibilidad>(
+        `/reservas/${reservaId}/disponibilidad?${parametros}`,
+        {
+          token: accessToken,
         },
-      },
-    );
+      );
 
-    setReservaActualizada(datos);
-    setSeleccionada(null);
-    setDisponibilidad(null);
-  } catch (error) {
-    setSeleccionada(null);
-    setDisponibilidad(null);
-
-    if (error instanceof ApiError) {
-      if (error.status === 401) {
+      setDisponibilidad(datos);
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 401) {
         setError(
-          'Tu sesión no es válida o ha vencido. Cierra sesión e ingresa nuevamente.',
+          "Tu sesión no es válida o ha vencido. Cierra sesión e ingresa nuevamente.",
         );
-      } else if (
-        error.status === 400 ||
-        error.status === 404 ||
-        error.status === 409
-      ) {
-        setError(error.message);
       } else {
         setError(
-          'No pudimos confirmar el resultado. Vuelve a Mis reservas para comprobar el horario antes de intentar otro cambio.',
+          error instanceof TypeError
+            ? "No se pudo conectar con el servidor."
+            : error instanceof Error
+              ? error.message
+              : "No se pudieron consultar los horarios.",
         );
       }
-    } else {
-      setError(
-        'No pudimos confirmar el resultado. Vuelve a Mis reservas para comprobar el horario antes de intentar otro cambio.',
-      );
+    } finally {
+      setCargando(false);
     }
-  } finally {
-    setConfirmando(false);
   }
-}
+  async function confirmarCambio() {
+    if (!seleccionada || !disponibilidad || confirmando || cargando) {
+      return;
+    }
+
+    setConfirmando(true);
+    setError("");
+
+    try {
+      const datos = await api<ReservaActualizada>(
+        `/reservas/${reservaId}/reagendar`,
+        {
+          method: "PATCH",
+          token: accessToken,
+          body: {
+            inicio: seleccionada.inicio,
+          },
+        },
+      );
+
+      setReservaActualizada(datos);
+      setSeleccionada(null);
+      setDisponibilidad(null);
+    } catch (error) {
+      setSeleccionada(null);
+      setDisponibilidad(null);
+
+      if (error instanceof ApiError) {
+        if (error.status === 401) {
+          setError(
+            "Tu sesión no es válida o ha vencido. Cierra sesión e ingresa nuevamente.",
+          );
+        } else if (
+          error.status === 400 ||
+          error.status === 404 ||
+          error.status === 409
+        ) {
+          setError(error.message);
+        } else {
+          setError(
+            "No pudimos confirmar el resultado. Vuelve a Mis reservas para comprobar el horario antes de intentar otro cambio.",
+          );
+        }
+      } else {
+        setError(
+          "No pudimos confirmar el resultado. Vuelve a Mis reservas para comprobar el horario antes de intentar otro cambio.",
+        );
+      }
+    } finally {
+      setConfirmando(false);
+    }
+  }
   if (reservaActualizada) {
-   const fechaNueva = formatearFechaHora(
-  reservaActualizada.inicio,
-  reservaActualizada.zonaHoraria,
-);
+    const fechaNueva = formatearFechaHora(
+      reservaActualizada.inicio,
+      reservaActualizada.zonaHoraria,
+    );
 
     return (
       <section aria-labelledby="titulo-cambio-confirmado">
@@ -180,8 +171,8 @@ export default function ReagendarReserva({
           <dt>Duración acordada</dt>
           <dd>{reservaActualizada.duracionMinutos} minutos</dd>
 
-         <dt>Precio acordado</dt>
-<dd>{formatearPrecio(reservaActualizada.precioAcordado)}</dd>
+          <dt>Precio acordado</dt>
+          <dd>{formatearPrecio(reservaActualizada.precioAcordado)}</dd>
         </dl>
 
         <button type="button" onClick={onVolver}>
@@ -238,22 +229,28 @@ export default function ReagendarReserva({
           {cargando ? "Consultando…" : "Consultar horarios"}
         </button>
       </form>
-
-      {error && (
-        <p className="mensaje-error" role="alert">
-          {error}
-        </p>
-      )}
+            {cargando && (
+  <EstadoContenido
+    tipo="cargando"
+    mensaje="Consultando las horas para reagendar tu reserva…"
+  />
+)}
+    {error && (
+  <EstadoContenido
+    tipo="error"
+    mensaje={error}
+  />
+)}
 
       {disponibilidad && (
         <div>
-         <p>
-  Cita actual:{' '}
-  {formatearFechaHora(
-    disponibilidad.inicioActual,
-    disponibilidad.zonaHoraria,
-  )}
-</p>
+          <p>
+            Cita actual:{" "}
+            {formatearFechaHora(
+              disponibilidad.inicioActual,
+              disponibilidad.zonaHoraria,
+            )}
+          </p>
 
           <p>
             Duración acordada: {disponibilidad.duracionMinutos} minutos
@@ -262,9 +259,10 @@ export default function ReagendarReserva({
           </p>
 
           {disponibilidad.opciones.length === 0 ? (
-            <p role="status">
-              No hay otros horarios disponibles para esa fecha. Prueba otro día.
-            </p>
+          <EstadoContenido
+  tipo="vacio"
+  mensaje="No hay otros horarios disponibles para esa fecha. Prueba otro día."
+/>
           ) : (
             <>
               <ul className="lista-horarios">

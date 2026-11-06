@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
-import DisponibilidadServicio from './DisponibilidadServicio.js';
-import { api, ApiError } from '../lib/api.js';
-import PasosReserva from './PasosReserva.js';
+import { useEffect, useState } from "react";
+import DisponibilidadServicio from "./DisponibilidadServicio.js";
+import { api, ApiError } from "../lib/api.js";
+import PasosReserva from "./PasosReserva.js";
+import EstadoContenido from "./EstadoContenido.js";
 type Profesional = {
   id: number;
   nombre: string;
@@ -14,12 +15,12 @@ type Props = {
   nombreBarberia: string;
   nombreServicio: string;
   duracionMinutos: number;
-precio: string;
+  precio: string;
   onVolver: () => void;
 };
 
 export default function ProfesionalesServicio({
-   accessToken,
+  accessToken,
   barberiaId,
   servicioId,
   nombreBarberia,
@@ -30,81 +31,79 @@ export default function ProfesionalesServicio({
 }: Props) {
   const [profesionales, setProfesionales] = useState<Profesional[]>([]);
   const [cargando, setCargando] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [intento, setIntento] = useState(0);
 
-  const [seleccionado, setSeleccionado] = useState<Profesional | null>(
-    null,
-  );
+  const [seleccionado, setSeleccionado] = useState<Profesional | null>(null);
 
-useEffect(() => {
-  const controlador = new AbortController();
+  useEffect(() => {
+    const controlador = new AbortController();
 
-  async function cargarProfesionales() {
-    setCargando(true);
-    setError('');
+    async function cargarProfesionales() {
+      setCargando(true);
+      setError("");
 
-    try {
-      const datos = await api<Profesional[]>(
-        `/catalogo/barberias/${barberiaId}/servicios/${servicioId}/profesionales`,
-        {
-          token: accessToken,
-          signal: controlador.signal,
-        },
-      );
-
-      if (!controlador.signal.aborted) {
-        setProfesionales(datos);
-      }
-    } catch (error) {
-      if (controlador.signal.aborted) return;
-
-      if (error instanceof ApiError && error.status === 401) {
-        setError(
-          'Tu sesión no es válida o ha vencido. Cierra sesión e ingresa nuevamente.',
+      try {
+        const datos = await api<Profesional[]>(
+          `/catalogo/barberias/${barberiaId}/servicios/${servicioId}/profesionales`,
+          {
+            token: accessToken,
+            signal: controlador.signal,
+          },
         );
-      } else {
-        setError(
-          error instanceof TypeError
-            ? 'No se pudo conectar con el servidor.'
-            : error instanceof Error
-              ? error.message
-              : 'No se pudieron cargar los profesionales.',
-        );
-      }
-    } finally {
-      if (!controlador.signal.aborted) {
-        setCargando(false);
+
+        if (!controlador.signal.aborted) {
+          setProfesionales(datos);
+        }
+      } catch (error) {
+        if (controlador.signal.aborted) return;
+
+        if (error instanceof ApiError && error.status === 401) {
+          setError(
+            "Tu sesión no es válida o ha vencido. Cierra sesión e ingresa nuevamente.",
+          );
+        } else {
+          setError(
+            error instanceof TypeError
+              ? "No se pudo conectar con el servidor."
+              : error instanceof Error
+                ? error.message
+                : "No se pudieron cargar los profesionales.",
+          );
+        }
+      } finally {
+        if (!controlador.signal.aborted) {
+          setCargando(false);
+        }
       }
     }
-  }
 
-  void cargarProfesionales();
+    void cargarProfesionales();
 
-  return () => controlador.abort();
-}, [accessToken, barberiaId, servicioId, intento]);
+    return () => controlador.abort();
+  }, [accessToken, barberiaId, servicioId, intento]);
 
   if (seleccionado) {
-  return (
-    <DisponibilidadServicio
-      key={seleccionado.id}
-      accessToken={accessToken}
-      barberiaId={barberiaId}
-      servicioId={servicioId}
-      profesionalId={seleccionado.id}
-      nombreBarberia={nombreBarberia}
-      nombreServicio={nombreServicio}
-      nombreProfesional={seleccionado.nombre}
-      duracionMinutos={duracionMinutos}
-precio={precio}
-      onVolver={() => setSeleccionado(null)}
-    />
-  );
-}
+    return (
+      <DisponibilidadServicio
+        key={seleccionado.id}
+        accessToken={accessToken}
+        barberiaId={barberiaId}
+        servicioId={servicioId}
+        profesionalId={seleccionado.id}
+        nombreBarberia={nombreBarberia}
+        nombreServicio={nombreServicio}
+        nombreProfesional={seleccionado.nombre}
+        duracionMinutos={duracionMinutos}
+        precio={precio}
+        onVolver={() => setSeleccionado(null)}
+      />
+    );
+  }
 
   return (
     <section aria-labelledby="titulo-profesionales">
-        <PasosReserva pasoActual={3} />
+      <PasosReserva pasoActual={3} />
       <button
         type="button"
         className="boton-secundario volver"
@@ -119,23 +118,18 @@ precio={precio}
       </p>
 
       {cargando ? (
-        <p role="status">Cargando profesionales…</p>
+        <EstadoContenido tipo="cargando" mensaje="Cargando profesionales…" />
       ) : error ? (
-        <div>
-          <p className="mensaje-error" role="alert">
-            {error}
-          </p>
-
-          <button
-            type="button"
-            className="boton-secundario"
-            onClick={() => setIntento((actual) => actual + 1)}
-          >
-            Reintentar
-          </button>
-        </div>
+        <EstadoContenido
+          tipo="error"
+          mensaje={error}
+          onReintentar={() => setIntento((actual) => actual + 1)}
+        />
       ) : profesionales.length === 0 ? (
-        <p>No hay profesionales disponibles para este servicio.</p>
+        <EstadoContenido
+          tipo="vacio"
+          mensaje="No hay profesionales disponibles para este servicio."
+        />
       ) : (
         <>
           <ul className="lista-barberias">
@@ -154,8 +148,6 @@ precio={precio}
               </li>
             ))}
           </ul>
-
-        
         </>
       )}
     </section>

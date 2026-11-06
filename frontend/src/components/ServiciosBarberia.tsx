@@ -3,6 +3,7 @@ import ProfesionalesServicio from './ProfesionalesServicio.js';
 import { api, ApiError } from '../lib/api.js';
 import { formatearPrecio } from '../lib/formatos.js';
 import PasosReserva from './PasosReserva.js';
+import EstadoContenido from './EstadoContenido.js';
 type Servicio = {
   id: number;
   nombre: string;
@@ -110,24 +111,22 @@ precio={servicioSeleccionado.precio}
       <p>Servicios disponibles</p>
 
       {cargando ? (
-        <p role="status">Cargando servicios…</p>
-      ) : error ? (
-        <div>
-          <p className="mensaje-error" role="alert">
-            {error}
-          </p>
-
-          <button
-            type="button"
-            className="boton-secundario"
-            onClick={() => setIntento((actual) => actual + 1)}
-          >
-            Reintentar
-          </button>
-        </div>
-      ) : servicios.length === 0 ? (
-        <p>Esta barbería todavía no tiene servicios disponibles.</p>
-      ) : (
+  <EstadoContenido
+    tipo="cargando"
+    mensaje="Cargando servicios…"
+  />
+) : error ? (
+  <EstadoContenido
+    tipo="error"
+    mensaje={error}
+    onReintentar={() => setIntento((actual) => actual + 1)}
+  />
+) : servicios.length === 0 ? (
+  <EstadoContenido
+    tipo="vacio"
+    mensaje="Esta barbería todavía no tiene servicios disponibles."
+  />
+) : (
         <ul className="lista-barberias">
           {servicios.map((servicio) => (
             <li key={servicio.id} className="barberia">

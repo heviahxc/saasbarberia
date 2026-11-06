@@ -2,8 +2,9 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { api, ApiError } from "../lib/api.js";
 import { formatearFechaHora, formatearPrecio } from "../lib/formatos.js";
-import PasosReserva from './PasosReserva.js';
-import ResumenReserva from './ResumenReserva.js';
+import PasosReserva from "./PasosReserva.js";
+import ResumenReserva from "./ResumenReserva.js";
+import EstadoContenido from "./EstadoContenido.js";
 type Opcion = {
   horaLocal: string;
   inicio: string;
@@ -39,12 +40,12 @@ type Props = {
   nombreServicio: string;
   nombreProfesional: string;
   duracionMinutos: number;
-precio: string;
+  precio: string;
   onVolver: () => void;
 };
 
 export default function DisponibilidadServicio({
-   accessToken,
+  accessToken,
   barberiaId,
   servicioId,
   profesionalId,
@@ -134,40 +135,46 @@ export default function DisponibilidadServicio({
       setReservaCreada(datos);
       setSeleccionada(null);
       setDisponibilidad(null);
-    } catch (error) {
-      if (error instanceof ApiError) {
-        if (error.status === 401) {
-          setError(
-            "Tu sesión no es válida o ha vencido. Cierra sesión e ingresa nuevamente.",
-          );
-        } else if (
-          error.status === 400 ||
-          error.status === 404 ||
-          error.status === 409
-        ) {
-          setSeleccionada(null);
-          setDisponibilidad(null);
+   } catch (error) {
+  if (error instanceof ApiError) {
+    if (error.status === 401) {
+      setError(
+        'Tu sesión no es válida o ha vencido. Cierra sesión e ingresa nuevamente.',
+      );
+    } else if (error.status === 403) {
+      setSeleccionada(null);
+      setDisponibilidad(null);
+      setError(error.message);
+    } else if (
+      error.status === 400 ||
+      error.status === 404 ||
+      error.status === 409
+    ) {
+      setSeleccionada(null);
+      setDisponibilidad(null);
 
-          setError(`${error.message} Consulta nuevamente los horarios.`);
-        } else {
-          setSeleccionada(null);
-          setDisponibilidad(null);
+      setError(
+        `${error.message} Consulta nuevamente los horarios.`,
+      );
+    } else {
+      setSeleccionada(null);
+      setDisponibilidad(null);
 
-          setError(
-            "No pudimos confirmar el resultado de la operación. Revisa Mis reservas antes de intentar reservar nuevamente.",
-          );
-        }
-      } else {
-        setSeleccionada(null);
-        setDisponibilidad(null);
-
-        setError(
-          "No pudimos confirmar el resultado de la operación. Revisa Mis reservas antes de intentar reservar nuevamente.",
-        );
-      }
-    } finally {
-      setConfirmando(false);
+      setError(
+        'No pudimos confirmar el resultado de la operación. Revisa Mis reservas antes de intentar reservar nuevamente.',
+      );
     }
+  } else {
+    setSeleccionada(null);
+    setDisponibilidad(null);
+
+    setError(
+      'No pudimos confirmar el resultado de la operación. Revisa Mis reservas antes de intentar reservar nuevamente.',
+    );
+  }
+} finally {
+  setConfirmando(false);
+}
   }
 
   if (reservaCreada) {
@@ -217,117 +224,107 @@ export default function DisponibilidadServicio({
     );
   }
 
-
   return (
-  <section aria-labelledby="titulo-disponibilidad">
-    <PasosReserva pasoActual={4} />
+    <section aria-labelledby="titulo-disponibilidad">
+      <PasosReserva pasoActual={4} />
 
-    <button
-      type="button"
-      className="boton-secundario volver"
-      onClick={onVolver}
-      disabled={cargando || confirmando}
-    >
-      Volver a los profesionales
-    </button>
+      <button
+        type="button"
+        className="boton-secundario volver"
+        onClick={onVolver}
+        disabled={cargando || confirmando}
+      >
+        Volver a los profesionales
+      </button>
 
-    <h2 id="titulo-disponibilidad">Elige tu horario</h2>
+      <h2 id="titulo-disponibilidad">Elige tu horario</h2>
 
-    <div className="distribucion-reserva">
-      <div className="selector-horarios">
-        <form
-          className="formulario"
-          onSubmit={consultarHorarios}
-          aria-busy={cargando}
-        >
-          <div className="campo">
-            <label htmlFor="fecha-reserva">Fecha de la cita</label>
-            <input
-              id="fecha-reserva"
-              type="date"
-              required
-              value={fecha}
-              disabled={cargando || confirmando}
-              onChange={(evento) => {
-                setFecha(evento.target.value);
-                setDisponibilidad(null);
-                setSeleccionada(null);
-                setError('');
-              }}
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={cargando || confirmando}
+      <div className="distribucion-reserva">
+        <div className="selector-horarios">
+          <form
+            className="formulario"
+            onSubmit={consultarHorarios}
+            aria-busy={cargando}
           >
-            {cargando ? 'Consultando…' : 'Consultar horarios'}
-          </button>
-        </form>
+            <div className="campo">
+              <label htmlFor="fecha-reserva">Fecha de la cita</label>
+              <input
+                id="fecha-reserva"
+                type="date"
+                required
+                value={fecha}
+                disabled={cargando || confirmando}
+                onChange={(evento) => {
+                  setFecha(evento.target.value);
+                  setDisponibilidad(null);
+                  setSeleccionada(null);
+                  setError("");
+                }}
+              />
+            </div>
 
-        {error && (
-          <p className="mensaje-error" role="alert">
-            {error}
-          </p>
-        )}
+            <button type="submit" disabled={cargando || confirmando}>
+              {cargando ? "Consultando…" : "Consultar horarios"}
+            </button>
+          </form>
+          {cargando && (
+            <EstadoContenido
+              tipo="cargando"
+              mensaje="Consultando las horas disponibles…"
+            />
+          )}
+          {error && <EstadoContenido tipo="error" mensaje={error} />}
+          {disponibilidad && (
+            <div>
+              <h3>Horarios disponibles</h3>
 
-        {disponibilidad && (
-          <div>
-            <h3>Horarios disponibles</h3>
-
-            <p>
-              Fecha: {disponibilidad.fecha}
-              <br />
-              Horas de la barbería: {disponibilidad.zonaHoraria}
-            </p>
-
-            {disponibilidad.opciones.length === 0 ? (
-              <p role="status">
-                No hay horas disponibles para esa fecha.
-                Prueba otro día.
+              <p>
+                Fecha: {disponibilidad.fecha}
+                <br />
+                Horas de la barbería: {disponibilidad.zonaHoraria}
               </p>
-            ) : (
-              <ul className="lista-horarios">
-                {disponibilidad.opciones.map((opcion) => (
-                  <li key={opcion.inicio}>
-                    <button
-                      type="button"
-                      className="boton-horario"
-                      aria-pressed={
-                        seleccionada?.inicio === opcion.inicio
-                      }
-                      disabled={confirmando}
-                      onClick={() => setSeleccionada(opcion)}
-                    >
-                      {opcion.horaLocal}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        )}
-      </div>
 
-      <ResumenReserva
-        nombreBarberia={nombreBarberia}
-        nombreServicio={nombreServicio}
-        nombreProfesional={nombreProfesional}
-        duracionMinutos={
-          disponibilidad?.duracionMinutos ?? duracionMinutos
-        }
-        precio={precio}
-        inicio={seleccionada?.inicio}
-        zonaHoraria={disponibilidad?.zonaHoraria}
-        confirmando={confirmando}
-        puedeConfirmar={
-          seleccionada !== null &&
-          disponibilidad !== null &&
-          !cargando
-        }
-        onConfirmar={confirmarReserva}
-      />
-    </div>
-  </section>
-);
+              {disponibilidad.opciones.length === 0 ? (
+                <EstadoContenido
+                  tipo="vacio"
+                  mensaje="No hay horas disponibles para esa fecha. Prueba otro día."
+                />
+              ) : (
+                <ul className="lista-horarios">
+                  {disponibilidad.opciones.map((opcion) => (
+                    <li key={opcion.inicio}>
+                      <button
+                        type="button"
+                        className="boton-horario"
+                        aria-pressed={seleccionada?.inicio === opcion.inicio}
+                        disabled={confirmando}
+                        onClick={() => setSeleccionada(opcion)}
+                      >
+                        {opcion.horaLocal}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+        </div>
+
+        <ResumenReserva
+          nombreBarberia={nombreBarberia}
+          nombreServicio={nombreServicio}
+          nombreProfesional={nombreProfesional}
+          duracionMinutos={disponibilidad?.duracionMinutos ?? duracionMinutos}
+          precio={precio}
+          inicio={seleccionada?.inicio}
+          zonaHoraria={disponibilidad?.zonaHoraria}
+          confirmando={confirmando}
+          puedeConfirmar={
+            seleccionada !== null && disponibilidad !== null && !cargando
+          }
+          onConfirmar={confirmarReserva}
+        />
+      </div>
+    </section>
+  );
 }

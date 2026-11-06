@@ -123,6 +123,9 @@ export type ProfesionalServicioScalarFieldEnum = (typeof ProfesionalServicioScal
 export const UsuarioScalarFieldEnum = {
   id: 'id',
   nombre: 'nombre',
+  apellidoPaterno: 'apellidoPaterno',
+  apellidoMaterno: 'apellidoMaterno',
+  telefono: 'telefono',
   email: 'email',
   passwordHash: 'passwordHash',
   activo: 'activo',

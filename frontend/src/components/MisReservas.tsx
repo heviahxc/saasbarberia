@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import ReagendarReserva from "./ReagendarReserva.js";
 import { api, ApiError } from "../lib/api.js";
 import { formatearFechaHora, formatearPrecio } from "../lib/formatos.js";
+import EstadoContenido from './EstadoContenido.js';
 type Reserva = {
   id: number;
   inicio: string;
@@ -186,14 +187,22 @@ export default function MisReservas({ accessToken }: Props) {
       </button>
 
       {cargando ? (
-        <p role="status">Consultando tus reservas…</p>
-      ) : error ? (
-        <p className="mensaje-error" role="alert">
-          {error}
-        </p>
-      ) : reservas.length === 0 ? (
-        <p>Todavía no tienes reservas. Puedes crear una en «Reservar».</p>
-      ) : (
+  <EstadoContenido
+    tipo="cargando"
+    mensaje="Consultando tus reservas…"
+  />
+) : error ? (
+  <EstadoContenido
+    tipo="error"
+    mensaje={error}
+    onReintentar={() => setIntento((actual) => actual + 1)}
+  />
+) : reservas.length === 0 ? (
+  <EstadoContenido
+    tipo="vacio"
+    mensaje="Todavía no tienes reservas. Puedes crear una en «Reservar»."
+  />
+) :  (
         <ul className="lista-barberias">
           {reservas.map((reserva) => {
             const fecha = formatearFechaHora(

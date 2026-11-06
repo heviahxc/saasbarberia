@@ -2,11 +2,14 @@ import { useEffect, useState } from 'react';
 import type { FormEvent } from "react";
 import CatalogoBarberias from './components/CatalogoBarberias.js';
 import MisReservas from './components/MisReservas.js';
+import { api,ApiError, escucharSesionInvalida,} from './lib/api.js';
+import MiPerfil from './components/MiPerfil.js';
 import {
-  api,
-  ApiError,
-  escucharSesionInvalida,
-} from './lib/api.js';
+  normalizarNombre,
+  validarNombre,
+  validarTelefono,
+} from './lib/validaciones.js';
+import AvisoPerfilIncompleto from './components/AvisoPerfilIncompleto.js';
 type Sesion = {
   accessToken: string;
   tokenType: string;
@@ -34,10 +37,12 @@ function App() {
   const [modo, setModo] = useState<"login" | "registro">("login");
   const [nombre, setNombre] = useState("");
   const [aviso, setAviso] = useState("");
-  const [vista, setVista] = useState<'catalogo' | 'reservas'>(
-  'catalogo',
-);
-
+  const [vista, setVista] = useState<
+  'catalogo' | 'reservas' | 'perfil'
+>('catalogo');
+const [apellidoPaterno, setApellidoPaterno] = useState('');
+const [apellidoMaterno, setApellidoMaterno] = useState('');
+const [telefono, setTelefono] = useState('');
 const tokenActual = sesion?.accessToken;
 
 useEffect(() => {
@@ -92,22 +97,38 @@ useEffect(() => {
     setCargando(false);
   }
 }
- async function registrarCuenta(
+async function registrarCuenta(
   evento: FormEvent<HTMLFormElement>,
 ) {
   evento.preventDefault();
 
   if (cargando) return;
 
-  setCargando(true);
   setError('');
   setAviso('');
+
+  const errores = [
+    validarNombre(nombre, 'El nombre'),
+    validarNombre(apellidoPaterno, 'El apellido paterno'),
+    validarNombre(apellidoMaterno, 'El apellido materno', true),
+    validarTelefono(telefono),
+  ].filter((mensaje): mensaje is string => Boolean(mensaje));
+
+  if (errores.length > 0) {
+    setError(errores.join(' '));
+    return;
+  }
+
+  setCargando(true);
 
   try {
     await api<UsuarioRegistrado>('/auth/registro', {
       method: 'POST',
       body: {
-        nombre: nombre.trim(),
+        nombre: normalizarNombre(nombre),
+        apellidoPaterno: normalizarNombre(apellidoPaterno),
+        apellidoMaterno: normalizarNombre(apellidoMaterno),
+        telefono: telefono.trim(),
         email: email.trim().toLowerCase(),
         password,
       },
@@ -115,6 +136,9 @@ useEffect(() => {
 
     setModo('login');
     setNombre('');
+    setApellidoPaterno('');
+    setApellidoMaterno('');
+    setTelefono('');
     setPassword('');
     setAviso('Tu cuenta fue creada. Ahora puedes iniciar sesión.');
   } catch (error) {
@@ -190,33 +214,72 @@ return (
   >
     Mis reservas
   </button>
+        <button
+  type="button"
+  className="boton-secundario"
+  aria-pressed={vista === 'perfil'}
+  onClick={() => setVista('perfil')}
+>
+  Mi perfil
+</button>
+
 </nav>
 
 <div className="contenido-cliente">
   <div className="introduccion-cliente">
-    <p className="etiqueta">
-      {vista === 'catalogo' ? 'TU PRÓXIMA CITA' : 'TU AGENDA'}
-    </p>
+  <p className="etiqueta">
+    {vista === 'catalogo'
+      ? 'TU PRÓXIMA CITA'
+      : vista === 'reservas'
+        ? 'TU AGENDA'
+        : 'TU CUENTA'}
+  </p>
 
-    <h1>
-      {vista === 'catalogo'
-        ? 'Un momento para ti'
-        : 'Tus citas, en un solo lugar'}
-    </h1>
+  <h1>
+    {vista === 'catalogo'
+      ? 'Un momento para ti'
+      : vista === 'reservas'
+        ? 'Tus citas, en un solo lugar'
+        : 'Tus datos personales'}
+  </h1>
 
-    <p>
-      {vista === 'catalogo'
-        ? 'Elige tu barbería, encuentra tu servicio y reserva una hora.'
-        : 'Consulta tus reservas y organiza tu próxima visita.'}
-    </p>
-  </div>
-
+  <p>
+    {vista === 'catalogo'
+      ? 'Elige tu barbería, encuentra tu servicio y reserva una hora.'
+      : vista === 'reservas'
+        ? 'Consulta tus reservas y organiza tu próxima visita.'
+        : 'Mantén tu información de contacto actualizada.'}
+  </p>
+</div>
+{vista !== 'perfil' && (
+  <AvisoPerfilIncompleto
+    accessToken={sesion.accessToken}
+    onCompletar={() => setVista('perfil')}
+  />
+)}
   <div className="superficie-cliente">
-    {vista === 'catalogo' ? (
-      <CatalogoBarberias accessToken={sesion.accessToken} />
-    ) : (
-      <MisReservas accessToken={sesion.accessToken} />
-    )}
+{vista === 'catalogo' ? (
+  <CatalogoBarberias accessToken={sesion.accessToken} />
+) : vista === 'reservas' ? (
+  <MisReservas accessToken={sesion.accessToken} />
+) : (
+  <MiPerfil
+    accessToken={sesion.accessToken}
+    onNombreActualizado={(nombre) => {
+      setSesion((actual) =>
+        actual
+          ? {
+              ...actual,
+              usuario: {
+                ...actual.usuario,
+                nombre,
+              },
+            }
+          : actual,
+      );
+    }}
+  />
+)}
   </div>
 </div>
         </>
@@ -245,24 +308,81 @@ return (
             }
             aria-busy={cargando}
           >
-            {modo === 'registro' && (
-              <div className="campo">
-                <label htmlFor="nombre">Nombre</label>
-                <input
-                  id="nombre"
-                  name="nombre"
-                  type="text"
-                  autoComplete="name"
-                  required
-                  maxLength={100}
-                  pattern={String.raw`.*\S.*`}
-                  title="Escribe tu nombre."
-                  value={nombre}
-                  onChange={(evento) => setNombre(evento.target.value)}
-                  disabled={cargando}
-                />
-              </div>
-            )}
+       {modo === 'registro' && (
+  <>
+    <div className="campo">
+      <label htmlFor="nombre">Nombre</label>
+      <input
+        id="nombre"
+        name="nombre"
+        type="text"
+        autoComplete="given-name"
+        required
+        maxLength={100}
+        value={nombre}
+        onChange={(evento) => setNombre(evento.target.value)}
+        disabled={cargando}
+      />
+    </div>
+
+    <div className="campo">
+      <label htmlFor="apellido-paterno">
+        Apellido paterno
+      </label>
+      <input
+        id="apellido-paterno"
+        name="apellidoPaterno"
+        type="text"
+        required
+        maxLength={100}
+        value={apellidoPaterno}
+        onChange={(evento) =>
+          setApellidoPaterno(evento.target.value)
+        }
+        disabled={cargando}
+      />
+    </div>
+
+    <div className="campo">
+      <label htmlFor="apellido-materno">
+        Apellido materno (opcional)
+      </label>
+      <input
+        id="apellido-materno"
+        name="apellidoMaterno"
+        type="text"
+        maxLength={100}
+        value={apellidoMaterno}
+        onChange={(evento) =>
+          setApellidoMaterno(evento.target.value)
+        }
+        disabled={cargando}
+      />
+    </div>
+
+    <div className="campo">
+      <label htmlFor="telefono-registro">Teléfono</label>
+      <input
+        id="telefono-registro"
+        name="telefono"
+        type="tel"
+        autoComplete="tel"
+        required
+        maxLength={16}
+        placeholder="+56912345678"
+        aria-describedby="ayuda-telefono-registro"
+        value={telefono}
+        onChange={(evento) => setTelefono(evento.target.value)}
+        disabled={cargando}
+      />
+
+      <small id="ayuda-telefono-registro">
+        Incluye el prefijo internacional, sin espacios.
+        Ejemplo: +56912345678.
+      </small>
+    </div>
+  </>
+)}
 
             <div className="campo">
               <label htmlFor="email">Correo electrónico</label>
@@ -291,7 +411,7 @@ return (
                     : 'new-password'
                 }
                 required
-                minLength={modo === 'registro' ? 15 : 1}
+                minLength={modo === 'registro' ? 8 : 1}
                 maxLength={128}
                 aria-describedby={
                   modo === 'registro' ? 'ayuda-password' : undefined
@@ -302,9 +422,9 @@ return (
               />
 
               {modo === 'registro' && (
-                <small id="ayuda-password">
-                  Utiliza entre 15 y 128 caracteres.
-                </small>
+              <small id="ayuda-password">
+  Utiliza entre 8 y 128 caracteres.
+</small>
               )}
             </div>
 

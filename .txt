@@ -1,0 +1,4 @@
+| Cuenta | Correo | Contraseña |
+|---|---|---|
+| Cliente | `ana@example.com` | `Prueba-local-2026!` |
+| Administrador | `admin@example.com` | `Admin-local-2026!` |

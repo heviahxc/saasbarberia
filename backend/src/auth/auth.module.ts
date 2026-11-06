@@ -8,6 +8,7 @@ import { AuthService } from './auth.service.js';
 import { JwtAuthGuard } from './guards/jwt-auth.guard.js';
 import { MiembroBarberiaGuard } from './guards/miembro-barberia.guard.js';
 import { AdministradorBarberiaGuard } from './guards/administrador-barberia.guard.js';
+
 @Module({
   imports: [
     PrismaModule,

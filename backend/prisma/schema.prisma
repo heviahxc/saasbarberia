@@ -78,6 +78,9 @@ enum RolBarberia {
 model Usuario {
   id                        Int                     @id @default(autoincrement())
   nombre                    String
+  apellidoPaterno String?
+apellidoMaterno String?
+telefono        String?
   email                     String                  @unique
   passwordHash              String
   activo                    Boolean                 @default(true)

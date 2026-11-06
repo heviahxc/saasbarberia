@@ -37,10 +37,13 @@ describe('Permisos entre barberías', () => {
     const registro = await request(app!.getHttpServer())
       .post('/auth/registro')
       .send({
-        nombre: 'Usuario de integración',
-        email,
-        password,
-      })
+  nombre: 'Usuario de prueba',
+  apellidoPaterno: 'Torres',
+  apellidoMaterno: null,
+  telefono: '+56912345678',
+  email,
+  password,
+})
       .expect(201);
 
     expect(registro.body).not.toHaveProperty('password');

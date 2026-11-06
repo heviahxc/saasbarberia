@@ -10,29 +10,33 @@ import { PrismaService } from '../prisma/prisma.service.js';
 import { RegistroDto } from './dto/registro.dto.js';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/login.dto.js';
+import { ActualizarPerfilDto } from './dto/actualizar-perfil.dto.js';
 @Injectable()
 export class AuthService {
-    constructor(private readonly prisma: PrismaService, private readonly jwtService: JwtService) {}
-        
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jwtService: JwtService,
+  ) {}
+
   //Registra un nuevo usuario en la base de datos
   async registro(registroDto: RegistroDto) {
-    const passwordHash = await argon2.hash(
-      registroDto.password,
-      {
-        type: argon2.argon2id,
-        memoryCost: 19456,
-        timeCost: 2,
-        parallelism: 1,
-      },
-    );
+    const passwordHash = await argon2.hash(registroDto.password, {
+      type: argon2.argon2id,
+      memoryCost: 19456,
+      timeCost: 2,
+      parallelism: 1,
+    });
 
     try {
       return await this.prisma.usuario.create({
-        data: {
-          nombre: registroDto.nombre.trim(),
-          email: registroDto.email,
-          passwordHash,
-        },
+     data: {
+  nombre: registroDto.nombre,
+  apellidoPaterno: registroDto.apellidoPaterno,
+  apellidoMaterno: registroDto.apellidoMaterno ?? null,
+  telefono: registroDto.telefono,
+  email: registroDto.email,
+  passwordHash,
+},
         select: {
           id: true,
           nombre: true,
@@ -45,16 +49,14 @@ export class AuthService {
         error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === 'P2002'
       ) {
-        throw new ConflictException(
-          'Ya existe una cuenta con ese correo',
-        );
+        throw new ConflictException('Ya existe una cuenta con ese correo');
       }
 
       throw error;
     }
   }
-    //Inicia sesión y devuelve un token JWT si las credenciales son válidas
-    async login(loginDto: LoginDto) {
+  //Inicia sesión y devuelve un token JWT si las credenciales son válidas
+  async login(loginDto: LoginDto) {
     const usuario = await this.prisma.usuario.findUnique({
       where: {
         email: loginDto.email,
@@ -96,8 +98,8 @@ export class AuthService {
       },
     };
   }
-    //Obtiene todas las barberías a las que pertenece el usuario especificado
-    async misBarberias(usuarioId: number) {
+  //Obtiene todas las barberías a las que pertenece el usuario especificado
+  async misBarberias(usuarioId: number) {
     return this.prisma.miembroBarberia.findMany({
       where: {
         usuarioId,
@@ -116,6 +118,52 @@ export class AuthService {
       },
       orderBy: {
         barberiaId: 'asc',
+      },
+    });
+  }
+
+  async obtenerPerfil(usuarioId: number) {
+    const usuario = await this.prisma.usuario.findUnique({
+      where: {
+        id: usuarioId,
+      },
+      select: {
+        id: true,
+        nombre: true,
+        apellidoPaterno: true,
+        apellidoMaterno: true,
+        telefono: true,
+        email: true,
+      },
+    });
+
+    if (!usuario) {
+      throw new UnauthorizedException('La cuenta no está disponible');
+    }
+
+    return usuario;
+  }
+
+  async actualizarPerfil(usuarioId: number, dto: ActualizarPerfilDto) {
+    return this.prisma.usuario.update({
+      where: {
+        id: usuarioId,
+      },
+      data: {
+        nombre: dto.nombre,
+        apellidoPaterno: dto.apellidoPaterno,
+        telefono: dto.telefono,
+        ...(dto.apellidoMaterno !== undefined
+          ? { apellidoMaterno: dto.apellidoMaterno }
+          : {}),
+      },
+      select: {
+        id: true,
+        nombre: true,
+        apellidoPaterno: true,
+        apellidoMaterno: true,
+        telefono: true,
+        email: true,
       },
     });
   }

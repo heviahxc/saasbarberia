@@ -4,6 +4,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  ForbiddenException,
 } from '@nestjs/common';
 
 import { Prisma } from '../generated/prisma/client.js';
@@ -36,7 +37,28 @@ export class ReservasService {
     ) {
       throw new BadRequestException('El ID de barbería no es válido');
     }
+const cliente = await this.prisma.usuario.findUnique({
+  where: {
+    id: clienteId,
+  },
+  select: {
+    nombre: true,
+    apellidoPaterno: true,
+    telefono: true,
+  },
+});
 
+const perfilCompleto =
+  cliente !== null &&
+  Boolean(cliente.nombre.trim()) &&
+  Boolean(cliente.apellidoPaterno?.trim()) &&
+  Boolean(cliente.telefono?.trim());
+
+if (!perfilCompleto) {
+  throw new ForbiddenException(
+    'Completa tu nombre, apellido paterno y teléfono en Mi perfil antes de reservar.',
+  );
+}
     return this.prisma.$transaction(
       async (tx) => {
         // El mismo bloqueo que utiliza eliminarHorario().
