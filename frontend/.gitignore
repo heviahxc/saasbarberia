@@ -1,0 +1,43 @@
+# Dependencias
+node_modules/
+
+# Compilación
+dist/
+dist-ssr/
+
+# Cobertura de pruebas
+coverage/
+
+# Cachés y archivos temporales
+.vite/
+.vite-temp/
+.eslintcache
+*.tsbuildinfo
+*.local
+*.tmp
+
+# Variables de entorno
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Configuración local de editores
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.sln
+*.sw?
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+Desktop.ini
