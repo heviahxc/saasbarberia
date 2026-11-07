@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-
-import { api } from '../lib/api.js';
-import EstadoContenido from './EstadoContenido.js';
+import { useAuth } from '../auth/auth-context.js';
+import { api } from '../../shared/lib/api.js';
+import EstadoContenido from '../../shared/components/EstadoContenido.js';
 
 type Perfil = {
   nombre: string;
@@ -10,14 +10,16 @@ type Perfil = {
 };
 
 type Props = {
-  accessToken: string;
+  
   onCompletar: () => void;
 };
 
 export default function AvisoPerfilIncompleto({
-  accessToken,
   onCompletar,
 }: Props) {
+  const { sesion } = useAuth();
+  const accessToken = sesion?.accessToken;
+
   const [faltantes, setFaltantes] = useState<string[]>([]);
   const [error, setError] = useState('');
   const [intento, setIntento] = useState(0);
@@ -26,6 +28,7 @@ export default function AvisoPerfilIncompleto({
     const controlador = new AbortController();
 
     async function comprobarPerfil() {
+        if (!accessToken) return;
       setError('');
       setFaltantes([]);
 

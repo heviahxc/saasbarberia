@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
-
-import { api } from "../lib/api.js";
-import EstadoContenido from "./EstadoContenido.js";
+import { useAuth } from '../auth/auth-context.js';
+import { api } from "../../shared/lib/api.js";
+import EstadoContenido from "../../shared/components/EstadoContenido.js";
 
 import {
   normalizarNombre,
   validarNombre,
   validarTelefono,
-} from "../lib/validaciones.js";
+} from "../../shared/lib/validaciones.js";
 
 type Perfil = {
   id: number;
@@ -19,16 +19,15 @@ type Perfil = {
   email: string;
 };
 
-type Props = {
-  accessToken: string;
-  onNombreActualizado: (nombre: string) => void;
-};
+
 
 type ErroresCampos = Partial<
   Record<"nombre" | "apellidoPaterno" | "apellidoMaterno" | "telefono", string>
 >;
 
-export default function MiPerfil({ accessToken, onNombreActualizado }: Props) {
+export default function MiPerfil() {
+  const { sesion, actualizarNombre } = useAuth();
+  const accessToken = sesion?.accessToken;
   const [perfil, setPerfil] = useState<Perfil | null>(null);
   const [cargando, setCargando] = useState(true);
   const [guardando, setGuardando] = useState(false);
@@ -39,6 +38,7 @@ export default function MiPerfil({ accessToken, onNombreActualizado }: Props) {
   const [erroresCampos, setErroresCampos] = useState<ErroresCampos>({});
 
   useEffect(() => {
+     if (!accessToken) return;
     const controlador = new AbortController();
 
     async function cargarPerfil() {
@@ -93,7 +93,7 @@ export default function MiPerfil({ accessToken, onNombreActualizado }: Props) {
   async function guardarPerfil(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault();
 
-    if (!perfil || guardando) return;
+    if (!perfil || !accessToken || guardando) return;
     const comprobaciones = {
       nombre: validarNombre(perfil.nombre, "El nombre"),
       apellidoPaterno: validarNombre(
@@ -145,7 +145,7 @@ export default function MiPerfil({ accessToken, onNombreActualizado }: Props) {
       });
 
       setPerfil(actualizado);
-      onNombreActualizado(actualizado.nombre);
+      actualizarNombre(actualizado.nombre);
       setAviso("Tu perfil fue actualizado.");
     } catch (error) {
       setErrorGuardado(

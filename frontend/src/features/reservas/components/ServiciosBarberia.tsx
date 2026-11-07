@@ -1,9 +1,10 @@
+import { useAuth } from '../../auth/auth-context.js';
 import { useEffect, useState } from 'react';
 import ProfesionalesServicio from './ProfesionalesServicio.js';
-import { api, ApiError } from '../lib/api.js';
-import { formatearPrecio } from '../lib/formatos.js';
+import { api, ApiError } from '../../../shared/lib/api.js';
+import { formatearPrecio } from '../../../shared/lib/formatos.js';
 import PasosReserva from './PasosReserva.js';
-import EstadoContenido from './EstadoContenido.js';
+import EstadoContenido from '../../../shared/components/EstadoContenido.js';
 type Servicio = {
   id: number;
   nombre: string;
@@ -12,18 +13,18 @@ type Servicio = {
 };
 
 type Props = {
-  accessToken: string;
   barberiaId: number;
   nombreBarberia: string;
   onVolver: () => void;
 };
 
 export default function ServiciosBarberia({
-  accessToken,
   barberiaId,
   nombreBarberia,
   onVolver,
 }: Props) {
+  const { sesion } = useAuth();
+  const accessToken = sesion?.accessToken;
   const [servicios, setServicios] = useState<Servicio[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
@@ -37,6 +38,8 @@ export default function ServiciosBarberia({
   const controlador = new AbortController();
 
   async function cargarServicios() {
+    if (!accessToken) return;
+
     setCargando(true);
     setError('');
 
@@ -84,7 +87,6 @@ export default function ServiciosBarberia({
   return (
     <ProfesionalesServicio
       key={servicioSeleccionado.id}
-      accessToken={accessToken}
       barberiaId={barberiaId}
       servicioId={servicioSeleccionado.id}
       nombreBarberia={nombreBarberia}

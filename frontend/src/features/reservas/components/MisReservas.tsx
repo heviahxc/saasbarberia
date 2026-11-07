@@ -1,8 +1,9 @@
+import { useAuth } from '../../auth/auth-context.js';
 import { useEffect, useState } from "react";
 import ReagendarReserva from "./ReagendarReserva.js";
-import { api, ApiError } from "../lib/api.js";
-import { formatearFechaHora, formatearPrecio } from "../lib/formatos.js";
-import EstadoContenido from './EstadoContenido.js';
+import { api, ApiError } from "../../../shared/lib/api.js";
+import { formatearFechaHora, formatearPrecio } from "../../../shared/lib/formatos.js";
+import EstadoContenido from '../../../shared/components/EstadoContenido.js';
 type Reserva = {
   id: number;
   inicio: string;
@@ -25,11 +26,9 @@ type Reserva = {
   };
 };
 
-type Props = {
-  accessToken: string;
-};
-
-export default function MisReservas({ accessToken }: Props) {
+export default function MisReservas() {
+  const { sesion } = useAuth();
+  const accessToken = sesion?.accessToken;
   const [reservas, setReservas] = useState<Reserva[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
@@ -54,6 +53,8 @@ export default function MisReservas({ accessToken }: Props) {
     const controlador = new AbortController();
 
     async function cargarReservas() {
+      if (!accessToken) return;
+
       setCargando(true);
       setError("");
 
@@ -94,7 +95,7 @@ export default function MisReservas({ accessToken }: Props) {
     return () => controlador.abort();
   }, [accessToken, intento]);
   async function cancelarReserva(reservaId: number) {
-    if (cancelando || cargando) return;
+    if (cancelando || cargando || !accessToken) return;
 
     setCancelando(true);
     setErrorCancelacion("");
@@ -147,7 +148,6 @@ export default function MisReservas({ accessToken }: Props) {
     return (
       <ReagendarReserva
         key={reservaPorReagendar.id}
-        accessToken={accessToken}
         reservaId={reservaPorReagendar.id}
         nombreServicio={reservaPorReagendar.nombreServicio}
         onVolver={() => {

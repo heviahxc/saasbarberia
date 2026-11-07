@@ -1,19 +1,18 @@
+import { useAuth } from '../../auth/auth-context.js';
 import { useEffect, useState } from "react";
 import ServiciosBarberia from "./ServiciosBarberia.js";
-import { api, ApiError } from '../lib/api.js';
+import { api, ApiError } from '../../../shared/lib/api.js';
 import PasosReserva from './PasosReserva.js';
-import EstadoContenido from './EstadoContenido.js';
+import EstadoContenido from '../../../shared/components/EstadoContenido.js';
 type Barberia = {
   id: number;
   nombre: string;
   ciudad: string;
 };
 
-type Props = {
-  accessToken: string;
-};
-
-export default function CatalogoBarberias({ accessToken }: Props) {
+export default function CatalogoBarberias() {
+  const { sesion } = useAuth();
+  const accessToken = sesion?.accessToken;
   const [barberias, setBarberias] = useState<Barberia[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
@@ -24,6 +23,8 @@ useEffect(() => {
   const controlador = new AbortController();
 
   async function cargarBarberias() {
+    if (!accessToken) return;
+
     setCargando(true);
     setError('');
 
@@ -67,7 +68,6 @@ useEffect(() => {
     return (
       <ServiciosBarberia
         key={barberiaSeleccionada.id}
-        accessToken={accessToken}
         barberiaId={barberiaSeleccionada.id}
         nombreBarberia={barberiaSeleccionada.nombre}
         onVolver={() => setBarberiaSeleccionada(null)}

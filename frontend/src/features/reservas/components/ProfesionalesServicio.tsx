@@ -1,15 +1,15 @@
+import { useAuth } from '../../auth/auth-context.js';
 import { useEffect, useState } from "react";
 import DisponibilidadServicio from "./DisponibilidadServicio.js";
-import { api, ApiError } from "../lib/api.js";
+import { api, ApiError } from "../../../shared/lib/api.js";
 import PasosReserva from "./PasosReserva.js";
-import EstadoContenido from "./EstadoContenido.js";
+import EstadoContenido from "../../../shared/components/EstadoContenido.js";
 type Profesional = {
   id: number;
   nombre: string;
 };
 
 type Props = {
-  accessToken: string;
   barberiaId: number;
   servicioId: number;
   nombreBarberia: string;
@@ -20,7 +20,6 @@ type Props = {
 };
 
 export default function ProfesionalesServicio({
-  accessToken,
   barberiaId,
   servicioId,
   nombreBarberia,
@@ -29,6 +28,8 @@ export default function ProfesionalesServicio({
   precio,
   onVolver,
 }: Props) {
+  const { sesion } = useAuth();
+  const accessToken = sesion?.accessToken;
   const [profesionales, setProfesionales] = useState<Profesional[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
@@ -40,6 +41,8 @@ export default function ProfesionalesServicio({
     const controlador = new AbortController();
 
     async function cargarProfesionales() {
+      if (!accessToken) return;
+
       setCargando(true);
       setError("");
 
@@ -87,7 +90,6 @@ export default function ProfesionalesServicio({
     return (
       <DisponibilidadServicio
         key={seleccionado.id}
-        accessToken={accessToken}
         barberiaId={barberiaId}
         servicioId={servicioId}
         profesionalId={seleccionado.id}

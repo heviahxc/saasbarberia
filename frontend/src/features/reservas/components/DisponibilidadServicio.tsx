@@ -1,10 +1,11 @@
+import { useAuth } from '../../auth/auth-context.js';
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { api, ApiError } from "../lib/api.js";
-import { formatearFechaHora, formatearPrecio } from "../lib/formatos.js";
+import { api, ApiError } from "../../../shared/lib/api.js";
+import { formatearFechaHora, formatearPrecio } from "../../../shared/lib/formatos.js";
 import PasosReserva from "./PasosReserva.js";
 import ResumenReserva from "./ResumenReserva.js";
-import EstadoContenido from "./EstadoContenido.js";
+import EstadoContenido from "../../../shared/components/EstadoContenido.js";
 type Opcion = {
   horaLocal: string;
   inicio: string;
@@ -32,7 +33,6 @@ type ReservaCreada = {
 };
 
 type Props = {
-  accessToken: string;
   barberiaId: number;
   servicioId: number;
   profesionalId: number;
@@ -45,7 +45,6 @@ type Props = {
 };
 
 export default function DisponibilidadServicio({
-  accessToken,
   barberiaId,
   servicioId,
   profesionalId,
@@ -56,6 +55,8 @@ export default function DisponibilidadServicio({
   precio,
   onVolver,
 }: Props) {
+  const { sesion } = useAuth();
+  const accessToken = sesion?.accessToken;
   const [fecha, setFecha] = useState("");
   const [disponibilidad, setDisponibilidad] = useState<Disponibilidad | null>(
     null,
@@ -70,7 +71,7 @@ export default function DisponibilidadServicio({
   async function consultarHorarios(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault();
 
-    if (cargando || confirmando) return;
+    if (cargando || confirmando || !accessToken) return;
 
     setCargando(true);
     setError("");
@@ -111,7 +112,7 @@ export default function DisponibilidadServicio({
     }
   }
   async function confirmarReserva() {
-    if (!seleccionada || !disponibilidad || confirmando || cargando) {
+    if (!seleccionada || !disponibilidad || confirmando || cargando || !accessToken) {
       return;
     }
 

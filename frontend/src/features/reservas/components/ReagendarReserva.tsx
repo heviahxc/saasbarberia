@@ -1,8 +1,9 @@
+import { useAuth } from '../../auth/auth-context.js';
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { api, ApiError } from "../lib/api.js";
-import { formatearFechaHora, formatearPrecio } from "../lib/formatos.js";
-import EstadoContenido from './EstadoContenido.js';
+import { api, ApiError } from "../../../shared/lib/api.js";
+import { formatearFechaHora, formatearPrecio } from "../../../shared/lib/formatos.js";
+import EstadoContenido from '../../../shared/components/EstadoContenido.js';
 type Opcion = {
   horaLocal: string;
   inicio: string;
@@ -28,18 +29,18 @@ type ReservaActualizada = {
 };
 
 type Props = {
-  accessToken: string;
   reservaId: number;
   nombreServicio: string;
   onVolver: () => void;
 };
 
 export default function ReagendarReserva({
-  accessToken,
   reservaId,
   nombreServicio,
   onVolver,
 }: Props) {
+  const { sesion } = useAuth();
+  const accessToken = sesion?.accessToken;
   const [fecha, setFecha] = useState("");
   const [disponibilidad, setDisponibilidad] = useState<Disponibilidad | null>(
     null,
@@ -53,7 +54,7 @@ export default function ReagendarReserva({
   async function consultarHorarios(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault();
 
-    if (cargando || confirmando) return;
+    if (cargando || confirmando || !accessToken) return;
 
     setCargando(true);
     setError("");
@@ -90,7 +91,7 @@ export default function ReagendarReserva({
     }
   }
   async function confirmarCambio() {
-    if (!seleccionada || !disponibilidad || confirmando || cargando) {
+    if (!seleccionada || !disponibilidad || confirmando || cargando || !accessToken) {
       return;
     }
 

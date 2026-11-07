@@ -1,7 +1,7 @@
 import {
   formatearFechaHora,
   formatearPrecio,
-} from '../lib/formatos.js';
+} from '../../../shared/lib/formatos.js';
 
 type Props = {
   nombreBarberia: string;
