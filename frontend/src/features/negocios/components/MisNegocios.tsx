@@ -1,3 +1,4 @@
+import AgendaNegocio from "../../agenda/components/AgendaNegocio.js";
 import ServiciosNegocio from "../../servicios/components/ServiciosNegocio.js";
 import MiEquipo from "../../equipo/components/MiEquipo.js";
 import CrearNegocio from "./CrearNegocio.js";
@@ -11,6 +12,8 @@ import "../negocios.css";
 import EditarNegocio from "./EditarNegocio.js";
 export default function MisNegocios() {
   const { sesion } = useAuth();
+  const [agendaSeleccionada, setAgendaSeleccionada] =
+    useState<MembresiaNegocio | null>(null);
   const [serviciosSeleccionados, setServiciosSeleccionados] = useState<{
     id: number;
     nombre: string;
@@ -67,6 +70,22 @@ export default function MisNegocios() {
     void cargarNegocios();
     return () => controlador.abort();
   }, [accessToken, intento]);
+
+  if (agendaSeleccionada) {
+    return (
+      <AgendaNegocio
+        key={agendaSeleccionada.barberia.id}
+        barberiaId={agendaSeleccionada.barberia.id}
+        nombreBarberia={agendaSeleccionada.barberia.nombre}
+        administrador={agendaSeleccionada.rol === "ADMINISTRADOR"}
+        profesionalId={agendaSeleccionada.profesionalId}
+        onVolver={() => {
+          setAgendaSeleccionada(null);
+          setIntento((i) => i + 1);
+        }}
+      />
+    );
+  }
 
   if (serviciosSeleccionados) {
     return (
@@ -173,7 +192,7 @@ export default function MisNegocios() {
         />
       ) : (
         <ul className="negocios-lista">
-          {membresias.map(({ barberia, rol }) => (
+          {membresias.map(({ barberia, rol, profesionalId }) => (
             <li key={barberia.id} className="negocio-tarjeta">
               <span className="negocio-rol">
                 {rol === "ADMINISTRADOR"
@@ -182,6 +201,24 @@ export default function MisNegocios() {
               </span>
               <h3>{barberia.nombre}</h3>
               <p>{barberia.ciudad}</p>
+              {rol === "ADMINISTRADOR" || profesionalId !== null ? (
+                <div className="negocio-acciones">
+                  <button
+                    type="button"
+                    className="negocio-editar"
+                    onClick={() =>
+                      setAgendaSeleccionada({ barberia, rol, profesionalId })
+                    }
+                  >
+                    {rol === "ADMINISTRADOR" ? "Ver agenda" : "Mi agenda"}
+                  </button>
+                </div>
+              ) : (
+                <p>
+                  Tu cuenta aún no tiene un profesional asignado. Contacta al
+                  administrador para acceder a tu agenda.
+                </p>
+              )}
               {rol === "ADMINISTRADOR" && (
                 <div
                   className="negocio-acciones"

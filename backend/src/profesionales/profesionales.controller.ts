@@ -1,3 +1,5 @@
+import { ProfesionalPropioGuard } from '../auth/guards/profesional-propio.guard.js';
+import { CreateBloqueoLocalDto } from './dto/create-bloqueo-local.dto.js';
 import {
   Body,
   Controller,
@@ -22,9 +24,7 @@ import { CreateBloqueoDto } from './dto/create-bloqueo.dto.js';
 @Controller('barberias/:barberiaId/profesionales')
 @UseGuards(JwtAuthGuard, MiembroBarberiaGuard)
 export class ProfesionalesController {
-  constructor(
-    private readonly profesionalesService: ProfesionalesService,
-  ) {}
+  constructor(private readonly profesionalesService: ProfesionalesService) {}
 
   // POST /barberias/:barberiaId/profesionales hace que un administrador de la barbería cree un nuevo profesional en la barbería especificada.
   // GET /barberias/:barberiaId/profesionales hace que un miembro de la barbería obtenga todos los profesionales de la barbería especificada.
@@ -43,21 +43,16 @@ export class ProfesionalesController {
     )
     createProfesionalDto: CreateProfesionalDto,
   ) {
-    return this.profesionalesService.create(
-      barberiaId,
-      createProfesionalDto,
-    );
+    return this.profesionalesService.create(barberiaId, createProfesionalDto);
   }
-     @Get()
+  @Get()
   @UseGuards(JwtAuthGuard, MiembroBarberiaGuard)
-findAll(
-  @Param('barberiaId', ParseIntPipe) barberiaId: number,
-) {
-  return this.profesionalesService.findAll(barberiaId);
-}
+  findAll(@Param('barberiaId', ParseIntPipe) barberiaId: number) {
+    return this.profesionalesService.findAll(barberiaId);
+  }
 
-    @Post(':profesionalId/servicios')
-    @UseGuards(AdministradorBarberiaGuard)
+  @Post(':profesionalId/servicios')
+  @UseGuards(AdministradorBarberiaGuard)
   asignarServicio(
     @Param('barberiaId', ParseIntPipe) barberiaId: number,
     @Param('profesionalId', ParseIntPipe) profesionalId: number,
@@ -76,19 +71,16 @@ findAll(
     );
   }
 
-    @Get(':profesionalId/servicios')
+  @Get(':profesionalId/servicios')
   findServicios(
     @Param('barberiaId', ParseIntPipe) barberiaId: number,
     @Param('profesionalId', ParseIntPipe) profesionalId: number,
   ) {
-    return this.profesionalesService.findServicios(
-      barberiaId,
-      profesionalId,
-    );
+    return this.profesionalesService.findServicios(barberiaId, profesionalId);
   }
 
-    @Delete(':profesionalId/servicios/:servicioId')
-    @UseGuards(AdministradorBarberiaGuard)
+  @Delete(':profesionalId/servicios/:servicioId')
+  @UseGuards(AdministradorBarberiaGuard)
   @HttpCode(204)
   async quitarServicio(
     @Param('barberiaId', ParseIntPipe) barberiaId: number,
@@ -122,15 +114,12 @@ findAll(
     );
   }
 
-    @Get(':profesionalId/horarios')
+  @Get(':profesionalId/horarios')
   findHorarios(
     @Param('barberiaId', ParseIntPipe) barberiaId: number,
     @Param('profesionalId', ParseIntPipe) profesionalId: number,
   ) {
-    return this.profesionalesService.findHorarios(
-      barberiaId,
-      profesionalId,
-    );
+    return this.profesionalesService.findHorarios(barberiaId, profesionalId);
   }
 
   @Delete(':profesionalId/horarios/:horarioId')
@@ -148,8 +137,8 @@ findAll(
     );
   }
 
-    @Post(':profesionalId/bloqueos')
-  @UseGuards(AdministradorBarberiaGuard)
+  @Post(':profesionalId/bloqueos')
+  @UseGuards(ProfesionalPropioGuard)
   crearBloqueo(
     @Param('barberiaId', ParseIntPipe) barberiaId: number,
     @Param('profesionalId', ParseIntPipe) profesionalId: number,
@@ -168,19 +157,17 @@ findAll(
     );
   }
 
-    @Get(':profesionalId/bloqueos')
+  @Get(':profesionalId/bloqueos')
+  @UseGuards(ProfesionalPropioGuard)
   findBloqueos(
     @Param('barberiaId', ParseIntPipe) barberiaId: number,
     @Param('profesionalId', ParseIntPipe) profesionalId: number,
   ) {
-    return this.profesionalesService.findBloqueos(
-      barberiaId,
-      profesionalId,
-    );
+    return this.profesionalesService.findBloqueos(barberiaId, profesionalId);
   }
 
   @Delete(':profesionalId/bloqueos/:bloqueoId')
-  @UseGuards(AdministradorBarberiaGuard)
+  @UseGuards(ProfesionalPropioGuard)
   @HttpCode(204)
   async eliminarBloqueo(
     @Param('barberiaId', ParseIntPipe) barberiaId: number,
@@ -194,8 +181,8 @@ findAll(
     );
   }
 
-    @Post(':profesionalId/bloqueos/impacto')
-  @UseGuards(AdministradorBarberiaGuard)
+  @Post(':profesionalId/bloqueos/impacto')
+  @UseGuards(ProfesionalPropioGuard)
   @HttpCode(200)
   consultarImpactoBloqueo(
     @Param('barberiaId', ParseIntPipe) barberiaId: number,
@@ -212,6 +199,52 @@ findAll(
       barberiaId,
       profesionalId,
       dto,
+    );
+  }
+  @Post(':profesionalId/bloqueos/local')
+  @UseGuards(ProfesionalPropioGuard)
+  crearBloqueoLocal(
+    @Param('barberiaId', ParseIntPipe) barberiaId: number,
+    @Param('profesionalId', ParseIntPipe) profesionalId: number,
+    @Body(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+    dto: CreateBloqueoLocalDto,
+  ) {
+    return this.profesionalesService.crearBloqueoLocal(
+      barberiaId,
+      profesionalId,
+      dto,
+    );
+  }
+
+  @Post(':profesionalId/bloqueos/local/impacto')
+  @UseGuards(ProfesionalPropioGuard)
+  @HttpCode(200)
+  consultarImpactoLocal(
+    @Param('barberiaId', ParseIntPipe) barberiaId: number,
+    @Param('profesionalId', ParseIntPipe) profesionalId: number,
+    @Body(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+    dto: CreateBloqueoLocalDto,
+  ) {
+    return this.profesionalesService.consultarImpactoBloqueoLocal(
+      barberiaId,
+      profesionalId,
+      dto,
+    );
+  }
+
+  @Post(':profesionalId/bloqueos/local/pendiente')
+  @UseGuards(ProfesionalPropioGuard)
+  crearBloqueoPendiente(
+    @Param('barberiaId', ParseIntPipe) barberiaId: number,
+    @Param('profesionalId', ParseIntPipe) profesionalId: number,
+    @Body(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+    dto: CreateBloqueoLocalDto,
+  ) {
+    return this.profesionalesService.crearBloqueoLocal(
+      barberiaId,
+      profesionalId,
+      dto,
+      true,
     );
   }
 }

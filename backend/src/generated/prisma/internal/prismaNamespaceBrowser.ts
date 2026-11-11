@@ -61,7 +61,8 @@ export const ModelName = {
   Reserva: 'Reserva',
   BloqueoProfesional: 'BloqueoProfesional',
   ReagendamientoReserva: 'ReagendamientoReserva',
-  InvitacionEquipo: 'InvitacionEquipo'
+  InvitacionEquipo: 'InvitacionEquipo',
+  CancelacionReserva: 'CancelacionReserva'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -202,7 +203,8 @@ export const ReagendamientoReservaScalarFieldEnum = {
   finAnterior: 'finAnterior',
   inicioNuevo: 'inicioNuevo',
   finNuevo: 'finNuevo',
-  creadoEn: 'creadoEn'
+  creadoEn: 'creadoEn',
+  motivo: 'motivo'
 } as const
 
 export type ReagendamientoReservaScalarFieldEnum = (typeof ReagendamientoReservaScalarFieldEnum)[keyof typeof ReagendamientoReservaScalarFieldEnum]
@@ -223,6 +225,17 @@ export const InvitacionEquipoScalarFieldEnum = {
 } as const
 
 export type InvitacionEquipoScalarFieldEnum = (typeof InvitacionEquipoScalarFieldEnum)[keyof typeof InvitacionEquipoScalarFieldEnum]
+
+
+export const CancelacionReservaScalarFieldEnum = {
+  id: 'id',
+  reservaId: 'reservaId',
+  actorId: 'actorId',
+  motivo: 'motivo',
+  creadoEn: 'creadoEn'
+} as const
+
+export type CancelacionReservaScalarFieldEnum = (typeof CancelacionReservaScalarFieldEnum)[keyof typeof CancelacionReservaScalarFieldEnum]
 
 
 export const SortOrder = {

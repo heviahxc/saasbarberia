@@ -47,6 +47,7 @@ export type ReagendamientoReservaMinAggregateOutputType = {
   inicioNuevo: Date | null
   finNuevo: Date | null
   creadoEn: Date | null
+  motivo: string | null
 }
 
 export type ReagendamientoReservaMaxAggregateOutputType = {
@@ -58,6 +59,7 @@ export type ReagendamientoReservaMaxAggregateOutputType = {
   inicioNuevo: Date | null
   finNuevo: Date | null
   creadoEn: Date | null
+  motivo: string | null
 }
 
 export type ReagendamientoReservaCountAggregateOutputType = {
@@ -69,6 +71,7 @@ export type ReagendamientoReservaCountAggregateOutputType = {
   inicioNuevo: number
   finNuevo: number
   creadoEn: number
+  motivo: number
   _all: number
 }
 
@@ -94,6 +97,7 @@ export type ReagendamientoReservaMinAggregateInputType = {
   inicioNuevo?: true
   finNuevo?: true
   creadoEn?: true
+  motivo?: true
 }
 
 export type ReagendamientoReservaMaxAggregateInputType = {
@@ -105,6 +109,7 @@ export type ReagendamientoReservaMaxAggregateInputType = {
   inicioNuevo?: true
   finNuevo?: true
   creadoEn?: true
+  motivo?: true
 }
 
 export type ReagendamientoReservaCountAggregateInputType = {
@@ -116,6 +121,7 @@ export type ReagendamientoReservaCountAggregateInputType = {
   inicioNuevo?: true
   finNuevo?: true
   creadoEn?: true
+  motivo?: true
   _all?: true
 }
 
@@ -214,6 +220,7 @@ export type ReagendamientoReservaGroupByOutputType = {
   inicioNuevo: Date
   finNuevo: Date
   creadoEn: Date
+  motivo: string | null
   _count: ReagendamientoReservaCountAggregateOutputType | null
   _avg: ReagendamientoReservaAvgAggregateOutputType | null
   _sum: ReagendamientoReservaSumAggregateOutputType | null
@@ -248,6 +255,7 @@ export type ReagendamientoReservaWhereInput = {
   inicioNuevo?: Prisma.DateTimeFilter<"ReagendamientoReserva"> | Date | string
   finNuevo?: Prisma.DateTimeFilter<"ReagendamientoReserva"> | Date | string
   creadoEn?: Prisma.DateTimeFilter<"ReagendamientoReserva"> | Date | string
+  motivo?: Prisma.StringNullableFilter<"ReagendamientoReserva"> | string | null
   reserva?: Prisma.XOR<Prisma.ReservaScalarRelationFilter, Prisma.ReservaWhereInput>
   actor?: Prisma.XOR<Prisma.UsuarioScalarRelationFilter, Prisma.UsuarioWhereInput>
 }
@@ -261,6 +269,7 @@ export type ReagendamientoReservaOrderByWithRelationInput = {
   inicioNuevo?: Prisma.SortOrder
   finNuevo?: Prisma.SortOrder
   creadoEn?: Prisma.SortOrder
+  motivo?: Prisma.SortOrderInput | Prisma.SortOrder
   reserva?: Prisma.ReservaOrderByWithRelationInput
   actor?: Prisma.UsuarioOrderByWithRelationInput
 }
@@ -277,6 +286,7 @@ export type ReagendamientoReservaWhereUniqueInput = Prisma.AtLeast<{
   inicioNuevo?: Prisma.DateTimeFilter<"ReagendamientoReserva"> | Date | string
   finNuevo?: Prisma.DateTimeFilter<"ReagendamientoReserva"> | Date | string
   creadoEn?: Prisma.DateTimeFilter<"ReagendamientoReserva"> | Date | string
+  motivo?: Prisma.StringNullableFilter<"ReagendamientoReserva"> | string | null
   reserva?: Prisma.XOR<Prisma.ReservaScalarRelationFilter, Prisma.ReservaWhereInput>
   actor?: Prisma.XOR<Prisma.UsuarioScalarRelationFilter, Prisma.UsuarioWhereInput>
 }, "id">
@@ -290,6 +300,7 @@ export type ReagendamientoReservaOrderByWithAggregationInput = {
   inicioNuevo?: Prisma.SortOrder
   finNuevo?: Prisma.SortOrder
   creadoEn?: Prisma.SortOrder
+  motivo?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ReagendamientoReservaCountOrderByAggregateInput
   _avg?: Prisma.ReagendamientoReservaAvgOrderByAggregateInput
   _max?: Prisma.ReagendamientoReservaMaxOrderByAggregateInput
@@ -309,6 +320,7 @@ export type ReagendamientoReservaScalarWhereWithAggregatesInput = {
   inicioNuevo?: Prisma.DateTimeWithAggregatesFilter<"ReagendamientoReserva"> | Date | string
   finNuevo?: Prisma.DateTimeWithAggregatesFilter<"ReagendamientoReserva"> | Date | string
   creadoEn?: Prisma.DateTimeWithAggregatesFilter<"ReagendamientoReserva"> | Date | string
+  motivo?: Prisma.StringNullableWithAggregatesFilter<"ReagendamientoReserva"> | string | null
 }
 
 export type ReagendamientoReservaCreateInput = {
@@ -317,6 +329,7 @@ export type ReagendamientoReservaCreateInput = {
   inicioNuevo: Date | string
   finNuevo: Date | string
   creadoEn?: Date | string
+  motivo?: string | null
   reserva: Prisma.ReservaCreateNestedOneWithoutReagendamientosInput
   actor: Prisma.UsuarioCreateNestedOneWithoutReagendamientosRealizadosInput
 }
@@ -330,6 +343,7 @@ export type ReagendamientoReservaUncheckedCreateInput = {
   inicioNuevo: Date | string
   finNuevo: Date | string
   creadoEn?: Date | string
+  motivo?: string | null
 }
 
 export type ReagendamientoReservaUpdateInput = {
@@ -338,6 +352,7 @@ export type ReagendamientoReservaUpdateInput = {
   inicioNuevo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   finNuevo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   creadoEn?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  motivo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reserva?: Prisma.ReservaUpdateOneRequiredWithoutReagendamientosNestedInput
   actor?: Prisma.UsuarioUpdateOneRequiredWithoutReagendamientosRealizadosNestedInput
 }
@@ -351,6 +366,7 @@ export type ReagendamientoReservaUncheckedUpdateInput = {
   inicioNuevo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   finNuevo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   creadoEn?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  motivo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ReagendamientoReservaCreateManyInput = {
@@ -362,6 +378,7 @@ export type ReagendamientoReservaCreateManyInput = {
   inicioNuevo: Date | string
   finNuevo: Date | string
   creadoEn?: Date | string
+  motivo?: string | null
 }
 
 export type ReagendamientoReservaUpdateManyMutationInput = {
@@ -370,6 +387,7 @@ export type ReagendamientoReservaUpdateManyMutationInput = {
   inicioNuevo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   finNuevo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   creadoEn?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  motivo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ReagendamientoReservaUncheckedUpdateManyInput = {
@@ -381,6 +399,7 @@ export type ReagendamientoReservaUncheckedUpdateManyInput = {
   inicioNuevo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   finNuevo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   creadoEn?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  motivo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ReagendamientoReservaListRelationFilter = {
@@ -402,6 +421,7 @@ export type ReagendamientoReservaCountOrderByAggregateInput = {
   inicioNuevo?: Prisma.SortOrder
   finNuevo?: Prisma.SortOrder
   creadoEn?: Prisma.SortOrder
+  motivo?: Prisma.SortOrder
 }
 
 export type ReagendamientoReservaAvgOrderByAggregateInput = {
@@ -419,6 +439,7 @@ export type ReagendamientoReservaMaxOrderByAggregateInput = {
   inicioNuevo?: Prisma.SortOrder
   finNuevo?: Prisma.SortOrder
   creadoEn?: Prisma.SortOrder
+  motivo?: Prisma.SortOrder
 }
 
 export type ReagendamientoReservaMinOrderByAggregateInput = {
@@ -430,6 +451,7 @@ export type ReagendamientoReservaMinOrderByAggregateInput = {
   inicioNuevo?: Prisma.SortOrder
   finNuevo?: Prisma.SortOrder
   creadoEn?: Prisma.SortOrder
+  motivo?: Prisma.SortOrder
 }
 
 export type ReagendamientoReservaSumOrderByAggregateInput = {
@@ -528,6 +550,7 @@ export type ReagendamientoReservaCreateWithoutActorInput = {
   inicioNuevo: Date | string
   finNuevo: Date | string
   creadoEn?: Date | string
+  motivo?: string | null
   reserva: Prisma.ReservaCreateNestedOneWithoutReagendamientosInput
 }
 
@@ -539,6 +562,7 @@ export type ReagendamientoReservaUncheckedCreateWithoutActorInput = {
   inicioNuevo: Date | string
   finNuevo: Date | string
   creadoEn?: Date | string
+  motivo?: string | null
 }
 
 export type ReagendamientoReservaCreateOrConnectWithoutActorInput = {
@@ -579,6 +603,7 @@ export type ReagendamientoReservaScalarWhereInput = {
   inicioNuevo?: Prisma.DateTimeFilter<"ReagendamientoReserva"> | Date | string
   finNuevo?: Prisma.DateTimeFilter<"ReagendamientoReserva"> | Date | string
   creadoEn?: Prisma.DateTimeFilter<"ReagendamientoReserva"> | Date | string
+  motivo?: Prisma.StringNullableFilter<"ReagendamientoReserva"> | string | null
 }
 
 export type ReagendamientoReservaCreateWithoutReservaInput = {
@@ -587,6 +612,7 @@ export type ReagendamientoReservaCreateWithoutReservaInput = {
   inicioNuevo: Date | string
   finNuevo: Date | string
   creadoEn?: Date | string
+  motivo?: string | null
   actor: Prisma.UsuarioCreateNestedOneWithoutReagendamientosRealizadosInput
 }
 
@@ -598,6 +624,7 @@ export type ReagendamientoReservaUncheckedCreateWithoutReservaInput = {
   inicioNuevo: Date | string
   finNuevo: Date | string
   creadoEn?: Date | string
+  motivo?: string | null
 }
 
 export type ReagendamientoReservaCreateOrConnectWithoutReservaInput = {
@@ -634,6 +661,7 @@ export type ReagendamientoReservaCreateManyActorInput = {
   inicioNuevo: Date | string
   finNuevo: Date | string
   creadoEn?: Date | string
+  motivo?: string | null
 }
 
 export type ReagendamientoReservaUpdateWithoutActorInput = {
@@ -642,6 +670,7 @@ export type ReagendamientoReservaUpdateWithoutActorInput = {
   inicioNuevo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   finNuevo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   creadoEn?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  motivo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reserva?: Prisma.ReservaUpdateOneRequiredWithoutReagendamientosNestedInput
 }
 
@@ -653,6 +682,7 @@ export type ReagendamientoReservaUncheckedUpdateWithoutActorInput = {
   inicioNuevo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   finNuevo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   creadoEn?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  motivo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ReagendamientoReservaUncheckedUpdateManyWithoutActorInput = {
@@ -663,6 +693,7 @@ export type ReagendamientoReservaUncheckedUpdateManyWithoutActorInput = {
   inicioNuevo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   finNuevo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   creadoEn?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  motivo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ReagendamientoReservaCreateManyReservaInput = {
@@ -673,6 +704,7 @@ export type ReagendamientoReservaCreateManyReservaInput = {
   inicioNuevo: Date | string
   finNuevo: Date | string
   creadoEn?: Date | string
+  motivo?: string | null
 }
 
 export type ReagendamientoReservaUpdateWithoutReservaInput = {
@@ -681,6 +713,7 @@ export type ReagendamientoReservaUpdateWithoutReservaInput = {
   inicioNuevo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   finNuevo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   creadoEn?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  motivo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   actor?: Prisma.UsuarioUpdateOneRequiredWithoutReagendamientosRealizadosNestedInput
 }
 
@@ -692,6 +725,7 @@ export type ReagendamientoReservaUncheckedUpdateWithoutReservaInput = {
   inicioNuevo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   finNuevo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   creadoEn?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  motivo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ReagendamientoReservaUncheckedUpdateManyWithoutReservaInput = {
@@ -702,6 +736,7 @@ export type ReagendamientoReservaUncheckedUpdateManyWithoutReservaInput = {
   inicioNuevo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   finNuevo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   creadoEn?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  motivo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -715,6 +750,7 @@ export type ReagendamientoReservaSelect<ExtArgs extends runtime.Types.Extensions
   inicioNuevo?: boolean
   finNuevo?: boolean
   creadoEn?: boolean
+  motivo?: boolean
   reserva?: boolean | Prisma.ReservaDefaultArgs<ExtArgs>
   actor?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["reagendamientoReserva"]>
@@ -728,6 +764,7 @@ export type ReagendamientoReservaSelectCreateManyAndReturn<ExtArgs extends runti
   inicioNuevo?: boolean
   finNuevo?: boolean
   creadoEn?: boolean
+  motivo?: boolean
   reserva?: boolean | Prisma.ReservaDefaultArgs<ExtArgs>
   actor?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["reagendamientoReserva"]>
@@ -741,6 +778,7 @@ export type ReagendamientoReservaSelectUpdateManyAndReturn<ExtArgs extends runti
   inicioNuevo?: boolean
   finNuevo?: boolean
   creadoEn?: boolean
+  motivo?: boolean
   reserva?: boolean | Prisma.ReservaDefaultArgs<ExtArgs>
   actor?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["reagendamientoReserva"]>
@@ -754,9 +792,10 @@ export type ReagendamientoReservaSelectScalar = {
   inicioNuevo?: boolean
   finNuevo?: boolean
   creadoEn?: boolean
+  motivo?: boolean
 }
 
-export type ReagendamientoReservaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "reservaId" | "actorId" | "inicioAnterior" | "finAnterior" | "inicioNuevo" | "finNuevo" | "creadoEn", ExtArgs["result"]["reagendamientoReserva"]>
+export type ReagendamientoReservaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "reservaId" | "actorId" | "inicioAnterior" | "finAnterior" | "inicioNuevo" | "finNuevo" | "creadoEn" | "motivo", ExtArgs["result"]["reagendamientoReserva"]>
 export type ReagendamientoReservaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   reserva?: boolean | Prisma.ReservaDefaultArgs<ExtArgs>
   actor?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
@@ -785,6 +824,7 @@ export type $ReagendamientoReservaPayload<ExtArgs extends runtime.Types.Extensio
     inicioNuevo: Date
     finNuevo: Date
     creadoEn: Date
+    motivo: string | null
   }, ExtArgs["result"]["reagendamientoReserva"]>
   composites: {}
 }
@@ -1218,6 +1258,7 @@ export interface ReagendamientoReservaFieldRefs {
   readonly inicioNuevo: Prisma.FieldRef<"ReagendamientoReserva", 'DateTime'>
   readonly finNuevo: Prisma.FieldRef<"ReagendamientoReserva", 'DateTime'>
   readonly creadoEn: Prisma.FieldRef<"ReagendamientoReserva", 'DateTime'>
+  readonly motivo: Prisma.FieldRef<"ReagendamientoReserva", 'String'>
 }
     
 

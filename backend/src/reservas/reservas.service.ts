@@ -242,7 +242,101 @@ export class ReservasService {
       orderBy: [{ inicio: 'desc' }, { id: 'desc' }],
     });
   }
+  async cancelarDesdeEquipo(
+    barberiaId: number,
+    reservaId: number,
+    actorId: number,
+    motivo: string,
+  ) {
+    return this.prisma.$transaction(
+      async (tx) => {
+        // Consultamos el permiso real de la cuenta.
+        // El navegador no decide el rol ni el profesional.
+        const membresias = await tx.$queryRaw<
+          {
+            rol: string;
+            activo: boolean;
+            profesionalId: number | null;
+          }[]
+        >`
+          SELECT "rol", "activo", "profesionalId"
+          FROM "public"."MiembroBarberia"
+          WHERE "usuarioId" = ${actorId}
+            AND "barberiaId" = ${barberiaId}
+          FOR SHARE
+        `;
 
+        const membresia = membresias[0];
+
+        if (!membresia?.activo) {
+          throw new ForbiddenException(
+            'No tienes acceso a esta barbería',
+          );
+        }
+
+        // Bloqueamos la reserva para coordinar esta operación
+        // con otra cancelación o un reagendamiento simultáneo.
+        const reservas = await tx.$queryRaw<Reserva[]>`
+          SELECT *
+          FROM "public"."Reserva"
+          WHERE "id" = ${reservaId}
+            AND "barberiaId" = ${barberiaId}
+          FOR UPDATE
+        `;
+
+        const reserva = reservas[0];
+
+        if (!reserva) {
+          throw new NotFoundException('La reserva no existe');
+        }
+
+        if (
+          membresia.rol !== 'ADMINISTRADOR' &&
+          membresia.profesionalId !== reserva.profesionalId
+        ) {
+          throw new ForbiddenException(
+            'Solo puedes cancelar las citas de tu profesional',
+          );
+        }
+
+        const canceladas = await tx.$queryRaw<
+          Pick<Reserva, 'id' | 'estado' | 'canceladoEn'>[]
+        >`
+          UPDATE "public"."Reserva"
+          SET
+            "estado" = 'CANCELADA',
+            "canceladoEn" = clock_timestamp()
+          WHERE "id" = ${reservaId}
+            AND "barberiaId" = ${barberiaId}
+            AND "estado" = 'CONFIRMADA'
+            AND "inicio" > clock_timestamp()
+          RETURNING "id", "estado", "canceladoEn"
+        `;
+
+        const cancelada = canceladas[0];
+
+        if (!cancelada) {
+          throw new ConflictException(
+            'Solo puedes cancelar reservas confirmadas que no hayan comenzado',
+          );
+        }
+
+        await tx.cancelacionReserva.create({
+          data: {
+            reservaId: reserva.id,
+            actorId,
+            motivo,
+          },
+        });
+
+        return cancelada;
+      },
+      {
+        isolationLevel:
+          Prisma.TransactionIsolationLevel.ReadCommitted,
+      },
+    );
+  }
   async cancelarMia(reservaId: number, clienteId: number) {
     if (
       !Number.isInteger(reservaId) ||
@@ -530,11 +624,98 @@ export class ReservasService {
       opciones: disponibles,
     };
   }
-
-  async reagendarMia(
+  async reagendarDesdeEquipo(
+    barberiaId: number,
     reservaId: number,
+    actorId: number,
+    nuevoInicio: string,
+    motivo: string,
+  ) {
+    const motivoLimpio = motivo.trim();
+
+    if (motivoLimpio.length < 5 || motivoLimpio.length > 300) {
+      throw new BadRequestException(
+        'El motivo debe tener entre 5 y 300 caracteres',
+      );
+    }
+
+    return this.reagendarMia(
+      reservaId,
+      actorId,
+      nuevoInicio,
+      {
+        barberiaId,
+        motivo: motivoLimpio,
+      },
+    );
+  }
+
+  async findDisponibilidadReagendarEquipo(
+    barberiaId: number,
+    reservaId: number,
+    actorId: number,
+    fecha: string,
+  ) {
+    const membresia = await this.prisma.miembroBarberia.findUnique({
+      where: {
+        usuarioId_barberiaId: {
+          usuarioId: actorId,
+          barberiaId,
+        },
+      },
+      select: {
+        activo: true,
+        rol: true,
+        profesionalId: true,
+      },
+    });
+
+    if (!membresia?.activo) {
+      throw new ForbiddenException(
+        'No tienes acceso a esta barbería',
+      );
+    }
+
+    const reserva = await this.prisma.reserva.findFirst({
+      where: {
+        id: reservaId,
+        barberiaId,
+      },
+      select: {
+        clienteId: true,
+        profesionalId: true,
+      },
+    });
+
+    if (!reserva) {
+      throw new NotFoundException('La reserva no existe');
+    }
+
+    if (
+      membresia.rol !== 'ADMINISTRADOR' &&
+      membresia.profesionalId !== reserva.profesionalId
+    ) {
+      throw new ForbiddenException(
+        'Solo puedes consultar las citas de tu profesional',
+      );
+    }
+
+    // Reutiliza el cálculo con la duración original de la reserva.
+    // Esta operación solo consulta; no realiza cambios.
+    return this.findDisponibilidadReagendar(
+      reservaId,
+      reserva.clienteId,
+      fecha,
+    );
+  }
+  async reagendarMia(
+   reservaId: number,
     clienteId: number,
     nuevoInicio: string,
+    equipo?: {
+      barberiaId: number;
+      motivo: string;
+    },
   ) {
     if (
       !Number.isInteger(reservaId) ||
@@ -545,10 +726,12 @@ export class ReservasService {
     }
 
     // Esta lectura identifica qué profesional debemos bloquear.
-    const referencia = await this.prisma.reserva.findFirst({
+      const referencia = await this.prisma.reserva.findFirst({
       where: {
         id: reservaId,
-        clienteId,
+        ...(equipo
+          ? { barberiaId: equipo.barberiaId }
+          : { clienteId }),
       },
       select: {
         profesionalId: true,
@@ -562,6 +745,46 @@ export class ReservasService {
 
     return this.prisma.$transaction(
       async (tx) => {
+                let membresiaEquipo:
+          | {
+              rol: string;
+              activo: boolean;
+              profesionalId: number | null;
+            }
+          | undefined;
+
+        if (equipo) {
+          const membresias = await tx.$queryRaw<
+            {
+              rol: string;
+              activo: boolean;
+              profesionalId: number | null;
+            }[]
+          >`
+            SELECT "rol", "activo", "profesionalId"
+            FROM "public"."MiembroBarberia"
+            WHERE "usuarioId" = ${clienteId}
+              AND "barberiaId" = ${equipo.barberiaId}
+            FOR SHARE
+          `;
+
+          membresiaEquipo = membresias[0];
+
+          if (!membresiaEquipo?.activo) {
+            throw new ForbiddenException(
+              'No tienes acceso a esta barbería',
+            );
+          }
+
+          if (
+            membresiaEquipo.rol !== 'ADMINISTRADOR' &&
+            membresiaEquipo.profesionalId !== referencia.profesionalId
+          ) {
+            throw new ForbiddenException(
+              'Solo puedes reagendar las citas de tu profesional',
+            );
+          }
+        }
         // Mantener el mismo orden: profesional y después reserva.
         const profesionales = await tx.$queryRaw<
           { activo: boolean; zonaHoraria: string; intervaloReservasMinutos: number }[]
@@ -584,11 +807,15 @@ export class ReservasService {
 
         // Releer y bloquear la reserva, coordinando también
         // con una posible cancelación simultánea.
+             const filtroAcceso = equipo
+          ? Prisma.sql`"barberiaId" = ${equipo.barberiaId}`
+          : Prisma.sql`"clienteId" = ${clienteId}`;
+
         const filas = await tx.$queryRaw<Reserva[]>`
           SELECT *
           FROM "public"."Reserva"
           WHERE "id" = ${reservaId}
-            AND "clienteId" = ${clienteId}
+            AND ${filtroAcceso}
           FOR UPDATE
         `;
 
@@ -710,6 +937,7 @@ export class ReservasService {
           data: {
             reservaId: reserva.id,
             actorId: clienteId,
+             motivo: equipo?.motivo ?? null,
             inicioAnterior: reserva.inicio,
             finAnterior: reserva.fin,
             inicioNuevo: intervalo.inicio,

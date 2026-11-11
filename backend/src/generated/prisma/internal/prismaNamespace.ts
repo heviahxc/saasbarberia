@@ -407,7 +407,8 @@ export const ModelName = {
   Reserva: 'Reserva',
   BloqueoProfesional: 'BloqueoProfesional',
   ReagendamientoReserva: 'ReagendamientoReserva',
-  InvitacionEquipo: 'InvitacionEquipo'
+  InvitacionEquipo: 'InvitacionEquipo',
+  CancelacionReserva: 'CancelacionReserva'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -423,7 +424,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "barberia" | "profesional" | "servicio" | "profesionalServicio" | "usuario" | "miembroBarberia" | "horarioProfesional" | "reserva" | "bloqueoProfesional" | "reagendamientoReserva" | "invitacionEquipo"
+    modelProps: "barberia" | "profesional" | "servicio" | "profesionalServicio" | "usuario" | "miembroBarberia" | "horarioProfesional" | "reserva" | "bloqueoProfesional" | "reagendamientoReserva" | "invitacionEquipo" | "cancelacionReserva"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1241,6 +1242,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    CancelacionReserva: {
+      payload: Prisma.$CancelacionReservaPayload<ExtArgs>
+      fields: Prisma.CancelacionReservaFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CancelacionReservaFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CancelacionReservaPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CancelacionReservaFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CancelacionReservaPayload>
+        }
+        findFirst: {
+          args: Prisma.CancelacionReservaFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CancelacionReservaPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CancelacionReservaFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CancelacionReservaPayload>
+        }
+        findMany: {
+          args: Prisma.CancelacionReservaFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CancelacionReservaPayload>[]
+        }
+        create: {
+          args: Prisma.CancelacionReservaCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CancelacionReservaPayload>
+        }
+        createMany: {
+          args: Prisma.CancelacionReservaCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CancelacionReservaCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CancelacionReservaPayload>[]
+        }
+        delete: {
+          args: Prisma.CancelacionReservaDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CancelacionReservaPayload>
+        }
+        update: {
+          args: Prisma.CancelacionReservaUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CancelacionReservaPayload>
+        }
+        deleteMany: {
+          args: Prisma.CancelacionReservaDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CancelacionReservaUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CancelacionReservaUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CancelacionReservaPayload>[]
+        }
+        upsert: {
+          args: Prisma.CancelacionReservaUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CancelacionReservaPayload>
+        }
+        aggregate: {
+          args: Prisma.CancelacionReservaAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCancelacionReserva>
+        }
+        groupBy: {
+          args: Prisma.CancelacionReservaGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CancelacionReservaGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CancelacionReservaCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CancelacionReservaCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1402,7 +1477,8 @@ export const ReagendamientoReservaScalarFieldEnum = {
   finAnterior: 'finAnterior',
   inicioNuevo: 'inicioNuevo',
   finNuevo: 'finNuevo',
-  creadoEn: 'creadoEn'
+  creadoEn: 'creadoEn',
+  motivo: 'motivo'
 } as const
 
 export type ReagendamientoReservaScalarFieldEnum = (typeof ReagendamientoReservaScalarFieldEnum)[keyof typeof ReagendamientoReservaScalarFieldEnum]
@@ -1423,6 +1499,17 @@ export const InvitacionEquipoScalarFieldEnum = {
 } as const
 
 export type InvitacionEquipoScalarFieldEnum = (typeof InvitacionEquipoScalarFieldEnum)[keyof typeof InvitacionEquipoScalarFieldEnum]
+
+
+export const CancelacionReservaScalarFieldEnum = {
+  id: 'id',
+  reservaId: 'reservaId',
+  actorId: 'actorId',
+  motivo: 'motivo',
+  creadoEn: 'creadoEn'
+} as const
+
+export type CancelacionReservaScalarFieldEnum = (typeof CancelacionReservaScalarFieldEnum)[keyof typeof CancelacionReservaScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1721,6 +1808,7 @@ export type GlobalOmitConfig = {
   bloqueoProfesional?: Prisma.BloqueoProfesionalOmit
   reagendamientoReserva?: Prisma.ReagendamientoReservaOmit
   invitacionEquipo?: Prisma.InvitacionEquipoOmit
+  cancelacionReserva?: Prisma.CancelacionReservaOmit
 }
 
 /* Types for Logging */

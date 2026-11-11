@@ -253,6 +253,7 @@ export type UsuarioWhereInput = {
   reagendamientosRealizados?: Prisma.ReagendamientoReservaListRelationFilter
   invitacionesCreadas?: Prisma.InvitacionEquipoListRelationFilter
   invitacionesAceptadas?: Prisma.InvitacionEquipoListRelationFilter
+  cancelacionReservas?: Prisma.CancelacionReservaListRelationFilter
 }
 
 export type UsuarioOrderByWithRelationInput = {
@@ -270,6 +271,7 @@ export type UsuarioOrderByWithRelationInput = {
   reagendamientosRealizados?: Prisma.ReagendamientoReservaOrderByRelationAggregateInput
   invitacionesCreadas?: Prisma.InvitacionEquipoOrderByRelationAggregateInput
   invitacionesAceptadas?: Prisma.InvitacionEquipoOrderByRelationAggregateInput
+  cancelacionReservas?: Prisma.CancelacionReservaOrderByRelationAggregateInput
 }
 
 export type UsuarioWhereUniqueInput = Prisma.AtLeast<{
@@ -290,6 +292,7 @@ export type UsuarioWhereUniqueInput = Prisma.AtLeast<{
   reagendamientosRealizados?: Prisma.ReagendamientoReservaListRelationFilter
   invitacionesCreadas?: Prisma.InvitacionEquipoListRelationFilter
   invitacionesAceptadas?: Prisma.InvitacionEquipoListRelationFilter
+  cancelacionReservas?: Prisma.CancelacionReservaListRelationFilter
 }, "id" | "email">
 
 export type UsuarioOrderByWithAggregationInput = {
@@ -338,6 +341,7 @@ export type UsuarioCreateInput = {
   reagendamientosRealizados?: Prisma.ReagendamientoReservaCreateNestedManyWithoutActorInput
   invitacionesCreadas?: Prisma.InvitacionEquipoCreateNestedManyWithoutCreadorInput
   invitacionesAceptadas?: Prisma.InvitacionEquipoCreateNestedManyWithoutAceptadaPorInput
+  cancelacionReservas?: Prisma.CancelacionReservaCreateNestedManyWithoutActorInput
 }
 
 export type UsuarioUncheckedCreateInput = {
@@ -355,6 +359,7 @@ export type UsuarioUncheckedCreateInput = {
   reagendamientosRealizados?: Prisma.ReagendamientoReservaUncheckedCreateNestedManyWithoutActorInput
   invitacionesCreadas?: Prisma.InvitacionEquipoUncheckedCreateNestedManyWithoutCreadorInput
   invitacionesAceptadas?: Prisma.InvitacionEquipoUncheckedCreateNestedManyWithoutAceptadaPorInput
+  cancelacionReservas?: Prisma.CancelacionReservaUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type UsuarioUpdateInput = {
@@ -371,6 +376,7 @@ export type UsuarioUpdateInput = {
   reagendamientosRealizados?: Prisma.ReagendamientoReservaUpdateManyWithoutActorNestedInput
   invitacionesCreadas?: Prisma.InvitacionEquipoUpdateManyWithoutCreadorNestedInput
   invitacionesAceptadas?: Prisma.InvitacionEquipoUpdateManyWithoutAceptadaPorNestedInput
+  cancelacionReservas?: Prisma.CancelacionReservaUpdateManyWithoutActorNestedInput
 }
 
 export type UsuarioUncheckedUpdateInput = {
@@ -388,6 +394,7 @@ export type UsuarioUncheckedUpdateInput = {
   reagendamientosRealizados?: Prisma.ReagendamientoReservaUncheckedUpdateManyWithoutActorNestedInput
   invitacionesCreadas?: Prisma.InvitacionEquipoUncheckedUpdateManyWithoutCreadorNestedInput
   invitacionesAceptadas?: Prisma.InvitacionEquipoUncheckedUpdateManyWithoutAceptadaPorNestedInput
+  cancelacionReservas?: Prisma.CancelacionReservaUncheckedUpdateManyWithoutActorNestedInput
 }
 
 export type UsuarioCreateManyInput = {
@@ -555,6 +562,20 @@ export type UsuarioUpdateOneWithoutInvitacionesAceptadasNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UsuarioUpdateToOneWithWhereWithoutInvitacionesAceptadasInput, Prisma.UsuarioUpdateWithoutInvitacionesAceptadasInput>, Prisma.UsuarioUncheckedUpdateWithoutInvitacionesAceptadasInput>
 }
 
+export type UsuarioCreateNestedOneWithoutCancelacionReservasInput = {
+  create?: Prisma.XOR<Prisma.UsuarioCreateWithoutCancelacionReservasInput, Prisma.UsuarioUncheckedCreateWithoutCancelacionReservasInput>
+  connectOrCreate?: Prisma.UsuarioCreateOrConnectWithoutCancelacionReservasInput
+  connect?: Prisma.UsuarioWhereUniqueInput
+}
+
+export type UsuarioUpdateOneRequiredWithoutCancelacionReservasNestedInput = {
+  create?: Prisma.XOR<Prisma.UsuarioCreateWithoutCancelacionReservasInput, Prisma.UsuarioUncheckedCreateWithoutCancelacionReservasInput>
+  connectOrCreate?: Prisma.UsuarioCreateOrConnectWithoutCancelacionReservasInput
+  upsert?: Prisma.UsuarioUpsertWithoutCancelacionReservasInput
+  connect?: Prisma.UsuarioWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UsuarioUpdateToOneWithWhereWithoutCancelacionReservasInput, Prisma.UsuarioUpdateWithoutCancelacionReservasInput>, Prisma.UsuarioUncheckedUpdateWithoutCancelacionReservasInput>
+}
+
 export type UsuarioCreateWithoutMembresiasInput = {
   nombre: string
   apellidoPaterno?: string | null
@@ -568,6 +589,7 @@ export type UsuarioCreateWithoutMembresiasInput = {
   reagendamientosRealizados?: Prisma.ReagendamientoReservaCreateNestedManyWithoutActorInput
   invitacionesCreadas?: Prisma.InvitacionEquipoCreateNestedManyWithoutCreadorInput
   invitacionesAceptadas?: Prisma.InvitacionEquipoCreateNestedManyWithoutAceptadaPorInput
+  cancelacionReservas?: Prisma.CancelacionReservaCreateNestedManyWithoutActorInput
 }
 
 export type UsuarioUncheckedCreateWithoutMembresiasInput = {
@@ -584,6 +606,7 @@ export type UsuarioUncheckedCreateWithoutMembresiasInput = {
   reagendamientosRealizados?: Prisma.ReagendamientoReservaUncheckedCreateNestedManyWithoutActorInput
   invitacionesCreadas?: Prisma.InvitacionEquipoUncheckedCreateNestedManyWithoutCreadorInput
   invitacionesAceptadas?: Prisma.InvitacionEquipoUncheckedCreateNestedManyWithoutAceptadaPorInput
+  cancelacionReservas?: Prisma.CancelacionReservaUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type UsuarioCreateOrConnectWithoutMembresiasInput = {
@@ -615,6 +638,7 @@ export type UsuarioUpdateWithoutMembresiasInput = {
   reagendamientosRealizados?: Prisma.ReagendamientoReservaUpdateManyWithoutActorNestedInput
   invitacionesCreadas?: Prisma.InvitacionEquipoUpdateManyWithoutCreadorNestedInput
   invitacionesAceptadas?: Prisma.InvitacionEquipoUpdateManyWithoutAceptadaPorNestedInput
+  cancelacionReservas?: Prisma.CancelacionReservaUpdateManyWithoutActorNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutMembresiasInput = {
@@ -631,6 +655,7 @@ export type UsuarioUncheckedUpdateWithoutMembresiasInput = {
   reagendamientosRealizados?: Prisma.ReagendamientoReservaUncheckedUpdateManyWithoutActorNestedInput
   invitacionesCreadas?: Prisma.InvitacionEquipoUncheckedUpdateManyWithoutCreadorNestedInput
   invitacionesAceptadas?: Prisma.InvitacionEquipoUncheckedUpdateManyWithoutAceptadaPorNestedInput
+  cancelacionReservas?: Prisma.CancelacionReservaUncheckedUpdateManyWithoutActorNestedInput
 }
 
 export type UsuarioCreateWithoutReservasInput = {
@@ -646,6 +671,7 @@ export type UsuarioCreateWithoutReservasInput = {
   reagendamientosRealizados?: Prisma.ReagendamientoReservaCreateNestedManyWithoutActorInput
   invitacionesCreadas?: Prisma.InvitacionEquipoCreateNestedManyWithoutCreadorInput
   invitacionesAceptadas?: Prisma.InvitacionEquipoCreateNestedManyWithoutAceptadaPorInput
+  cancelacionReservas?: Prisma.CancelacionReservaCreateNestedManyWithoutActorInput
 }
 
 export type UsuarioUncheckedCreateWithoutReservasInput = {
@@ -662,6 +688,7 @@ export type UsuarioUncheckedCreateWithoutReservasInput = {
   reagendamientosRealizados?: Prisma.ReagendamientoReservaUncheckedCreateNestedManyWithoutActorInput
   invitacionesCreadas?: Prisma.InvitacionEquipoUncheckedCreateNestedManyWithoutCreadorInput
   invitacionesAceptadas?: Prisma.InvitacionEquipoUncheckedCreateNestedManyWithoutAceptadaPorInput
+  cancelacionReservas?: Prisma.CancelacionReservaUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type UsuarioCreateOrConnectWithoutReservasInput = {
@@ -693,6 +720,7 @@ export type UsuarioUpdateWithoutReservasInput = {
   reagendamientosRealizados?: Prisma.ReagendamientoReservaUpdateManyWithoutActorNestedInput
   invitacionesCreadas?: Prisma.InvitacionEquipoUpdateManyWithoutCreadorNestedInput
   invitacionesAceptadas?: Prisma.InvitacionEquipoUpdateManyWithoutAceptadaPorNestedInput
+  cancelacionReservas?: Prisma.CancelacionReservaUpdateManyWithoutActorNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutReservasInput = {
@@ -709,6 +737,7 @@ export type UsuarioUncheckedUpdateWithoutReservasInput = {
   reagendamientosRealizados?: Prisma.ReagendamientoReservaUncheckedUpdateManyWithoutActorNestedInput
   invitacionesCreadas?: Prisma.InvitacionEquipoUncheckedUpdateManyWithoutCreadorNestedInput
   invitacionesAceptadas?: Prisma.InvitacionEquipoUncheckedUpdateManyWithoutAceptadaPorNestedInput
+  cancelacionReservas?: Prisma.CancelacionReservaUncheckedUpdateManyWithoutActorNestedInput
 }
 
 export type UsuarioCreateWithoutReagendamientosRealizadosInput = {
@@ -724,6 +753,7 @@ export type UsuarioCreateWithoutReagendamientosRealizadosInput = {
   membresias?: Prisma.MiembroBarberiaCreateNestedManyWithoutUsuarioInput
   invitacionesCreadas?: Prisma.InvitacionEquipoCreateNestedManyWithoutCreadorInput
   invitacionesAceptadas?: Prisma.InvitacionEquipoCreateNestedManyWithoutAceptadaPorInput
+  cancelacionReservas?: Prisma.CancelacionReservaCreateNestedManyWithoutActorInput
 }
 
 export type UsuarioUncheckedCreateWithoutReagendamientosRealizadosInput = {
@@ -740,6 +770,7 @@ export type UsuarioUncheckedCreateWithoutReagendamientosRealizadosInput = {
   membresias?: Prisma.MiembroBarberiaUncheckedCreateNestedManyWithoutUsuarioInput
   invitacionesCreadas?: Prisma.InvitacionEquipoUncheckedCreateNestedManyWithoutCreadorInput
   invitacionesAceptadas?: Prisma.InvitacionEquipoUncheckedCreateNestedManyWithoutAceptadaPorInput
+  cancelacionReservas?: Prisma.CancelacionReservaUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type UsuarioCreateOrConnectWithoutReagendamientosRealizadosInput = {
@@ -771,6 +802,7 @@ export type UsuarioUpdateWithoutReagendamientosRealizadosInput = {
   membresias?: Prisma.MiembroBarberiaUpdateManyWithoutUsuarioNestedInput
   invitacionesCreadas?: Prisma.InvitacionEquipoUpdateManyWithoutCreadorNestedInput
   invitacionesAceptadas?: Prisma.InvitacionEquipoUpdateManyWithoutAceptadaPorNestedInput
+  cancelacionReservas?: Prisma.CancelacionReservaUpdateManyWithoutActorNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutReagendamientosRealizadosInput = {
@@ -787,6 +819,7 @@ export type UsuarioUncheckedUpdateWithoutReagendamientosRealizadosInput = {
   membresias?: Prisma.MiembroBarberiaUncheckedUpdateManyWithoutUsuarioNestedInput
   invitacionesCreadas?: Prisma.InvitacionEquipoUncheckedUpdateManyWithoutCreadorNestedInput
   invitacionesAceptadas?: Prisma.InvitacionEquipoUncheckedUpdateManyWithoutAceptadaPorNestedInput
+  cancelacionReservas?: Prisma.CancelacionReservaUncheckedUpdateManyWithoutActorNestedInput
 }
 
 export type UsuarioCreateWithoutInvitacionesCreadasInput = {
@@ -802,6 +835,7 @@ export type UsuarioCreateWithoutInvitacionesCreadasInput = {
   membresias?: Prisma.MiembroBarberiaCreateNestedManyWithoutUsuarioInput
   reagendamientosRealizados?: Prisma.ReagendamientoReservaCreateNestedManyWithoutActorInput
   invitacionesAceptadas?: Prisma.InvitacionEquipoCreateNestedManyWithoutAceptadaPorInput
+  cancelacionReservas?: Prisma.CancelacionReservaCreateNestedManyWithoutActorInput
 }
 
 export type UsuarioUncheckedCreateWithoutInvitacionesCreadasInput = {
@@ -818,6 +852,7 @@ export type UsuarioUncheckedCreateWithoutInvitacionesCreadasInput = {
   membresias?: Prisma.MiembroBarberiaUncheckedCreateNestedManyWithoutUsuarioInput
   reagendamientosRealizados?: Prisma.ReagendamientoReservaUncheckedCreateNestedManyWithoutActorInput
   invitacionesAceptadas?: Prisma.InvitacionEquipoUncheckedCreateNestedManyWithoutAceptadaPorInput
+  cancelacionReservas?: Prisma.CancelacionReservaUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type UsuarioCreateOrConnectWithoutInvitacionesCreadasInput = {
@@ -838,6 +873,7 @@ export type UsuarioCreateWithoutInvitacionesAceptadasInput = {
   membresias?: Prisma.MiembroBarberiaCreateNestedManyWithoutUsuarioInput
   reagendamientosRealizados?: Prisma.ReagendamientoReservaCreateNestedManyWithoutActorInput
   invitacionesCreadas?: Prisma.InvitacionEquipoCreateNestedManyWithoutCreadorInput
+  cancelacionReservas?: Prisma.CancelacionReservaCreateNestedManyWithoutActorInput
 }
 
 export type UsuarioUncheckedCreateWithoutInvitacionesAceptadasInput = {
@@ -854,6 +890,7 @@ export type UsuarioUncheckedCreateWithoutInvitacionesAceptadasInput = {
   membresias?: Prisma.MiembroBarberiaUncheckedCreateNestedManyWithoutUsuarioInput
   reagendamientosRealizados?: Prisma.ReagendamientoReservaUncheckedCreateNestedManyWithoutActorInput
   invitacionesCreadas?: Prisma.InvitacionEquipoUncheckedCreateNestedManyWithoutCreadorInput
+  cancelacionReservas?: Prisma.CancelacionReservaUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type UsuarioCreateOrConnectWithoutInvitacionesAceptadasInput = {
@@ -885,6 +922,7 @@ export type UsuarioUpdateWithoutInvitacionesCreadasInput = {
   membresias?: Prisma.MiembroBarberiaUpdateManyWithoutUsuarioNestedInput
   reagendamientosRealizados?: Prisma.ReagendamientoReservaUpdateManyWithoutActorNestedInput
   invitacionesAceptadas?: Prisma.InvitacionEquipoUpdateManyWithoutAceptadaPorNestedInput
+  cancelacionReservas?: Prisma.CancelacionReservaUpdateManyWithoutActorNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutInvitacionesCreadasInput = {
@@ -901,6 +939,7 @@ export type UsuarioUncheckedUpdateWithoutInvitacionesCreadasInput = {
   membresias?: Prisma.MiembroBarberiaUncheckedUpdateManyWithoutUsuarioNestedInput
   reagendamientosRealizados?: Prisma.ReagendamientoReservaUncheckedUpdateManyWithoutActorNestedInput
   invitacionesAceptadas?: Prisma.InvitacionEquipoUncheckedUpdateManyWithoutAceptadaPorNestedInput
+  cancelacionReservas?: Prisma.CancelacionReservaUncheckedUpdateManyWithoutActorNestedInput
 }
 
 export type UsuarioUpsertWithoutInvitacionesAceptadasInput = {
@@ -927,6 +966,7 @@ export type UsuarioUpdateWithoutInvitacionesAceptadasInput = {
   membresias?: Prisma.MiembroBarberiaUpdateManyWithoutUsuarioNestedInput
   reagendamientosRealizados?: Prisma.ReagendamientoReservaUpdateManyWithoutActorNestedInput
   invitacionesCreadas?: Prisma.InvitacionEquipoUpdateManyWithoutCreadorNestedInput
+  cancelacionReservas?: Prisma.CancelacionReservaUpdateManyWithoutActorNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutInvitacionesAceptadasInput = {
@@ -943,6 +983,89 @@ export type UsuarioUncheckedUpdateWithoutInvitacionesAceptadasInput = {
   membresias?: Prisma.MiembroBarberiaUncheckedUpdateManyWithoutUsuarioNestedInput
   reagendamientosRealizados?: Prisma.ReagendamientoReservaUncheckedUpdateManyWithoutActorNestedInput
   invitacionesCreadas?: Prisma.InvitacionEquipoUncheckedUpdateManyWithoutCreadorNestedInput
+  cancelacionReservas?: Prisma.CancelacionReservaUncheckedUpdateManyWithoutActorNestedInput
+}
+
+export type UsuarioCreateWithoutCancelacionReservasInput = {
+  nombre: string
+  apellidoPaterno?: string | null
+  apellidoMaterno?: string | null
+  telefono?: string | null
+  email: string
+  passwordHash: string
+  activo?: boolean
+  creadoEn?: Date | string
+  reservas?: Prisma.ReservaCreateNestedManyWithoutClienteInput
+  membresias?: Prisma.MiembroBarberiaCreateNestedManyWithoutUsuarioInput
+  reagendamientosRealizados?: Prisma.ReagendamientoReservaCreateNestedManyWithoutActorInput
+  invitacionesCreadas?: Prisma.InvitacionEquipoCreateNestedManyWithoutCreadorInput
+  invitacionesAceptadas?: Prisma.InvitacionEquipoCreateNestedManyWithoutAceptadaPorInput
+}
+
+export type UsuarioUncheckedCreateWithoutCancelacionReservasInput = {
+  id?: number
+  nombre: string
+  apellidoPaterno?: string | null
+  apellidoMaterno?: string | null
+  telefono?: string | null
+  email: string
+  passwordHash: string
+  activo?: boolean
+  creadoEn?: Date | string
+  reservas?: Prisma.ReservaUncheckedCreateNestedManyWithoutClienteInput
+  membresias?: Prisma.MiembroBarberiaUncheckedCreateNestedManyWithoutUsuarioInput
+  reagendamientosRealizados?: Prisma.ReagendamientoReservaUncheckedCreateNestedManyWithoutActorInput
+  invitacionesCreadas?: Prisma.InvitacionEquipoUncheckedCreateNestedManyWithoutCreadorInput
+  invitacionesAceptadas?: Prisma.InvitacionEquipoUncheckedCreateNestedManyWithoutAceptadaPorInput
+}
+
+export type UsuarioCreateOrConnectWithoutCancelacionReservasInput = {
+  where: Prisma.UsuarioWhereUniqueInput
+  create: Prisma.XOR<Prisma.UsuarioCreateWithoutCancelacionReservasInput, Prisma.UsuarioUncheckedCreateWithoutCancelacionReservasInput>
+}
+
+export type UsuarioUpsertWithoutCancelacionReservasInput = {
+  update: Prisma.XOR<Prisma.UsuarioUpdateWithoutCancelacionReservasInput, Prisma.UsuarioUncheckedUpdateWithoutCancelacionReservasInput>
+  create: Prisma.XOR<Prisma.UsuarioCreateWithoutCancelacionReservasInput, Prisma.UsuarioUncheckedCreateWithoutCancelacionReservasInput>
+  where?: Prisma.UsuarioWhereInput
+}
+
+export type UsuarioUpdateToOneWithWhereWithoutCancelacionReservasInput = {
+  where?: Prisma.UsuarioWhereInput
+  data: Prisma.XOR<Prisma.UsuarioUpdateWithoutCancelacionReservasInput, Prisma.UsuarioUncheckedUpdateWithoutCancelacionReservasInput>
+}
+
+export type UsuarioUpdateWithoutCancelacionReservasInput = {
+  nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  apellidoPaterno?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  apellidoMaterno?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telefono?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  activo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  creadoEn?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  reservas?: Prisma.ReservaUpdateManyWithoutClienteNestedInput
+  membresias?: Prisma.MiembroBarberiaUpdateManyWithoutUsuarioNestedInput
+  reagendamientosRealizados?: Prisma.ReagendamientoReservaUpdateManyWithoutActorNestedInput
+  invitacionesCreadas?: Prisma.InvitacionEquipoUpdateManyWithoutCreadorNestedInput
+  invitacionesAceptadas?: Prisma.InvitacionEquipoUpdateManyWithoutAceptadaPorNestedInput
+}
+
+export type UsuarioUncheckedUpdateWithoutCancelacionReservasInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  apellidoPaterno?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  apellidoMaterno?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telefono?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  activo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  creadoEn?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  reservas?: Prisma.ReservaUncheckedUpdateManyWithoutClienteNestedInput
+  membresias?: Prisma.MiembroBarberiaUncheckedUpdateManyWithoutUsuarioNestedInput
+  reagendamientosRealizados?: Prisma.ReagendamientoReservaUncheckedUpdateManyWithoutActorNestedInput
+  invitacionesCreadas?: Prisma.InvitacionEquipoUncheckedUpdateManyWithoutCreadorNestedInput
+  invitacionesAceptadas?: Prisma.InvitacionEquipoUncheckedUpdateManyWithoutAceptadaPorNestedInput
 }
 
 
@@ -956,6 +1079,7 @@ export type UsuarioCountOutputType = {
   reagendamientosRealizados: number
   invitacionesCreadas: number
   invitacionesAceptadas: number
+  cancelacionReservas: number
 }
 
 export type UsuarioCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -964,6 +1088,7 @@ export type UsuarioCountOutputTypeSelect<ExtArgs extends runtime.Types.Extension
   reagendamientosRealizados?: boolean | UsuarioCountOutputTypeCountReagendamientosRealizadosArgs
   invitacionesCreadas?: boolean | UsuarioCountOutputTypeCountInvitacionesCreadasArgs
   invitacionesAceptadas?: boolean | UsuarioCountOutputTypeCountInvitacionesAceptadasArgs
+  cancelacionReservas?: boolean | UsuarioCountOutputTypeCountCancelacionReservasArgs
 }
 
 /**
@@ -1011,6 +1136,13 @@ export type UsuarioCountOutputTypeCountInvitacionesAceptadasArgs<ExtArgs extends
   where?: Prisma.InvitacionEquipoWhereInput
 }
 
+/**
+ * UsuarioCountOutputType without action
+ */
+export type UsuarioCountOutputTypeCountCancelacionReservasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CancelacionReservaWhereInput
+}
+
 
 export type UsuarioSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1027,6 +1159,7 @@ export type UsuarioSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   reagendamientosRealizados?: boolean | Prisma.Usuario$reagendamientosRealizadosArgs<ExtArgs>
   invitacionesCreadas?: boolean | Prisma.Usuario$invitacionesCreadasArgs<ExtArgs>
   invitacionesAceptadas?: boolean | Prisma.Usuario$invitacionesAceptadasArgs<ExtArgs>
+  cancelacionReservas?: boolean | Prisma.Usuario$cancelacionReservasArgs<ExtArgs>
   _count?: boolean | Prisma.UsuarioCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["usuario"]>
 
@@ -1073,6 +1206,7 @@ export type UsuarioInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   reagendamientosRealizados?: boolean | Prisma.Usuario$reagendamientosRealizadosArgs<ExtArgs>
   invitacionesCreadas?: boolean | Prisma.Usuario$invitacionesCreadasArgs<ExtArgs>
   invitacionesAceptadas?: boolean | Prisma.Usuario$invitacionesAceptadasArgs<ExtArgs>
+  cancelacionReservas?: boolean | Prisma.Usuario$cancelacionReservasArgs<ExtArgs>
   _count?: boolean | Prisma.UsuarioCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UsuarioIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1086,6 +1220,7 @@ export type $UsuarioPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     reagendamientosRealizados: Prisma.$ReagendamientoReservaPayload<ExtArgs>[]
     invitacionesCreadas: Prisma.$InvitacionEquipoPayload<ExtArgs>[]
     invitacionesAceptadas: Prisma.$InvitacionEquipoPayload<ExtArgs>[]
+    cancelacionReservas: Prisma.$CancelacionReservaPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1496,6 +1631,7 @@ export interface Prisma__UsuarioClient<T, Null = never, ExtArgs extends runtime.
   reagendamientosRealizados<T extends Prisma.Usuario$reagendamientosRealizadosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$reagendamientosRealizadosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReagendamientoReservaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   invitacionesCreadas<T extends Prisma.Usuario$invitacionesCreadasArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$invitacionesCreadasArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InvitacionEquipoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   invitacionesAceptadas<T extends Prisma.Usuario$invitacionesAceptadasArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$invitacionesAceptadasArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InvitacionEquipoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  cancelacionReservas<T extends Prisma.Usuario$cancelacionReservasArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$cancelacionReservasArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CancelacionReservaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2044,6 +2180,30 @@ export type Usuario$invitacionesAceptadasArgs<ExtArgs extends runtime.Types.Exte
   take?: number
   skip?: number
   distinct?: Prisma.InvitacionEquipoScalarFieldEnum | Prisma.InvitacionEquipoScalarFieldEnum[]
+}
+
+/**
+ * Usuario.cancelacionReservas
+ */
+export type Usuario$cancelacionReservasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CancelacionReserva
+   */
+  select?: Prisma.CancelacionReservaSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CancelacionReserva
+   */
+  omit?: Prisma.CancelacionReservaOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CancelacionReservaInclude<ExtArgs> | null
+  where?: Prisma.CancelacionReservaWhereInput
+  orderBy?: Prisma.CancelacionReservaOrderByWithRelationInput | Prisma.CancelacionReservaOrderByWithRelationInput[]
+  cursor?: Prisma.CancelacionReservaWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CancelacionReservaScalarFieldEnum | Prisma.CancelacionReservaScalarFieldEnum[]
 }
 
 /**

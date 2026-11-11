@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon';
+import { CreateBloqueoLocalDto } from './dto/create-bloqueo-local.dto.js';
 import {
   ConflictException,
   Injectable,
@@ -54,7 +56,7 @@ export class ProfesionalesService {
   }
 
   //Asigna un servicio a un profesional en la barbería especificada
-    async asignarServicio(
+  async asignarServicio(
     barberiaId: number,
     profesionalId: number,
     servicioId: number,
@@ -69,9 +71,7 @@ export class ProfesionalesService {
     });
 
     if (!profesional) {
-      throw new NotFoundException(
-        'El profesional no existe en esta barbería',
-      );
+      throw new NotFoundException('El profesional no existe en esta barbería');
     }
 
     const servicio = await this.prisma.servicio.findUnique({
@@ -84,9 +84,7 @@ export class ProfesionalesService {
     });
 
     if (!servicio) {
-      throw new NotFoundException(
-        'El servicio no existe en esta barbería',
-      );
+      throw new NotFoundException('El servicio no existe en esta barbería');
     }
     if (!servicio.activo) {
       throw new ConflictException(
@@ -94,7 +92,6 @@ export class ProfesionalesService {
       );
     }
     try {
-      
       return await this.prisma.profesionalServicio.create({
         data: {
           barberiaId,
@@ -122,10 +119,7 @@ export class ProfesionalesService {
   }
 
   //Obtiene todos los servicios asignados a un profesional en la barbería especificada
-    async findServicios(
-    barberiaId: number,
-    profesionalId: number,
-  ) {
+  async findServicios(barberiaId: number, profesionalId: number) {
     const profesional = await this.prisma.profesional.findUnique({
       where: {
         id_barberiaId: {
@@ -137,41 +131,37 @@ export class ProfesionalesService {
     });
 
     if (!profesional) {
-      throw new NotFoundException(
-        'El profesional no existe en esta barbería',
-      );
+      throw new NotFoundException('El profesional no existe en esta barbería');
     }
 
-    const asignaciones =
-      await this.prisma.profesionalServicio.findMany({
-        where: {
-          barberiaId,
-          profesionalId,
-        },
-        select: {
-          servicio: true,
-        },
-        orderBy: {
-          servicioId: 'asc',
-        },
-      });
+    const asignaciones = await this.prisma.profesionalServicio.findMany({
+      where: {
+        barberiaId,
+        profesionalId,
+      },
+      select: {
+        servicio: true,
+      },
+      orderBy: {
+        servicioId: 'asc',
+      },
+    });
 
     return asignaciones.map((asignacion) => asignacion.servicio);
   }
 
-    async quitarServicio(
+  async quitarServicio(
     barberiaId: number,
     profesionalId: number,
     servicioId: number,
   ) {
-    const resultado =
-      await this.prisma.profesionalServicio.deleteMany({
-        where: {
-          barberiaId,
-          profesionalId,
-          servicioId,
-        },
-      });
+    const resultado = await this.prisma.profesionalServicio.deleteMany({
+      where: {
+        barberiaId,
+        profesionalId,
+        servicioId,
+      },
+    });
 
     if (resultado.count === 0) {
       throw new NotFoundException(
@@ -180,15 +170,13 @@ export class ProfesionalesService {
     }
   }
 
-    async crearHorario(
+  async crearHorario(
     barberiaId: number,
     profesionalId: number,
     dto: CreateHorarioDto,
   ) {
     if (dto.inicioMinuto >= dto.finMinuto) {
-      throw new BadRequestException(
-        'El inicio debe ser anterior al fin',
-      );
+      throw new BadRequestException('El inicio debe ser anterior al fin');
     }
 
     const profesional = await this.prisma.profesional.findUnique({
@@ -204,13 +192,10 @@ export class ProfesionalesService {
     });
 
     if (!profesional) {
-      throw new NotFoundException(
-        'El profesional no existe en esta barbería',
-      );
+      throw new NotFoundException('El profesional no existe en esta barbería');
     }
 
-    const horarios =
-      await this.prisma.$queryRaw<HorarioProfesional[]>`
+    const horarios = await this.prisma.$queryRaw<HorarioProfesional[]>`
         INSERT INTO "public"."HorarioProfesional" (
           "barberiaId",
           "profesionalId",
@@ -246,10 +231,7 @@ export class ProfesionalesService {
     return horario;
   }
 
-    async findHorarios(
-    barberiaId: number,
-    profesionalId: number,
-  ) {
+  async findHorarios(barberiaId: number, profesionalId: number) {
     const profesional = await this.prisma.profesional.findUnique({
       where: {
         id_barberiaId: {
@@ -263,9 +245,7 @@ export class ProfesionalesService {
     });
 
     if (!profesional) {
-      throw new NotFoundException(
-        'El profesional no existe en esta barbería',
-      );
+      throw new NotFoundException('El profesional no existe en esta barbería');
     }
 
     return this.prisma.horarioProfesional.findMany({
@@ -273,14 +253,11 @@ export class ProfesionalesService {
         barberiaId,
         profesionalId,
       },
-      orderBy: [
-        { diaSemana: 'asc' },
-        { inicioMinuto: 'asc' },
-      ],
+      orderBy: [{ diaSemana: 'asc' }, { inicioMinuto: 'asc' }],
     });
   }
 
-    async eliminarHorario(
+  async eliminarHorario(
     barberiaId: number,
     profesionalId: number,
     horarioId: number,
@@ -350,10 +327,66 @@ export class ProfesionalesService {
     );
   }
 
-    async crearBloqueo(
+  async crearBloqueoLocal(
+    barberiaId: number,
+    profesionalId: number,
+    dto: CreateBloqueoLocalDto,
+    permitirPendientes = false,
+  ) {
+    return this.crearBloqueo(
+      barberiaId,
+      profesionalId,
+      await this.convertirBloqueoLocal(barberiaId, dto),
+      permitirPendientes,
+    );
+  }
+
+  async consultarImpactoBloqueoLocal(
+    barberiaId: number,
+    profesionalId: number,
+    dto: CreateBloqueoLocalDto,
+  ) {
+    return this.consultarImpactoBloqueo(
+      barberiaId,
+      profesionalId,
+      await this.convertirBloqueoLocal(barberiaId, dto),
+    );
+  }
+
+  private async convertirBloqueoLocal(
+    barberiaId: number,
+    dto: CreateBloqueoLocalDto,
+  ) {
+    const barberia = await this.prisma.barberia.findUnique({
+      where: { id: barberiaId },
+      select: { zonaHoraria: true },
+    });
+    if (!barberia) throw new NotFoundException('La barbería no existe');
+    const convertir = (valor: string) => {
+      const fecha = DateTime.fromISO(valor, { zone: barberia.zonaHoraria });
+      if (
+        !fecha.isValid ||
+        fecha.toFormat("yyyy-MM-dd'T'HH:mm") !== valor ||
+        fecha.getPossibleOffsets().length !== 1
+      ) {
+        throw new BadRequestException(
+          'La hora no existe o es ambigua en la zona horaria de la barbería. Elige otra hora.',
+        );
+      }
+      return fecha.toUTC().toISO()!;
+    };
+    return {
+      inicio: convertir(dto.inicioLocal),
+      fin: convertir(dto.finLocal),
+      motivo: dto.motivo,
+    };
+  }
+
+  async crearBloqueo(
     barberiaId: number,
     profesionalId: number,
     dto: CreateBloqueoDto,
+    permitirPendientes = false,
   ) {
     const inicio = new Date(dto.inicio);
     const fin = new Date(dto.fin);
@@ -363,9 +396,7 @@ export class ProfesionalesService {
       !Number.isFinite(fin.getTime()) ||
       fin.getTime() <= inicio.getTime()
     ) {
-      throw new BadRequestException(
-        'El intervalo del bloqueo no es válido',
-      );
+      throw new BadRequestException('El intervalo del bloqueo no es válido');
     }
 
     return this.prisma.$transaction(
@@ -409,7 +440,7 @@ export class ProfesionalesService {
           },
         });
 
-        if (reserva) {
+        if (reserva && !permitirPendientes) {
           throw new ConflictException(
             'El bloqueo se cruza con una reserva confirmada',
           );
@@ -431,10 +462,7 @@ export class ProfesionalesService {
     );
   }
 
-    async findBloqueos(
-    barberiaId: number,
-    profesionalId: number,
-  ) {
+  async findBloqueos(barberiaId: number, profesionalId: number) {
     const profesional = await this.prisma.profesional.findUnique({
       where: {
         id_barberiaId: {
@@ -448,21 +476,52 @@ export class ProfesionalesService {
     });
 
     if (!profesional) {
-      throw new NotFoundException(
-        'El profesional no existe en esta barbería',
-      );
+      throw new NotFoundException('El profesional no existe en esta barbería');
     }
 
-    return this.prisma.bloqueoProfesional.findMany({
-      where: {
-        barberiaId,
-        profesionalId,
+    // El estado se calcula desde las citas actuales: no queda desactualizado
+    // cuando una reserva se cancela o se mueve fuera del intervalo.
+    return this.prisma.$transaction(
+      async (tx) => {
+        const bloqueos = await tx.bloqueoProfesional.findMany({
+          where: { barberiaId, profesionalId },
+          orderBy: [{ inicio: 'asc' }, { id: 'asc' }],
+        });
+        if (!bloqueos.length) return [];
+        const reservas = await tx.reserva.findMany({
+          where: {
+            barberiaId,
+            profesionalId,
+            estado: 'CONFIRMADA',
+            inicio: {
+              lt: new Date(Math.max(...bloqueos.map((b) => b.fin.getTime()))),
+            },
+            fin: { gt: bloqueos[0].inicio },
+          },
+          select: {
+            id: true,
+            inicio: true,
+            fin: true,
+            nombreServicio: true,
+            cliente: { select: { id: true, nombre: true } },
+          },
+          orderBy: [{ inicio: 'asc' }, { id: 'asc' }],
+        });
+        return bloqueos.map((b) => {
+          const reservasPendientes = reservas.filter(
+            (r) => r.inicio < b.fin && r.fin > b.inicio,
+          );
+          return {
+            ...b,
+            estado: reservasPendientes.length
+              ? 'PENDIENTE_RESOLUCION'
+              : 'SIN_PENDIENTES',
+            reservasPendientes,
+          };
+        });
       },
-      orderBy: [
-        { inicio: 'asc' },
-        { id: 'asc' },
-      ],
-    });
+      { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead },
+    );
   }
 
   async eliminarBloqueo(
@@ -506,7 +565,7 @@ export class ProfesionalesService {
     );
   }
 
-    async consultarImpactoBloqueo(
+  async consultarImpactoBloqueo(
     barberiaId: number,
     profesionalId: number,
     dto: CreateBloqueoDto,
@@ -519,15 +578,11 @@ export class ProfesionalesService {
       !Number.isFinite(fin.getTime()) ||
       fin.getTime() <= inicio.getTime()
     ) {
-      throw new BadRequestException(
-        'El intervalo del bloqueo no es válido',
-      );
+      throw new BadRequestException('El intervalo del bloqueo no es válido');
     }
 
     if (fin.getTime() <= Date.now()) {
-      throw new BadRequestException(
-        'El bloqueo debe terminar en el futuro',
-      );
+      throw new BadRequestException('El bloqueo debe terminar en el futuro');
     }
 
     const profesional = await this.prisma.profesional.findUnique({
@@ -549,9 +604,7 @@ export class ProfesionalesService {
     });
 
     if (!profesional) {
-      throw new NotFoundException(
-        'El profesional no existe en esta barbería',
-      );
+      throw new NotFoundException('El profesional no existe en esta barbería');
     }
 
     const reservas = await this.prisma.reserva.findMany({
@@ -579,10 +632,7 @@ export class ProfesionalesService {
           },
         },
       },
-      orderBy: [
-        { inicio: 'asc' },
-        { id: 'asc' },
-      ],
+      orderBy: [{ inicio: 'asc' }, { id: 'asc' }],
     });
 
     return {

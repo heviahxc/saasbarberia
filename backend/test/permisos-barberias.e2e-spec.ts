@@ -345,7 +345,9 @@ describe('Permisos entre barberías', () => {
     ]);
 
     expect(
-      respuestas.map((respuesta) => respuesta.status).sort(),
+     respuestas
+  .map((respuesta) => respuesta.status)
+  .sort((a, b) => a - b),
     ).toEqual([201, 409]);
 
     const confirmada = respuestas.find(

@@ -1,0 +1,122 @@
+.agenda-controles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: end;
+  margin: 24px 0 16px;
+}
+.agenda-controles label {
+  display: grid;
+  gap: 8px;
+  font-weight: 600;
+}
+.agenda-controles input,
+.agenda-controles select {
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #aab7ce;
+  border-radius: 10px;
+  background: white;
+  color: inherit;
+  font: inherit;
+}
+.agenda-tabla {
+  overflow-x: auto;
+}
+.agenda-tabla table {
+  min-width: 620px;
+}
+.agenda-tabla:focus-visible {
+  outline: 2px solid #3346b8;
+  outline-offset: 3px;
+}
+@media (max-width: 600px) {
+  .agenda-controles label {
+    flex: 1 1 140px;
+  }
+  .agenda-controles input,
+  .agenda-controles select {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+.bloqueos-agenda {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #dce2eb;
+}
+.bloqueos-agenda label {
+  display: grid;
+  gap: 8px;
+}
+.bloqueos-agenda input,
+.bloqueos-agenda select {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 12px;
+  font: inherit;
+  border: 1px solid #aab7ce;
+  border-radius: 10px;
+  background: white;
+  color: inherit;
+}
+.bloqueos-campos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 16px;
+  align-items: end;
+  margin: 20px 0;
+  padding: 16px;
+  border: 1px solid #dce2eb;
+  border-radius: 12px;
+}
+
+.bloqueo-impacto {
+  margin: 20px 0;
+  padding: 20px;
+  border: 1px solid #e1bb62;
+  border-radius: 12px;
+  background: #fffaf0;
+}
+.bloqueo-pendientes {
+  padding-left: 20px;
+  min-width: 240px;
+}
+.bloqueo-pendientes li {
+  margin: 12px 0;
+}
+.bloqueo-pendientes small {
+  display: block;
+}
+.bloqueos-agenda summary {
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.cancelar-cita-equipo {
+  display: grid;
+  gap: 12px;
+  min-width: 240px;
+  max-width: 360px;
+}
+
+.cancelar-cita-equipo p {
+  margin: 0;
+}
+
+.cancelar-cita-equipo textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid #aab7ce;
+  border-radius: 10px;
+  background: white;
+  color: inherit;
+  font: inherit;
+  resize: vertical;
+}
+
+.cancelar-cita-equipo .grupo-acciones {
+  flex-wrap: wrap;
+}

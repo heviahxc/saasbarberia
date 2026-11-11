@@ -13,16 +13,16 @@ datasource db {
 }
 
 model Barberia {
-  id            Int               @id @default(autoincrement())
-  nombre        String
-  ciudad        String
-  profesionales Profesional[]
-  servicios     Servicio[]
-  miembros      MiembroBarberia[]
-  zonaHoraria   String            @default("America/Santiago")
-  reservas      Reserva[]
-  direccion String?
-  intervaloReservasMinutos Int @default(15)
+  id                       Int               @id @default(autoincrement())
+  nombre                   String
+  ciudad                   String
+  profesionales            Profesional[]
+  servicios                Servicio[]
+  miembros                 MiembroBarberia[]
+  zonaHoraria              String            @default("America/Santiago")
+  reservas                 Reserva[]
+  direccion                String?
+  intervaloReservasMinutos Int               @default(15)
 }
 
 model Profesional {
@@ -33,11 +33,11 @@ model Profesional {
   barberiaId Int
   barberia   Barberia @relation(fields: [barberiaId], references: [id], onDelete: Restrict)
 
-  servicios ProfesionalServicio[]
-  miembros  MiembroBarberia[]
-  horarios  HorarioProfesional[]
-  reservas  Reserva[]
-  bloqueos  BloqueoProfesional[]
+  servicios    ProfesionalServicio[]
+  miembros     MiembroBarberia[]
+  horarios     HorarioProfesional[]
+  reservas     Reserva[]
+  bloqueos     BloqueoProfesional[]
   invitaciones InvitacionEquipo[]
 
   @@unique([id, barberiaId])
@@ -81,9 +81,9 @@ enum RolBarberia {
 model Usuario {
   id                        Int                     @id @default(autoincrement())
   nombre                    String
-  apellidoPaterno String?
-apellidoMaterno String?
-telefono        String?
+  apellidoPaterno           String?
+  apellidoMaterno           String?
+  telefono                  String?
   email                     String                  @unique
   passwordHash              String
   activo                    Boolean                 @default(true)
@@ -91,8 +91,10 @@ telefono        String?
   reservas                  Reserva[]
   membresias                MiembroBarberia[]
   reagendamientosRealizados ReagendamientoReserva[]
-  invitacionesCreadas InvitacionEquipo[] @relation("CreadorInvitacion")
-  invitacionesAceptadas InvitacionEquipo[] @relation("AceptadorInvitacion")
+  invitacionesCreadas       InvitacionEquipo[]      @relation("CreadorInvitacion")
+  invitacionesAceptadas     InvitacionEquipo[]      @relation("AceptadorInvitacion")
+
+  cancelacionReservas CancelacionReserva[]
 }
 
 model MiembroBarberia {
@@ -136,16 +138,16 @@ model Reserva {
   profesionalId Int
   servicioId    Int
 
-  inicio          DateTime @db.Timestamptz(3)
-  fin             DateTime @db.Timestamptz(3)
+  inicio          DateTime            @db.Timestamptz(3)
+  fin             DateTime            @db.Timestamptz(3)
   duracionMinutos Int
-  precioAcordado  Decimal  @db.Decimal(10, 2)
+  precioAcordado  Decimal             @db.Decimal(10, 2)
   nombreServicio  String
   zonaHoraria     String
-
-  estado      EstadoReserva @default(CONFIRMADA)
-  creadoEn    DateTime      @default(now()) @db.Timestamptz(3)
-  canceladoEn DateTime?     @db.Timestamptz(3)
+  cancelacion     CancelacionReserva?
+  estado          EstadoReserva       @default(CONFIRMADA)
+  creadoEn        DateTime            @default(now()) @db.Timestamptz(3)
+  canceladoEn     DateTime?           @db.Timestamptz(3)
 
   cliente         Usuario                 @relation(fields: [clienteId], references: [id], onDelete: Restrict, onUpdate: Restrict)
   barberia        Barberia                @relation(fields: [barberiaId], references: [id], onDelete: Restrict, onUpdate: Restrict)
@@ -184,31 +186,45 @@ model ReagendamientoReserva {
   inicioNuevo    DateTime @db.Timestamptz(3)
   finNuevo       DateTime @db.Timestamptz(3)
   creadoEn       DateTime @default(now()) @db.Timestamptz(3)
-
-  reserva Reserva @relation(fields: [reservaId], references: [id], onDelete: Restrict, onUpdate: Restrict)
-  actor   Usuario @relation(fields: [actorId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  motivo         String?  @db.VarChar(300)
+  reserva        Reserva  @relation(fields: [reservaId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  actor          Usuario  @relation(fields: [actorId], references: [id], onDelete: Restrict, onUpdate: Restrict)
 
   @@index([reservaId, creadoEn])
   @@index([actorId])
 }
 
 model InvitacionEquipo {
-  id Int @id @default(autoincrement())
-  barberiaId Int
+  id            Int       @id @default(autoincrement())
+  barberiaId    Int
   profesionalId Int
-  email String
-  tokenHash String @unique
-  creadorId Int
+  email         String
+  tokenHash     String    @unique
+  creadorId     Int
   aceptadaPorId Int?
-  creadoEn DateTime @default(now()) @db.Timestamptz(3)
-  venceEn DateTime @db.Timestamptz(3)
-  aceptadaEn DateTime? @db.Timestamptz(3)
-  revocadaEn DateTime? @db.Timestamptz(3)
+  creadoEn      DateTime  @default(now()) @db.Timestamptz(3)
+  venceEn       DateTime  @db.Timestamptz(3)
+  aceptadaEn    DateTime? @db.Timestamptz(3)
+  revocadaEn    DateTime? @db.Timestamptz(3)
 
   profesional Profesional @relation(fields: [profesionalId, barberiaId], references: [id, barberiaId], onDelete: Restrict, onUpdate: Restrict)
-  creador Usuario @relation("CreadorInvitacion", fields: [creadorId], references: [id], onDelete: Restrict, onUpdate: Restrict)
-  aceptadaPor Usuario? @relation("AceptadorInvitacion", fields: [aceptadaPorId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  creador     Usuario     @relation("CreadorInvitacion", fields: [creadorId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  aceptadaPor Usuario?    @relation("AceptadorInvitacion", fields: [aceptadaPorId], references: [id], onDelete: Restrict, onUpdate: Restrict)
 
   @@index([barberiaId, profesionalId])
   @@index([barberiaId, email])
+}
+
+model CancelacionReserva {
+  id        Int @id @default(autoincrement())
+  reservaId Int @unique
+  actorId   Int
+
+  motivo   String?  @db.VarChar(300)
+  creadoEn DateTime @default(now()) @db.Timestamptz(3)
+
+  reserva Reserva @relation(fields: [reservaId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  actor   Usuario @relation(fields: [actorId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([actorId])
 }

@@ -8,7 +8,7 @@ import {
 } from 'class-validator';
 
 const PATRON_NOMBRE =
-  /^\p{L}[\p{L}\p{M}]*(?:[ '’\-]\p{L}[\p{L}\p{M}]*)*$/u;
+  /^\p{L}[\p{L}\p{M}]*(?:[ '’-]\p{L}[\p{L}\p{M}]*)*$/u;
 
 export function NombrePersona(
   etiqueta: string,

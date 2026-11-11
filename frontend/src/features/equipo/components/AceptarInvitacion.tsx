@@ -132,7 +132,8 @@ function ConfirmarInvitacion({
       {aceptada ? (
         <p className="mensaje-exito" role="status">
           Tu cuenta quedó vinculada al profesional de esta barbería, con rol de
-          miembro.
+          miembro. Entra a Mis negocios y selecciona Mi agenda para consultar
+          tus citas.
         </p>
       ) : (
         <>
