@@ -1,0 +1,129 @@
+.servicios-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 20px 0;
+}
+.servicios-cabecera h2,
+.servicios-cabecera p {
+  margin: 4px 0;
+}
+.servicios-cabecera p,
+.servicios-nota,
+.servicios-formulario small {
+  color: #526077;
+}
+.servicios-nota {
+  font-size: 0.9rem;
+}
+.servicios-acciones {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.servicios-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 24px 0 16px;
+}
+.servicios-filtros [aria-pressed="true"] {
+  background: #3346b8;
+  border-color: #3346b8;
+  color: white;
+}
+.servicios-tabla-contenedor {
+  overflow-x: auto;
+}
+.servicios-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.9rem;
+}
+.servicios-tabla thead th {
+  padding: 14px 12px;
+  background: #f3f5f9;
+  color: #526077;
+  font-weight: 600;
+}
+.servicios-tabla tbody th,
+.servicios-tabla td {
+  padding: 16px 12px;
+  border-bottom: 1px solid #e2e6ee;
+  vertical-align: middle;
+}
+.servicios-tabla tbody th {
+  min-width: 150px;
+  overflow-wrap: anywhere;
+  max-width: 320px;
+}
+.servicios-tabla tbody tr:hover {
+  background: #fafbfe;
+}
+.servicios-tabla button {
+  padding: 9px 12px;
+}
+.servicios-tabla td {
+  white-space: nowrap;
+}
+.servicio-estado {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.servicio-activo {
+  background: #e0f3e9;
+  color: #12633e;
+}
+.servicio-inactivo {
+  background: #eef0f4;
+  color: #526077;
+}
+.servicios-formulario {
+  max-width: 640px;
+}
+.servicios-campos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+@media (max-width: 600px) {
+  .servicios-campos {
+    grid-template-columns: 1fr;
+  }
+  .servicios-cabecera {
+    align-items: flex-start;
+  }
+}
+
+.servicios-acciones {
+  align-items: center;
+}
+.servicios-acciones button {
+  min-height: 42px;
+  margin: 0;
+}
+.servicios-tabla .servicios-acciones {
+  flex-wrap: nowrap;
+}
+.servicios-tabla .servicios-acciones button {
+  min-width: 86px;
+}
+.servicios-tabla th:last-child,
+.servicios-tabla td:last-child {
+  width: 1%;
+}
+@media (max-width: 600px) {
+  .servicios-cabecera > .servicios-acciones {
+    width: 100%;
+  }
+  .servicios-cabecera > .servicios-acciones button,
+  .servicios-formulario > .servicios-acciones button {
+    flex: 1 1 130px;
+  }
+}

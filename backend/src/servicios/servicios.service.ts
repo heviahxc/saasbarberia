@@ -1,4 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma } from '../generated/prisma/client.js';
+import { ActualizarServicioDto } from './dto/actualizar-servicio.dto.js';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CreateServicioDto } from './dto/create-servicio.dto.js';
@@ -8,10 +14,7 @@ export class ServiciosService {
   constructor(private readonly prisma: PrismaService) {}
 
   //Crea un nuevo servicio en la barbería especificada
-  async create(
-    barberiaId: number,
-    createServicioDto: CreateServicioDto,
-  ) {
+  async create(barberiaId: number, createServicioDto: CreateServicioDto) {
     const barberia = await this.prisma.barberia.findUnique({
       where: { id: barberiaId },
       select: { id: true },
@@ -32,8 +35,8 @@ export class ServiciosService {
       },
     });
   }
-    //Obtiene todos los servicios de la barbería especificada
-    async findAll(barberiaId: number) {
+  //Obtiene todos los servicios de la barbería especificada
+  async findAll(barberiaId: number) {
     const barberia = await this.prisma.barberia.findUnique({
       where: { id: barberiaId },
       select: { id: true },
@@ -51,11 +54,8 @@ export class ServiciosService {
     });
   }
   //Cambia el estado de un servicio en la barbería especificada
-    async cambiarEstado(
-    barberiaId: number,
-    servicioId: number,
-    activo: boolean,
-  ) {
+  async cambiarEstado(barberiaId: number, servicioId: number, activo: boolean) {
+    this.validarServicioId(servicioId);
     const resultado = await this.prisma.servicio.updateMany({
       where: {
         id: servicioId,
@@ -67,9 +67,7 @@ export class ServiciosService {
     });
 
     if (resultado.count === 0) {
-      throw new NotFoundException(
-        'El servicio no existe en esta barbería',
-      );
+      throw new NotFoundException('El servicio no existe en esta barbería');
     }
 
     return {
@@ -79,7 +77,7 @@ export class ServiciosService {
     };
   }
   //Obtiene todos los servicios activos de la barbería especificada
-    async findDisponibles(barberiaId: number) {
+  async findDisponibles(barberiaId: number) {
     const barberia = await this.prisma.barberia.findUnique({
       where: { id: barberiaId },
       select: { id: true },
@@ -102,11 +100,12 @@ export class ServiciosService {
     });
   }
 
-    async cambiarDuracion(
+  async cambiarDuracion(
     barberiaId: number,
     servicioId: number,
     duracionMinutos: number,
   ) {
+    this.validarServicioId(servicioId);
     const resultado = await this.prisma.servicio.updateMany({
       where: {
         id: servicioId,
@@ -118,9 +117,7 @@ export class ServiciosService {
     });
 
     if (resultado.count === 0) {
-      throw new NotFoundException(
-        'El servicio no existe en esta barbería',
-      );
+      throw new NotFoundException('El servicio no existe en esta barbería');
     }
 
     return {
@@ -128,5 +125,41 @@ export class ServiciosService {
       barberiaId,
       duracionMinutos,
     };
+  }
+
+  private validarServicioId(servicioId: number) {
+    if (
+      !Number.isSafeInteger(servicioId) ||
+      servicioId < 1 ||
+      servicioId > 2147483647
+    ) {
+      throw new BadRequestException('El ID de servicio no es válido');
+    }
+  }
+
+  async actualizar(
+    barberiaId: number,
+    servicioId: number,
+    dto: ActualizarServicioDto,
+  ) {
+    this.validarServicioId(servicioId);
+    try {
+      return await this.prisma.servicio.update({
+        where: { id_barberiaId: { id: servicioId, barberiaId } },
+        data: {
+          nombre: dto.nombre,
+          precio: dto.precio,
+          duracionMinutos: dto.duracionMinutos,
+        },
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new NotFoundException('El servicio no existe en esta barbería');
+      }
+      throw error;
+    }
   }
 }

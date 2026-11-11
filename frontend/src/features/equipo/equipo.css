@@ -1,0 +1,188 @@
+.equipo-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 20px 0;
+}
+.equipo-cabecera h2,
+.equipo-cabecera p {
+  margin: 4px 0;
+}
+.equipo-formularios {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin: 24px 0;
+  align-items: start;
+}
+.equipo-formulario {
+  padding: 24px;
+  border: 1px solid #dce2eb;
+  border-radius: 16px;
+  background: #f8f9fc;
+}
+.equipo-formulario h3 {
+  margin: 0;
+}
+.equipo-formulario p {
+  margin: 0;
+  color: #526077;
+}
+.equipo-formulario select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #aab7ce;
+  border-radius: 10px;
+  font: inherit;
+  background: white;
+  color: inherit;
+}
+.equipo-ayuda {
+  font-size: 0.875rem;
+}
+.equipo-enlace {
+  padding: 20px;
+  margin: 24px 0;
+  background: #eef1ff;
+  border-radius: 12px;
+}
+.equipo-enlace input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+  font: inherit;
+  border: 1px solid #aab7ce;
+  border-radius: 8px;
+}
+.equipo-lista {
+  list-style: none;
+  padding: 0;
+}
+.equipo-lista li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  padding: 16px 0;
+  border-bottom: 1px solid #dce2eb;
+  overflow-wrap: anywhere;
+}
+.equipo-lista li strong {
+  flex: 1 1 180px;
+}
+.equipo-lista li span {
+  color: #526077;
+}
+@media (max-width: 720px) {
+  .equipo-formularios {
+    grid-template-columns: 1fr;
+  }
+  .equipo-cabecera {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+.horarios-formulario {
+  max-width: 760px;
+  margin: 24px 0;
+}
+.horarios-campos {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 16px;
+}
+.horarios-medianoche {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.horarios-medianoche input {
+  width: auto;
+}
+.horarios-semana {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 16px;
+}
+.horarios-dia {
+  border: 1px solid #dce2eb;
+  border-radius: 12px;
+  padding: 18px;
+}
+.horarios-dia h4 {
+  margin: 0;
+}
+.horarios-dia p {
+  color: #526077;
+}
+.horarios-dia .equipo-lista {
+  margin-bottom: 0;
+}
+.horarios-dia .equipo-lista li strong {
+  flex-basis: 100px;
+}
+@media (max-width: 600px) {
+  .horarios-campos {
+    grid-template-columns: 1fr;
+  }
+}
+
+.equipo-cabecera {
+  flex-wrap: wrap;
+}
+.equipo-cabecera > button {
+  flex-shrink: 0;
+  min-height: 42px;
+}
+.equipo-lista .equipo-profesional {
+  justify-content: space-between;
+  gap: 16px 24px;
+}
+.equipo-persona {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  flex: 1 1 220px;
+}
+.equipo-lista .equipo-persona strong {
+  flex: initial;
+}
+.equipo-persona span {
+  font-size: 0.875rem;
+}
+.equipo-profesional .grupo-acciones {
+  flex: 0 0 auto;
+}
+.equipo-profesional .grupo-acciones button {
+  min-width: 110px;
+}
+.equipo-lista > li > button {
+  margin-left: auto;
+  min-height: 40px;
+}
+.equipo-formularios {
+  align-items: stretch;
+}
+.equipo-formularios .equipo-formulario {
+  display: flex;
+  flex-direction: column;
+}
+.equipo-formularios .equipo-formulario > button[type="submit"] {
+  margin-top: auto;
+}
+.horarios-formulario > button[type="submit"] {
+  justify-self: start;
+}
+@media (max-width: 600px) {
+  .equipo-profesional .grupo-acciones {
+    flex: 1 1 100%;
+  }
+  .equipo-lista > li > button {
+    margin-left: 0;
+  }
+  .equipo-cabecera > button {
+    align-self: stretch;
+  }
+}

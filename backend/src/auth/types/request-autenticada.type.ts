@@ -11,5 +11,6 @@ export type RequestAutenticada = Request & {
   membresia?: {
     barberiaId: number;
     rol: RolBarberia;
+    profesionalId: number | null;
   };
 };

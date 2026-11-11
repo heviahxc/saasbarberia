@@ -8,6 +8,7 @@ export function calcularIntervalo(
   inicioISO: string,
   duracionMinutos: number,
   zonaHoraria: string,
+  intervaloMinutos = 15,
 ) {
   if (!IANAZone.isValidZone(zonaHoraria)) {
     throw new InternalServerErrorException(
@@ -54,6 +55,13 @@ export function calcularIntervalo(
     throw new BadRequestException(
       'La reserva debe comenzar en el futuro',
     );
+  }
+
+  if (![15, 30].includes(intervaloMinutos)) {
+    throw new InternalServerErrorException('El intervalo de reservas no es válido');
+  }
+  if ((inicioLocal.hour * 60 + inicioLocal.minute) % intervaloMinutos !== 0) {
+    throw new BadRequestException(`Elige una hora de inicio cada ${intervaloMinutos} minutos. Actualiza la disponibilidad`);
   }
 
   const finLocal = inicioLocal.plus({

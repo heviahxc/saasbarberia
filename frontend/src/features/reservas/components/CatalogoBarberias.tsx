@@ -8,6 +8,7 @@ type Barberia = {
   id: number;
   nombre: string;
   ciudad: string;
+  direccion: string | null;
 };
 
 export default function CatalogoBarberias() {
@@ -104,7 +105,9 @@ useEffect(() => {
           <li key={barberia.id} className="barberia">
             <h3>{barberia.nombre}</h3>
             <p>{barberia.ciudad}</p>
-
+          <p>
+  {barberia.direccion?.trim() || 'Dirección pendiente de informar'}
+</p>
             <button
               type="button"
               className="accion-tarjeta"

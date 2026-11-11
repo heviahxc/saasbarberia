@@ -1,29 +1,30 @@
-import { useAuth } from '../../auth/auth-context.js';
+import { useAuth } from "../../auth/auth-context.js";
 import { useEffect, useState } from "react";
 import ReagendarReserva from "./ReagendarReserva.js";
 import { api, ApiError } from "../../../shared/lib/api.js";
-import { formatearFechaHora, formatearPrecio } from "../../../shared/lib/formatos.js";
-import EstadoContenido from '../../../shared/components/EstadoContenido.js';
-type Reserva = {
-  id: number;
-  inicio: string;
-  fin: string;
-  duracionMinutos: number;
-  precioAcordado: string;
-  nombreServicio: string;
-  zonaHoraria: string;
-  estado: "CONFIRMADA" | "CANCELADA";
-  creadoEn: string;
-  canceladoEn: string | null;
-  barberia: {
-    id: number;
-    nombre: string;
-    ciudad: string;
-  };
-  profesional: {
-    id: number;
-    nombre: string;
-  };
+import {
+  formatearFechaHora,
+  formatearPrecio,
+} from "../../../shared/lib/formatos.js";
+import EstadoContenido from "../../../shared/components/EstadoContenido.js";
+import type { Reserva } from '../types.js';
+import ListadoReservas from './ListadoReservas.js';
+
+type FiltroReservas = 'proximas' | 'pasadas' | 'canceladas';
+
+const filtrosReservas: {
+  valor: FiltroReservas;
+  etiqueta: string;
+}[] = [
+  { valor: 'proximas', etiqueta: 'Próximas' },
+  { valor: 'pasadas', etiqueta: 'Pasadas' },
+  { valor: 'canceladas', etiqueta: 'Canceladas' },
+];
+
+const mensajesVacios: Record<FiltroReservas, string> = {
+  proximas: 'No tienes reservas próximas ni en curso.',
+  pasadas: 'No tienes reservas pasadas.',
+  canceladas: 'No tienes reservas canceladas.',
 };
 
 export default function MisReservas() {
@@ -36,12 +37,18 @@ export default function MisReservas() {
   const [reservaPorCancelar, setReservaPorCancelar] = useState<number | null>(
     null,
   );
+  const [reservaDetalleId, setReservaDetalleId] =
+  useState<number | null>(null);
   const [cancelando, setCancelando] = useState(false);
   const [errorCancelacion, setErrorCancelacion] = useState("");
   const [aviso, setAviso] = useState("");
   const [ahora, setAhora] = useState(() => Date.now());
   const [reservaPorReagendar, setReservaPorReagendar] =
     useState<Reserva | null>(null);
+const [ordenFecha, setOrdenFecha] =
+  useState<'asc' | 'desc'>('asc');
+    const [filtro, setFiltro] = useState<FiltroReservas>('proximas');
+
   useEffect(() => {
     const intervalo = window.setInterval(() => {
       setAhora(Date.now());
@@ -143,7 +150,33 @@ export default function MisReservas() {
       setCancelando(false);
     }
   }
+const gruposReservas: Record<FiltroReservas, Reserva[]> = {
+  proximas: [],
+  pasadas: [],
+  canceladas: [],
+};
 
+for (const reserva of reservas) {
+  if (reserva.estado === 'CANCELADA') {
+    gruposReservas.canceladas.push(reserva);
+  } else if (new Date(reserva.fin).getTime() <= ahora) {
+    gruposReservas.pasadas.push(reserva);
+  } else {
+    gruposReservas.proximas.push(reserva);
+  }
+}
+
+const reservasFiltradas = [...gruposReservas[filtro]].sort(
+  (primera, segunda) => {
+    const diferencia =
+      new Date(primera.inicio).getTime() -
+      new Date(segunda.inicio).getTime();
+
+    const comparacion = diferencia || primera.id - segunda.id;
+
+    return ordenFecha === 'asc' ? comparacion : -comparacion;
+  },
+);
   if (reservaPorReagendar) {
     return (
       <ReagendarReserva
@@ -159,52 +192,128 @@ export default function MisReservas() {
   }
   return (
     <section aria-labelledby="titulo-mis-reservas">
-      <h2 id="titulo-mis-reservas">Mis reservas</h2>
+      <div className="reservas-cabecera">
+        <h2 id="titulo-mis-reservas">Mis reservas</h2>
+        <button
+          type="button"
+          className="boton-secundario reservas-actualizar"
+          onClick={() => {
+            setReservaPorCancelar(null);
+            setErrorCancelacion('');
+            setAviso('');
+            setIntento((actual) => actual + 1);
+          }}
+          disabled={cargando || cancelando}
+        >
+          {cargando ? 'Actualizando…' : 'Actualizar'}
+        </button>
+      </div>
 
-      <button
-        type="button"
-        className="boton-secundario"
-        onClick={() => {
-          setReservaPorCancelar(null);
-          setErrorCancelacion("");
-          setAviso("");
-          setIntento((actual) => actual + 1);
-        }}
-        disabled={cargando || cancelando}
-      >
-        {aviso && (
-          <p className="mensaje-exito" role="status">
-            {aviso}
-          </p>
-        )}
+      {aviso && <p className="mensaje-exito" role="status">{aviso}</p>}
+      {errorCancelacion && (
+        <p className="mensaje-error" role="alert">{errorCancelacion}</p>
+      )}
 
-        {errorCancelacion && (
-          <p className="mensaje-error" role="alert">
-            {errorCancelacion}
-          </p>
-        )}
-        {cargando ? "Cargando…" : "Actualizar"}
-      </button>
+      {reservaDetalleId !== null && (
+        <button
+          type="button"
+          className="boton-secundario volver"
+          disabled={cancelando}
+          onClick={() => {
+            setReservaDetalleId(null);
+            setReservaPorCancelar(null);
+            setErrorCancelacion('');
+          }}
+        >
+          Volver a la lista
+        </button>
+      )}
 
+      {reservaDetalleId === null && (
+        <>
+          <div className="reservas-herramientas">
+            <div className="filtros-reservas" role="group" aria-label="Filtrar reservas">
+              {filtrosReservas.map((opcion) => (
+                <button
+                  key={opcion.valor}
+                  type="button"
+                  aria-pressed={filtro === opcion.valor}
+                  disabled={cargando || cancelando}
+                  onClick={() => setFiltro(opcion.valor)}
+                >
+                  {opcion.etiqueta}
+                  {!cargando && !error && (
+                    <span className="reservas-contador">
+                      <span className="solo-lectores">: </span>
+                      {gruposReservas[opcion.valor].length}
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
+
+            <div className="orden-reservas">
+              <label htmlFor="orden-fecha">Fecha de la cita</label>
+              <select
+                id="orden-fecha"
+                value={ordenFecha}
+                disabled={cargando || cancelando}
+                onChange={(evento) =>
+                  setOrdenFecha(evento.target.value === 'desc' ? 'desc' : 'asc')
+                }
+              >
+                <option value="asc">Más antiguas primero</option>
+                <option value="desc">Más recientes primero</option>
+              </select>
+            </div>
+          </div>
+          {filtro === 'proximas' && (
+            <p className="nota-resumen">
+              Incluye las citas en curso hasta su hora de término.
+            </p>
+          )}
+        </>
+      )}
       {cargando ? (
-  <EstadoContenido
-    tipo="cargando"
-    mensaje="Consultando tus reservas…"
-  />
-) : error ? (
-  <EstadoContenido
-    tipo="error"
-    mensaje={error}
-    onReintentar={() => setIntento((actual) => actual + 1)}
-  />
-) : reservas.length === 0 ? (
+        <EstadoContenido tipo="cargando" mensaje="Consultando tus reservas…" />
+      ) : error ? (
+        <EstadoContenido
+          tipo="error"
+          mensaje={error}
+          onReintentar={() => setIntento((actual) => actual + 1)}
+        />
+ ) : reservas.length === 0 ? (
   <EstadoContenido
     tipo="vacio"
     mensaje="Todavía no tienes reservas. Puedes crear una en «Reservar»."
   />
-) :  (
-        <ul className="lista-barberias">
-          {reservas.map((reserva) => {
+ ) : reservaDetalleId === null ? (
+  reservasFiltradas.length === 0 ? (
+    <EstadoContenido
+      tipo="vacio"
+      mensaje={mensajesVacios[filtro]}
+    />
+  ) : (
+    <ListadoReservas
+      reservas={reservasFiltradas}
+      onVerDetalle={(id) => {
+        setReservaDetalleId(id);
+        setReservaPorCancelar(null);
+        setErrorCancelacion('');
+        setAviso('');
+      }}
+    />
+  )
+) : !reservas.some((reserva) => reserva.id === reservaDetalleId) ? (
+  <EstadoContenido
+    tipo="vacio"
+    mensaje="Esta reserva ya no aparece en tu lista."
+  />
+) : (
+  <ul className="lista-barberias">
+          {reservas
+  .filter((reserva) => reserva.id === reservaDetalleId)
+  .map((reserva) => {
             const fecha = formatearFechaHora(
               reserva.inicio,
               reserva.zonaHoraria,
@@ -233,6 +342,12 @@ export default function MisReservas() {
                   <dt>Barbería</dt>
                   <dd>
                     {reserva.barberia.nombre} · {reserva.barberia.ciudad}
+                  </dd>
+
+                  <dt>Dirección actual</dt>
+                  <dd>
+                    {reserva.barberia.direccion?.trim() ||
+                      "Dirección pendiente de informar"}
                   </dd>
 
                   <dt>Profesional</dt>

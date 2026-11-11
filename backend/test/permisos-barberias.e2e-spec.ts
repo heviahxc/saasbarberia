@@ -101,6 +101,7 @@ describe('Permisos entre barberías', () => {
       .auth(tokenA, { type: 'bearer' })
       .send({
         nombre: nombreA,
+        direccion: '  Avenida   Central 123  ',
         ciudad: 'Ciudad de prueba',
       })
       .expect(201);
@@ -197,6 +198,26 @@ describe('Permisos entre barberías', () => {
     }
 
     
+  });
+
+  it('guarda la dirección y asigna al creador como administrador', async () => {
+    const negocio = await request(app!.getHttpServer())
+      .get(`/barberias/${barberiaA}`).auth(tokenA, { type: 'bearer' }).expect(200);
+    expect(negocio.body.direccion).toBe('Avenida Central 123');
+    const membresias = await request(app!.getHttpServer())
+      .get('/auth/me/barberias').auth(tokenA, { type: 'bearer' }).expect(200);
+    expect(membresias.body).toEqual(expect.arrayContaining([
+      expect.objectContaining({ rol: 'ADMINISTRADOR', barberia: expect.objectContaining({ id: barberiaA }) }),
+    ]));
+  });
+
+  it('rechaza creación anónima, datos vacíos y roles enviados por el cliente', async () => {
+    const datos = { nombre: nombreA, ciudad: 'Linares', direccion: 'Central 123' };
+    await request(app!.getHttpServer()).post('/barberias').send(datos).expect(401);
+    for (const body of [{ ...datos, nombre: '   ' }, { ...datos, direccion: '   ' }, { ...datos, rol: 'ADMINISTRADOR' }]) {
+      await request(app!.getHttpServer()).post('/barberias')
+        .auth(tokenA, { type: 'bearer' }).send(body).expect(400);
+    }
   });
 
   it('rechaza una consulta sin token', async () => {

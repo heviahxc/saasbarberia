@@ -55,6 +55,7 @@ export class MiembroBarberiaGuard implements CanActivate {
      select: {
         activo: true,
         rol: true,
+        profesionalId: true,
       },
     });
 
@@ -66,6 +67,7 @@ export class MiembroBarberiaGuard implements CanActivate {
     request.membresia = {
       barberiaId,
       rol: membresia.rol,
+      profesionalId: membresia.profesionalId,
     };
     return true;
   }

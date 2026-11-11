@@ -1,13 +1,12 @@
-import {
-  IsInt,
-  IsString,
-  Matches,
-  Max,
-  MaxLength,
-  Min,
-} from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsInt, IsString, Matches, Max, MaxLength, Min } from 'class-validator';
 
 export class CreateServicioDto {
+  @Transform(({ value }) =>
+    typeof value === 'string'
+      ? value.normalize('NFC').trim().replace(/\s+/gu, ' ')
+      : value,
+  )
   @IsString()
   @Matches(/\S/, {
     message: 'El nombre no puede estar vacío',

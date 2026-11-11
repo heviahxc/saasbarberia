@@ -51,6 +51,7 @@ export class ReservasController {
    @Get()
   @UseGuards(MiembroBarberiaGuard)
   findAgenda(
+    @Req() request: RequestAutenticada,
     @Param('barberiaId', ParseIntPipe) barberiaId: number,
     @Query(
       new ValidationPipe({
@@ -64,6 +65,7 @@ export class ReservasController {
     return this.reservasService.findAgenda(
       barberiaId,
       query.fecha,
+      request.membresia?.rol === 'ADMINISTRADOR' ? undefined : (request.membresia?.profesionalId ?? 0),
     );
   }
 

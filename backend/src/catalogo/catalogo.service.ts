@@ -17,6 +17,7 @@ export class CatalogoService {
         id: true,
         nombre: true,
         ciudad: true,
+        direccion: true,
       },
       orderBy: {
         id: 'asc',

@@ -8,6 +8,7 @@ import {
   Req,
   UseGuards,
   ValidationPipe,
+  Patch,
 } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
@@ -18,7 +19,8 @@ import type {
 
 import { BarberiasService } from './barberias.service.js';
 import { CreateBarberiaDto } from './dto/create-barberia.dto.js';
-
+import { AdministradorBarberiaGuard } from '../auth/guards/administrador-barberia.guard.js';
+import { ActualizarBarberiaDto } from './dto/actualizar-barberia.dto.js';
 @Controller('barberias')
 @UseGuards(JwtAuthGuard)
 export class BarberiasController {
@@ -56,4 +58,20 @@ export class BarberiasController {
       request.usuario.id,
     );
   }
+
+  @Patch(':barberiaId')
+@UseGuards(MiembroBarberiaGuard, AdministradorBarberiaGuard)
+actualizar(
+  @Param('barberiaId', ParseIntPipe) barberiaId: number,
+  @Body(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  )
+  dto: ActualizarBarberiaDto,
+) {
+  return this.barberiasService.actualizar(barberiaId, dto);
+}
 }

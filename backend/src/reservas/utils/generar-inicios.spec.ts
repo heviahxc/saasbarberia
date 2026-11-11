@@ -48,4 +48,13 @@ describe('generarInicios', () => {
 
     expect(opciones).toEqual([]);
   });
+
+  it('ofrece inicios cada 30 minutos manteniendo una duración de 45', () => {
+    const opciones = generarInicios(fecha, zona, 45, [{ inicioMinuto: 555, finMinuto: 720 }], ahora, 30);
+    expect(opciones.map(o => o.horaLocal)).toEqual(['09:30', '10:00', '10:30', '11:00']);
+    expect(Date.parse(opciones[0].fin) - Date.parse(opciones[0].inicio)).toBe(45 * 60000);
+  });
+  it('rechaza intervalos inválidos', () => {
+    expect(() => generarInicios(fecha, zona, 30, [], ahora, 0)).toThrow();
+  });
 });

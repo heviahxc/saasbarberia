@@ -1,3 +1,4 @@
+import { ActualizarServicioDto } from './dto/actualizar-servicio.dto.js';
 import {
   Body,
   Controller,
@@ -29,6 +30,7 @@ export class ServiciosController {
     @Param('barberiaId', ParseIntPipe) barberiaId: number,
     @Body(
       new ValidationPipe({
+        transform: true,
         whitelist: true,
         forbidNonWhitelisted: true,
       }),
@@ -38,20 +40,19 @@ export class ServiciosController {
     return this.serviciosService.create(barberiaId, createServicioDto);
   }
   //Obtiene todos los servicios de la barbería especificada
-    @Get()
-  findAll(
-    @Param('barberiaId', ParseIntPipe) barberiaId: number,
-  ) {
+  @Get()
+  findAll(@Param('barberiaId', ParseIntPipe) barberiaId: number) {
     return this.serviciosService.findAll(barberiaId);
   }
 
-    @Patch(':servicioId/estado')
+  @Patch(':servicioId/estado')
   @UseGuards(AdministradorBarberiaGuard)
   cambiarEstado(
     @Param('barberiaId', ParseIntPipe) barberiaId: number,
     @Param('servicioId', ParseIntPipe) servicioId: number,
     @Body(
       new ValidationPipe({
+        transform: true,
         whitelist: true,
         forbidNonWhitelisted: true,
       }),
@@ -64,20 +65,19 @@ export class ServiciosController {
       cambiarEstadoDto.activo,
     );
   }
-    //Obtiene todos los servicios disponibles de la barbería especificada
-    @Get('disponibles')
-  findDisponibles(
-    @Param('barberiaId', ParseIntPipe) barberiaId: number,
-  ) {
+  //Obtiene todos los servicios disponibles de la barbería especificada
+  @Get('disponibles')
+  findDisponibles(@Param('barberiaId', ParseIntPipe) barberiaId: number) {
     return this.serviciosService.findDisponibles(barberiaId);
   }
-    @Patch(':servicioId/duracion')
+  @Patch(':servicioId/duracion')
   @UseGuards(AdministradorBarberiaGuard)
   cambiarDuracion(
     @Param('barberiaId', ParseIntPipe) barberiaId: number,
     @Param('servicioId', ParseIntPipe) servicioId: number,
     @Body(
       new ValidationPipe({
+        transform: true,
         whitelist: true,
         forbidNonWhitelisted: true,
       }),
@@ -89,5 +89,21 @@ export class ServiciosController {
       servicioId,
       dto.duracionMinutos,
     );
+  }
+  @Patch(':servicioId')
+  @UseGuards(AdministradorBarberiaGuard)
+  actualizar(
+    @Param('barberiaId', ParseIntPipe) barberiaId: number,
+    @Param('servicioId', ParseIntPipe) servicioId: number,
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        whitelist: true,
+        forbidNonWhitelisted: true,
+      }),
+    )
+    dto: ActualizarServicioDto,
+  ) {
+    return this.serviciosService.actualizar(barberiaId, servicioId, dto);
   }
 }

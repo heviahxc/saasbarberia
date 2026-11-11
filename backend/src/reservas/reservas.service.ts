@@ -23,6 +23,7 @@ type ServicioReservable = {
   duracionMinutos: number;
   precio: string;
   zonaHoraria: string;
+  intervaloReservasMinutos: number;
 };
 
 @Injectable()
@@ -37,28 +38,28 @@ export class ReservasService {
     ) {
       throw new BadRequestException('El ID de barbería no es válido');
     }
-const cliente = await this.prisma.usuario.findUnique({
-  where: {
-    id: clienteId,
-  },
-  select: {
-    nombre: true,
-    apellidoPaterno: true,
-    telefono: true,
-  },
-});
+    const cliente = await this.prisma.usuario.findUnique({
+      where: {
+        id: clienteId,
+      },
+      select: {
+        nombre: true,
+        apellidoPaterno: true,
+        telefono: true,
+      },
+    });
 
-const perfilCompleto =
-  cliente !== null &&
-  Boolean(cliente.nombre.trim()) &&
-  Boolean(cliente.apellidoPaterno?.trim()) &&
-  Boolean(cliente.telefono?.trim());
+    const perfilCompleto =
+      cliente !== null &&
+      Boolean(cliente.nombre.trim()) &&
+      Boolean(cliente.apellidoPaterno?.trim()) &&
+      Boolean(cliente.telefono?.trim());
 
-if (!perfilCompleto) {
-  throw new ForbiddenException(
-    'Completa tu nombre, apellido paterno y teléfono en Mi perfil antes de reservar.',
-  );
-}
+    if (!perfilCompleto) {
+      throw new ForbiddenException(
+        'Completa tu nombre, apellido paterno y teléfono en Mi perfil antes de reservar.',
+      );
+    }
     return this.prisma.$transaction(
       async (tx) => {
         // El mismo bloqueo que utiliza eliminarHorario().
@@ -85,7 +86,8 @@ if (!perfilCompleto) {
             s."nombre",
             s."duracionMinutos",
             s."precio"::text AS "precio",
-            b."zonaHoraria"
+            b."zonaHoraria",
+            b."intervaloReservasMinutos"
           FROM "public"."Servicio" AS s
           JOIN "public"."Barberia" AS b
             ON b."id" = s."barberiaId"
@@ -111,6 +113,7 @@ if (!perfilCompleto) {
           dto.inicio,
           servicio.duracionMinutos,
           servicio.zonaHoraria,
+          servicio.intervaloReservasMinutos,
         );
 
         const horario = await tx.horarioProfesional.findFirst({
@@ -226,6 +229,7 @@ if (!perfilCompleto) {
             id: true,
             nombre: true,
             ciudad: true,
+            direccion: true,
           },
         },
         profesional: {
@@ -287,7 +291,7 @@ if (!perfilCompleto) {
     );
   }
 
-  async findAgenda(barberiaId: number, fecha: string) {
+  async findAgenda(barberiaId: number, fecha: string, profesionalId?: number) {
     const barberia = await this.prisma.barberia.findUnique({
       where: {
         id: barberiaId,
@@ -321,6 +325,7 @@ if (!perfilCompleto) {
     const reservas = await this.prisma.reserva.findMany({
       where: {
         barberiaId,
+        profesionalId,
         inicio: {
           gte: inicioDia.toJSDate(),
           lt: siguienteDia.toJSDate(),
@@ -381,6 +386,7 @@ if (!perfilCompleto) {
         barberia: {
           select: {
             zonaHoraria: true,
+            intervaloReservasMinutos: true,
           },
         },
       },
@@ -459,6 +465,8 @@ if (!perfilCompleto) {
       zonaHoraria,
       servicio.duracionMinutos,
       tramos,
+      Date.now(),
+      profesional.barberia.intervaloReservasMinutos,
     );
 
     const inicioDia = dia.startOf('day');
@@ -556,9 +564,9 @@ if (!perfilCompleto) {
       async (tx) => {
         // Mantener el mismo orden: profesional y después reserva.
         const profesionales = await tx.$queryRaw<
-          { activo: boolean; zonaHoraria: string }[]
+          { activo: boolean; zonaHoraria: string; intervaloReservasMinutos: number }[]
         >`
-          SELECT p."activo", b."zonaHoraria"
+          SELECT p."activo", b."zonaHoraria", b."intervaloReservasMinutos"
           FROM "public"."Profesional" AS p
           JOIN "public"."Barberia" AS b
             ON b."id" = p."barberiaId"
@@ -631,6 +639,7 @@ if (!perfilCompleto) {
           nuevoInicio,
           reserva.duracionMinutos,
           profesional.zonaHoraria,
+          profesional.intervaloReservasMinutos,
         );
 
         if (intervalo.inicio.getTime() === reserva.inicio.getTime()) {
@@ -750,6 +759,7 @@ if (!perfilCompleto) {
         barberia: {
           select: {
             zonaHoraria: true,
+            intervaloReservasMinutos: true,
           },
         },
       },
@@ -831,6 +841,8 @@ if (!perfilCompleto) {
       zonaHoraria,
       reserva.duracionMinutos,
       tramos,
+      Date.now(),
+      reserva.barberia.intervaloReservasMinutos,
     );
 
     const inicioDia = dia.startOf('day');
@@ -879,7 +891,7 @@ if (!perfilCompleto) {
         return false;
       }
 
-            return !ocupados.some((ocupado) =>
+      return !ocupados.some((ocupado) =>
         intervalosSeSuperponen(
           inicio,
           fin,

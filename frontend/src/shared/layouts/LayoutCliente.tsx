@@ -15,6 +15,8 @@ type Props = {
   descripcion: string;
   onCerrarSesion: () => void;
   aviso?: ReactNode;
+  area?: "cliente" | "negocio";
+  onCambiarArea?: () => void;
   children: ReactNode;
 };
 
@@ -26,6 +28,8 @@ export default function LayoutCliente({
   descripcion,
   onCerrarSesion,
   aviso,
+  area = "cliente",
+  onCambiarArea,
   children,
 }: Props) {
   return (
@@ -36,10 +40,15 @@ export default function LayoutCliente({
             <span className="marca-icono" aria-hidden="true">
               B
             </span>
-            <span>BARBER SAAS</span>
+            <span>BARBER SAAS · {area === "cliente" ? "Clientes" : "Negocios"}</span>
           </div>
 
           <div className="cuenta-cliente">
+            {onCambiarArea && (
+              <button type="button" className="boton-secundario" onClick={onCambiarArea}>
+                {area === "cliente" ? "Ir a negocios" : "Ir a reservas"}
+              </button>
+            )}
             <span className="saludo-cliente">
               Hola, {nombreUsuario}
             </span>
@@ -54,7 +63,7 @@ export default function LayoutCliente({
           </div>
         </header>
 
-        <nav className="menu-cliente" aria-label="Opciones del cliente">
+        <nav className="menu-cliente" aria-label={area === "cliente" ? "Opciones del cliente" : "Opciones del negocio"}>
           {opcionesMenu.map((opcion) => (
             <button
               key={opcion.id}

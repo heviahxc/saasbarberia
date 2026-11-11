@@ -17,12 +17,14 @@ export function generarInicios(
   duracionMinutos: number,
   tramos: TramoHorario[],
   ahoraMillis = Date.now(),
+  intervaloMinutos = 15,
 ): OpcionHorario[] {
   const dia = DateTime.fromISO(fecha, {
     zone: zonaHoraria,
   });
 
   if (
+    ![15, 30].includes(intervaloMinutos) ||
     !dia.isValid ||
     dia.toISODate() !== fecha ||
     !Number.isInteger(duracionMinutos) ||
@@ -35,14 +37,14 @@ export function generarInicios(
   const opciones = new Map<string, OpcionHorario>();
 
   for (const tramo of tramos) {
-    // Alinear con minutos 00, 15, 30 y 45.
+    // Alinear con la cuadrícula local configurada por el negocio.
     const primerMinuto =
-      Math.ceil(tramo.inicioMinuto / 15) * 15;
+      Math.ceil(tramo.inicioMinuto / intervaloMinutos) * intervaloMinutos;
 
     for (
       let minuto = primerMinuto;
       minuto + duracionMinutos <= tramo.finMinuto;
-      minuto += 15
+      minuto += intervaloMinutos
     ) {
       const hora = Math.floor(minuto / 60);
       const minutos = minuto % 60;

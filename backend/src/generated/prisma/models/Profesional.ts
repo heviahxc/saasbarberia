@@ -218,6 +218,7 @@ export type ProfesionalWhereInput = {
   horarios?: Prisma.HorarioProfesionalListRelationFilter
   reservas?: Prisma.ReservaListRelationFilter
   bloqueos?: Prisma.BloqueoProfesionalListRelationFilter
+  invitaciones?: Prisma.InvitacionEquipoListRelationFilter
 }
 
 export type ProfesionalOrderByWithRelationInput = {
@@ -231,6 +232,7 @@ export type ProfesionalOrderByWithRelationInput = {
   horarios?: Prisma.HorarioProfesionalOrderByRelationAggregateInput
   reservas?: Prisma.ReservaOrderByRelationAggregateInput
   bloqueos?: Prisma.BloqueoProfesionalOrderByRelationAggregateInput
+  invitaciones?: Prisma.InvitacionEquipoOrderByRelationAggregateInput
 }
 
 export type ProfesionalWhereUniqueInput = Prisma.AtLeast<{
@@ -248,6 +250,7 @@ export type ProfesionalWhereUniqueInput = Prisma.AtLeast<{
   horarios?: Prisma.HorarioProfesionalListRelationFilter
   reservas?: Prisma.ReservaListRelationFilter
   bloqueos?: Prisma.BloqueoProfesionalListRelationFilter
+  invitaciones?: Prisma.InvitacionEquipoListRelationFilter
 }, "id" | "id_barberiaId">
 
 export type ProfesionalOrderByWithAggregationInput = {
@@ -281,6 +284,7 @@ export type ProfesionalCreateInput = {
   horarios?: Prisma.HorarioProfesionalCreateNestedManyWithoutProfesionalInput
   reservas?: Prisma.ReservaCreateNestedManyWithoutProfesionalInput
   bloqueos?: Prisma.BloqueoProfesionalCreateNestedManyWithoutProfesionalInput
+  invitaciones?: Prisma.InvitacionEquipoCreateNestedManyWithoutProfesionalInput
 }
 
 export type ProfesionalUncheckedCreateInput = {
@@ -293,6 +297,7 @@ export type ProfesionalUncheckedCreateInput = {
   horarios?: Prisma.HorarioProfesionalUncheckedCreateNestedManyWithoutProfesionalInput
   reservas?: Prisma.ReservaUncheckedCreateNestedManyWithoutProfesionalInput
   bloqueos?: Prisma.BloqueoProfesionalUncheckedCreateNestedManyWithoutProfesionalInput
+  invitaciones?: Prisma.InvitacionEquipoUncheckedCreateNestedManyWithoutProfesionalInput
 }
 
 export type ProfesionalUpdateInput = {
@@ -304,6 +309,7 @@ export type ProfesionalUpdateInput = {
   horarios?: Prisma.HorarioProfesionalUpdateManyWithoutProfesionalNestedInput
   reservas?: Prisma.ReservaUpdateManyWithoutProfesionalNestedInput
   bloqueos?: Prisma.BloqueoProfesionalUpdateManyWithoutProfesionalNestedInput
+  invitaciones?: Prisma.InvitacionEquipoUpdateManyWithoutProfesionalNestedInput
 }
 
 export type ProfesionalUncheckedUpdateInput = {
@@ -316,6 +322,7 @@ export type ProfesionalUncheckedUpdateInput = {
   horarios?: Prisma.HorarioProfesionalUncheckedUpdateManyWithoutProfesionalNestedInput
   reservas?: Prisma.ReservaUncheckedUpdateManyWithoutProfesionalNestedInput
   bloqueos?: Prisma.BloqueoProfesionalUncheckedUpdateManyWithoutProfesionalNestedInput
+  invitaciones?: Prisma.InvitacionEquipoUncheckedUpdateManyWithoutProfesionalNestedInput
 }
 
 export type ProfesionalCreateManyInput = {
@@ -511,6 +518,20 @@ export type ProfesionalUpdateOneRequiredWithoutBloqueosNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProfesionalUpdateToOneWithWhereWithoutBloqueosInput, Prisma.ProfesionalUpdateWithoutBloqueosInput>, Prisma.ProfesionalUncheckedUpdateWithoutBloqueosInput>
 }
 
+export type ProfesionalCreateNestedOneWithoutInvitacionesInput = {
+  create?: Prisma.XOR<Prisma.ProfesionalCreateWithoutInvitacionesInput, Prisma.ProfesionalUncheckedCreateWithoutInvitacionesInput>
+  connectOrCreate?: Prisma.ProfesionalCreateOrConnectWithoutInvitacionesInput
+  connect?: Prisma.ProfesionalWhereUniqueInput
+}
+
+export type ProfesionalUpdateOneRequiredWithoutInvitacionesNestedInput = {
+  create?: Prisma.XOR<Prisma.ProfesionalCreateWithoutInvitacionesInput, Prisma.ProfesionalUncheckedCreateWithoutInvitacionesInput>
+  connectOrCreate?: Prisma.ProfesionalCreateOrConnectWithoutInvitacionesInput
+  upsert?: Prisma.ProfesionalUpsertWithoutInvitacionesInput
+  connect?: Prisma.ProfesionalWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProfesionalUpdateToOneWithWhereWithoutInvitacionesInput, Prisma.ProfesionalUpdateWithoutInvitacionesInput>, Prisma.ProfesionalUncheckedUpdateWithoutInvitacionesInput>
+}
+
 export type ProfesionalCreateWithoutBarberiaInput = {
   nombre: string
   activo?: boolean
@@ -519,6 +540,7 @@ export type ProfesionalCreateWithoutBarberiaInput = {
   horarios?: Prisma.HorarioProfesionalCreateNestedManyWithoutProfesionalInput
   reservas?: Prisma.ReservaCreateNestedManyWithoutProfesionalInput
   bloqueos?: Prisma.BloqueoProfesionalCreateNestedManyWithoutProfesionalInput
+  invitaciones?: Prisma.InvitacionEquipoCreateNestedManyWithoutProfesionalInput
 }
 
 export type ProfesionalUncheckedCreateWithoutBarberiaInput = {
@@ -530,6 +552,7 @@ export type ProfesionalUncheckedCreateWithoutBarberiaInput = {
   horarios?: Prisma.HorarioProfesionalUncheckedCreateNestedManyWithoutProfesionalInput
   reservas?: Prisma.ReservaUncheckedCreateNestedManyWithoutProfesionalInput
   bloqueos?: Prisma.BloqueoProfesionalUncheckedCreateNestedManyWithoutProfesionalInput
+  invitaciones?: Prisma.InvitacionEquipoUncheckedCreateNestedManyWithoutProfesionalInput
 }
 
 export type ProfesionalCreateOrConnectWithoutBarberiaInput = {
@@ -576,6 +599,7 @@ export type ProfesionalCreateWithoutServiciosInput = {
   horarios?: Prisma.HorarioProfesionalCreateNestedManyWithoutProfesionalInput
   reservas?: Prisma.ReservaCreateNestedManyWithoutProfesionalInput
   bloqueos?: Prisma.BloqueoProfesionalCreateNestedManyWithoutProfesionalInput
+  invitaciones?: Prisma.InvitacionEquipoCreateNestedManyWithoutProfesionalInput
 }
 
 export type ProfesionalUncheckedCreateWithoutServiciosInput = {
@@ -587,6 +611,7 @@ export type ProfesionalUncheckedCreateWithoutServiciosInput = {
   horarios?: Prisma.HorarioProfesionalUncheckedCreateNestedManyWithoutProfesionalInput
   reservas?: Prisma.ReservaUncheckedCreateNestedManyWithoutProfesionalInput
   bloqueos?: Prisma.BloqueoProfesionalUncheckedCreateNestedManyWithoutProfesionalInput
+  invitaciones?: Prisma.InvitacionEquipoUncheckedCreateNestedManyWithoutProfesionalInput
 }
 
 export type ProfesionalCreateOrConnectWithoutServiciosInput = {
@@ -613,6 +638,7 @@ export type ProfesionalUpdateWithoutServiciosInput = {
   horarios?: Prisma.HorarioProfesionalUpdateManyWithoutProfesionalNestedInput
   reservas?: Prisma.ReservaUpdateManyWithoutProfesionalNestedInput
   bloqueos?: Prisma.BloqueoProfesionalUpdateManyWithoutProfesionalNestedInput
+  invitaciones?: Prisma.InvitacionEquipoUpdateManyWithoutProfesionalNestedInput
 }
 
 export type ProfesionalUncheckedUpdateWithoutServiciosInput = {
@@ -624,6 +650,7 @@ export type ProfesionalUncheckedUpdateWithoutServiciosInput = {
   horarios?: Prisma.HorarioProfesionalUncheckedUpdateManyWithoutProfesionalNestedInput
   reservas?: Prisma.ReservaUncheckedUpdateManyWithoutProfesionalNestedInput
   bloqueos?: Prisma.BloqueoProfesionalUncheckedUpdateManyWithoutProfesionalNestedInput
+  invitaciones?: Prisma.InvitacionEquipoUncheckedUpdateManyWithoutProfesionalNestedInput
 }
 
 export type ProfesionalCreateWithoutMiembrosInput = {
@@ -634,6 +661,7 @@ export type ProfesionalCreateWithoutMiembrosInput = {
   horarios?: Prisma.HorarioProfesionalCreateNestedManyWithoutProfesionalInput
   reservas?: Prisma.ReservaCreateNestedManyWithoutProfesionalInput
   bloqueos?: Prisma.BloqueoProfesionalCreateNestedManyWithoutProfesionalInput
+  invitaciones?: Prisma.InvitacionEquipoCreateNestedManyWithoutProfesionalInput
 }
 
 export type ProfesionalUncheckedCreateWithoutMiembrosInput = {
@@ -645,6 +673,7 @@ export type ProfesionalUncheckedCreateWithoutMiembrosInput = {
   horarios?: Prisma.HorarioProfesionalUncheckedCreateNestedManyWithoutProfesionalInput
   reservas?: Prisma.ReservaUncheckedCreateNestedManyWithoutProfesionalInput
   bloqueos?: Prisma.BloqueoProfesionalUncheckedCreateNestedManyWithoutProfesionalInput
+  invitaciones?: Prisma.InvitacionEquipoUncheckedCreateNestedManyWithoutProfesionalInput
 }
 
 export type ProfesionalCreateOrConnectWithoutMiembrosInput = {
@@ -671,6 +700,7 @@ export type ProfesionalUpdateWithoutMiembrosInput = {
   horarios?: Prisma.HorarioProfesionalUpdateManyWithoutProfesionalNestedInput
   reservas?: Prisma.ReservaUpdateManyWithoutProfesionalNestedInput
   bloqueos?: Prisma.BloqueoProfesionalUpdateManyWithoutProfesionalNestedInput
+  invitaciones?: Prisma.InvitacionEquipoUpdateManyWithoutProfesionalNestedInput
 }
 
 export type ProfesionalUncheckedUpdateWithoutMiembrosInput = {
@@ -682,6 +712,7 @@ export type ProfesionalUncheckedUpdateWithoutMiembrosInput = {
   horarios?: Prisma.HorarioProfesionalUncheckedUpdateManyWithoutProfesionalNestedInput
   reservas?: Prisma.ReservaUncheckedUpdateManyWithoutProfesionalNestedInput
   bloqueos?: Prisma.BloqueoProfesionalUncheckedUpdateManyWithoutProfesionalNestedInput
+  invitaciones?: Prisma.InvitacionEquipoUncheckedUpdateManyWithoutProfesionalNestedInput
 }
 
 export type ProfesionalCreateWithoutHorariosInput = {
@@ -692,6 +723,7 @@ export type ProfesionalCreateWithoutHorariosInput = {
   miembros?: Prisma.MiembroBarberiaCreateNestedManyWithoutProfesionalInput
   reservas?: Prisma.ReservaCreateNestedManyWithoutProfesionalInput
   bloqueos?: Prisma.BloqueoProfesionalCreateNestedManyWithoutProfesionalInput
+  invitaciones?: Prisma.InvitacionEquipoCreateNestedManyWithoutProfesionalInput
 }
 
 export type ProfesionalUncheckedCreateWithoutHorariosInput = {
@@ -703,6 +735,7 @@ export type ProfesionalUncheckedCreateWithoutHorariosInput = {
   miembros?: Prisma.MiembroBarberiaUncheckedCreateNestedManyWithoutProfesionalInput
   reservas?: Prisma.ReservaUncheckedCreateNestedManyWithoutProfesionalInput
   bloqueos?: Prisma.BloqueoProfesionalUncheckedCreateNestedManyWithoutProfesionalInput
+  invitaciones?: Prisma.InvitacionEquipoUncheckedCreateNestedManyWithoutProfesionalInput
 }
 
 export type ProfesionalCreateOrConnectWithoutHorariosInput = {
@@ -729,6 +762,7 @@ export type ProfesionalUpdateWithoutHorariosInput = {
   miembros?: Prisma.MiembroBarberiaUpdateManyWithoutProfesionalNestedInput
   reservas?: Prisma.ReservaUpdateManyWithoutProfesionalNestedInput
   bloqueos?: Prisma.BloqueoProfesionalUpdateManyWithoutProfesionalNestedInput
+  invitaciones?: Prisma.InvitacionEquipoUpdateManyWithoutProfesionalNestedInput
 }
 
 export type ProfesionalUncheckedUpdateWithoutHorariosInput = {
@@ -740,6 +774,7 @@ export type ProfesionalUncheckedUpdateWithoutHorariosInput = {
   miembros?: Prisma.MiembroBarberiaUncheckedUpdateManyWithoutProfesionalNestedInput
   reservas?: Prisma.ReservaUncheckedUpdateManyWithoutProfesionalNestedInput
   bloqueos?: Prisma.BloqueoProfesionalUncheckedUpdateManyWithoutProfesionalNestedInput
+  invitaciones?: Prisma.InvitacionEquipoUncheckedUpdateManyWithoutProfesionalNestedInput
 }
 
 export type ProfesionalCreateWithoutReservasInput = {
@@ -750,6 +785,7 @@ export type ProfesionalCreateWithoutReservasInput = {
   miembros?: Prisma.MiembroBarberiaCreateNestedManyWithoutProfesionalInput
   horarios?: Prisma.HorarioProfesionalCreateNestedManyWithoutProfesionalInput
   bloqueos?: Prisma.BloqueoProfesionalCreateNestedManyWithoutProfesionalInput
+  invitaciones?: Prisma.InvitacionEquipoCreateNestedManyWithoutProfesionalInput
 }
 
 export type ProfesionalUncheckedCreateWithoutReservasInput = {
@@ -761,6 +797,7 @@ export type ProfesionalUncheckedCreateWithoutReservasInput = {
   miembros?: Prisma.MiembroBarberiaUncheckedCreateNestedManyWithoutProfesionalInput
   horarios?: Prisma.HorarioProfesionalUncheckedCreateNestedManyWithoutProfesionalInput
   bloqueos?: Prisma.BloqueoProfesionalUncheckedCreateNestedManyWithoutProfesionalInput
+  invitaciones?: Prisma.InvitacionEquipoUncheckedCreateNestedManyWithoutProfesionalInput
 }
 
 export type ProfesionalCreateOrConnectWithoutReservasInput = {
@@ -787,6 +824,7 @@ export type ProfesionalUpdateWithoutReservasInput = {
   miembros?: Prisma.MiembroBarberiaUpdateManyWithoutProfesionalNestedInput
   horarios?: Prisma.HorarioProfesionalUpdateManyWithoutProfesionalNestedInput
   bloqueos?: Prisma.BloqueoProfesionalUpdateManyWithoutProfesionalNestedInput
+  invitaciones?: Prisma.InvitacionEquipoUpdateManyWithoutProfesionalNestedInput
 }
 
 export type ProfesionalUncheckedUpdateWithoutReservasInput = {
@@ -798,6 +836,7 @@ export type ProfesionalUncheckedUpdateWithoutReservasInput = {
   miembros?: Prisma.MiembroBarberiaUncheckedUpdateManyWithoutProfesionalNestedInput
   horarios?: Prisma.HorarioProfesionalUncheckedUpdateManyWithoutProfesionalNestedInput
   bloqueos?: Prisma.BloqueoProfesionalUncheckedUpdateManyWithoutProfesionalNestedInput
+  invitaciones?: Prisma.InvitacionEquipoUncheckedUpdateManyWithoutProfesionalNestedInput
 }
 
 export type ProfesionalCreateWithoutBloqueosInput = {
@@ -808,6 +847,7 @@ export type ProfesionalCreateWithoutBloqueosInput = {
   miembros?: Prisma.MiembroBarberiaCreateNestedManyWithoutProfesionalInput
   horarios?: Prisma.HorarioProfesionalCreateNestedManyWithoutProfesionalInput
   reservas?: Prisma.ReservaCreateNestedManyWithoutProfesionalInput
+  invitaciones?: Prisma.InvitacionEquipoCreateNestedManyWithoutProfesionalInput
 }
 
 export type ProfesionalUncheckedCreateWithoutBloqueosInput = {
@@ -819,6 +859,7 @@ export type ProfesionalUncheckedCreateWithoutBloqueosInput = {
   miembros?: Prisma.MiembroBarberiaUncheckedCreateNestedManyWithoutProfesionalInput
   horarios?: Prisma.HorarioProfesionalUncheckedCreateNestedManyWithoutProfesionalInput
   reservas?: Prisma.ReservaUncheckedCreateNestedManyWithoutProfesionalInput
+  invitaciones?: Prisma.InvitacionEquipoUncheckedCreateNestedManyWithoutProfesionalInput
 }
 
 export type ProfesionalCreateOrConnectWithoutBloqueosInput = {
@@ -845,6 +886,7 @@ export type ProfesionalUpdateWithoutBloqueosInput = {
   miembros?: Prisma.MiembroBarberiaUpdateManyWithoutProfesionalNestedInput
   horarios?: Prisma.HorarioProfesionalUpdateManyWithoutProfesionalNestedInput
   reservas?: Prisma.ReservaUpdateManyWithoutProfesionalNestedInput
+  invitaciones?: Prisma.InvitacionEquipoUpdateManyWithoutProfesionalNestedInput
 }
 
 export type ProfesionalUncheckedUpdateWithoutBloqueosInput = {
@@ -856,6 +898,69 @@ export type ProfesionalUncheckedUpdateWithoutBloqueosInput = {
   miembros?: Prisma.MiembroBarberiaUncheckedUpdateManyWithoutProfesionalNestedInput
   horarios?: Prisma.HorarioProfesionalUncheckedUpdateManyWithoutProfesionalNestedInput
   reservas?: Prisma.ReservaUncheckedUpdateManyWithoutProfesionalNestedInput
+  invitaciones?: Prisma.InvitacionEquipoUncheckedUpdateManyWithoutProfesionalNestedInput
+}
+
+export type ProfesionalCreateWithoutInvitacionesInput = {
+  nombre: string
+  activo?: boolean
+  barberia: Prisma.BarberiaCreateNestedOneWithoutProfesionalesInput
+  servicios?: Prisma.ProfesionalServicioCreateNestedManyWithoutProfesionalInput
+  miembros?: Prisma.MiembroBarberiaCreateNestedManyWithoutProfesionalInput
+  horarios?: Prisma.HorarioProfesionalCreateNestedManyWithoutProfesionalInput
+  reservas?: Prisma.ReservaCreateNestedManyWithoutProfesionalInput
+  bloqueos?: Prisma.BloqueoProfesionalCreateNestedManyWithoutProfesionalInput
+}
+
+export type ProfesionalUncheckedCreateWithoutInvitacionesInput = {
+  id?: number
+  nombre: string
+  activo?: boolean
+  barberiaId: number
+  servicios?: Prisma.ProfesionalServicioUncheckedCreateNestedManyWithoutProfesionalInput
+  miembros?: Prisma.MiembroBarberiaUncheckedCreateNestedManyWithoutProfesionalInput
+  horarios?: Prisma.HorarioProfesionalUncheckedCreateNestedManyWithoutProfesionalInput
+  reservas?: Prisma.ReservaUncheckedCreateNestedManyWithoutProfesionalInput
+  bloqueos?: Prisma.BloqueoProfesionalUncheckedCreateNestedManyWithoutProfesionalInput
+}
+
+export type ProfesionalCreateOrConnectWithoutInvitacionesInput = {
+  where: Prisma.ProfesionalWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProfesionalCreateWithoutInvitacionesInput, Prisma.ProfesionalUncheckedCreateWithoutInvitacionesInput>
+}
+
+export type ProfesionalUpsertWithoutInvitacionesInput = {
+  update: Prisma.XOR<Prisma.ProfesionalUpdateWithoutInvitacionesInput, Prisma.ProfesionalUncheckedUpdateWithoutInvitacionesInput>
+  create: Prisma.XOR<Prisma.ProfesionalCreateWithoutInvitacionesInput, Prisma.ProfesionalUncheckedCreateWithoutInvitacionesInput>
+  where?: Prisma.ProfesionalWhereInput
+}
+
+export type ProfesionalUpdateToOneWithWhereWithoutInvitacionesInput = {
+  where?: Prisma.ProfesionalWhereInput
+  data: Prisma.XOR<Prisma.ProfesionalUpdateWithoutInvitacionesInput, Prisma.ProfesionalUncheckedUpdateWithoutInvitacionesInput>
+}
+
+export type ProfesionalUpdateWithoutInvitacionesInput = {
+  nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  activo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  barberia?: Prisma.BarberiaUpdateOneRequiredWithoutProfesionalesNestedInput
+  servicios?: Prisma.ProfesionalServicioUpdateManyWithoutProfesionalNestedInput
+  miembros?: Prisma.MiembroBarberiaUpdateManyWithoutProfesionalNestedInput
+  horarios?: Prisma.HorarioProfesionalUpdateManyWithoutProfesionalNestedInput
+  reservas?: Prisma.ReservaUpdateManyWithoutProfesionalNestedInput
+  bloqueos?: Prisma.BloqueoProfesionalUpdateManyWithoutProfesionalNestedInput
+}
+
+export type ProfesionalUncheckedUpdateWithoutInvitacionesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  activo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  barberiaId?: Prisma.IntFieldUpdateOperationsInput | number
+  servicios?: Prisma.ProfesionalServicioUncheckedUpdateManyWithoutProfesionalNestedInput
+  miembros?: Prisma.MiembroBarberiaUncheckedUpdateManyWithoutProfesionalNestedInput
+  horarios?: Prisma.HorarioProfesionalUncheckedUpdateManyWithoutProfesionalNestedInput
+  reservas?: Prisma.ReservaUncheckedUpdateManyWithoutProfesionalNestedInput
+  bloqueos?: Prisma.BloqueoProfesionalUncheckedUpdateManyWithoutProfesionalNestedInput
 }
 
 export type ProfesionalCreateManyBarberiaInput = {
@@ -872,6 +977,7 @@ export type ProfesionalUpdateWithoutBarberiaInput = {
   horarios?: Prisma.HorarioProfesionalUpdateManyWithoutProfesionalNestedInput
   reservas?: Prisma.ReservaUpdateManyWithoutProfesionalNestedInput
   bloqueos?: Prisma.BloqueoProfesionalUpdateManyWithoutProfesionalNestedInput
+  invitaciones?: Prisma.InvitacionEquipoUpdateManyWithoutProfesionalNestedInput
 }
 
 export type ProfesionalUncheckedUpdateWithoutBarberiaInput = {
@@ -883,6 +989,7 @@ export type ProfesionalUncheckedUpdateWithoutBarberiaInput = {
   horarios?: Prisma.HorarioProfesionalUncheckedUpdateManyWithoutProfesionalNestedInput
   reservas?: Prisma.ReservaUncheckedUpdateManyWithoutProfesionalNestedInput
   bloqueos?: Prisma.BloqueoProfesionalUncheckedUpdateManyWithoutProfesionalNestedInput
+  invitaciones?: Prisma.InvitacionEquipoUncheckedUpdateManyWithoutProfesionalNestedInput
 }
 
 export type ProfesionalUncheckedUpdateManyWithoutBarberiaInput = {
@@ -902,6 +1009,7 @@ export type ProfesionalCountOutputType = {
   horarios: number
   reservas: number
   bloqueos: number
+  invitaciones: number
 }
 
 export type ProfesionalCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -910,6 +1018,7 @@ export type ProfesionalCountOutputTypeSelect<ExtArgs extends runtime.Types.Exten
   horarios?: boolean | ProfesionalCountOutputTypeCountHorariosArgs
   reservas?: boolean | ProfesionalCountOutputTypeCountReservasArgs
   bloqueos?: boolean | ProfesionalCountOutputTypeCountBloqueosArgs
+  invitaciones?: boolean | ProfesionalCountOutputTypeCountInvitacionesArgs
 }
 
 /**
@@ -957,6 +1066,13 @@ export type ProfesionalCountOutputTypeCountBloqueosArgs<ExtArgs extends runtime.
   where?: Prisma.BloqueoProfesionalWhereInput
 }
 
+/**
+ * ProfesionalCountOutputType without action
+ */
+export type ProfesionalCountOutputTypeCountInvitacionesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.InvitacionEquipoWhereInput
+}
+
 
 export type ProfesionalSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -969,6 +1085,7 @@ export type ProfesionalSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   horarios?: boolean | Prisma.Profesional$horariosArgs<ExtArgs>
   reservas?: boolean | Prisma.Profesional$reservasArgs<ExtArgs>
   bloqueos?: boolean | Prisma.Profesional$bloqueosArgs<ExtArgs>
+  invitaciones?: boolean | Prisma.Profesional$invitacionesArgs<ExtArgs>
   _count?: boolean | Prisma.ProfesionalCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["profesional"]>
 
@@ -1003,6 +1120,7 @@ export type ProfesionalInclude<ExtArgs extends runtime.Types.Extensions.Internal
   horarios?: boolean | Prisma.Profesional$horariosArgs<ExtArgs>
   reservas?: boolean | Prisma.Profesional$reservasArgs<ExtArgs>
   bloqueos?: boolean | Prisma.Profesional$bloqueosArgs<ExtArgs>
+  invitaciones?: boolean | Prisma.Profesional$invitacionesArgs<ExtArgs>
   _count?: boolean | Prisma.ProfesionalCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ProfesionalIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1021,6 +1139,7 @@ export type $ProfesionalPayload<ExtArgs extends runtime.Types.Extensions.Interna
     horarios: Prisma.$HorarioProfesionalPayload<ExtArgs>[]
     reservas: Prisma.$ReservaPayload<ExtArgs>[]
     bloqueos: Prisma.$BloqueoProfesionalPayload<ExtArgs>[]
+    invitaciones: Prisma.$InvitacionEquipoPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1427,6 +1546,7 @@ export interface Prisma__ProfesionalClient<T, Null = never, ExtArgs extends runt
   horarios<T extends Prisma.Profesional$horariosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profesional$horariosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$HorarioProfesionalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reservas<T extends Prisma.Profesional$reservasArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profesional$reservasArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReservaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   bloqueos<T extends Prisma.Profesional$bloqueosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profesional$bloqueosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BloqueoProfesionalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  invitaciones<T extends Prisma.Profesional$invitacionesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profesional$invitacionesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InvitacionEquipoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1978,6 +2098,30 @@ export type Profesional$bloqueosArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.BloqueoProfesionalScalarFieldEnum | Prisma.BloqueoProfesionalScalarFieldEnum[]
+}
+
+/**
+ * Profesional.invitaciones
+ */
+export type Profesional$invitacionesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the InvitacionEquipo
+   */
+  select?: Prisma.InvitacionEquipoSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the InvitacionEquipo
+   */
+  omit?: Prisma.InvitacionEquipoOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.InvitacionEquipoInclude<ExtArgs> | null
+  where?: Prisma.InvitacionEquipoWhereInput
+  orderBy?: Prisma.InvitacionEquipoOrderByWithRelationInput | Prisma.InvitacionEquipoOrderByWithRelationInput[]
+  cursor?: Prisma.InvitacionEquipoWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.InvitacionEquipoScalarFieldEnum | Prisma.InvitacionEquipoScalarFieldEnum[]
 }
 
 /**

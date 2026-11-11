@@ -67,3 +67,8 @@ export type BloqueoProfesional = Prisma.BloqueoProfesionalModel
  * 
  */
 export type ReagendamientoReserva = Prisma.ReagendamientoReservaModel
+/**
+ * Model InvitacionEquipo
+ * 
+ */
+export type InvitacionEquipo = Prisma.InvitacionEquipoModel

@@ -11,11 +11,13 @@ import type { Sesion, UsuarioRegistrado } from '../types.js';
 
 type Props = {
   avisoInicial?: string;
+  area?: "cliente" | "negocio";
   onSesionIniciada: (sesion: Sesion) => void;
 };
 
 export default function AccesoCuenta({
   avisoInicial = '',
+  area = 'cliente',
   onSesionIniciada,
 }: Props) {
   const [modo, setModo] = useState<'login' | 'registro'>('login');
@@ -126,8 +128,12 @@ export default function AccesoCuenta({
 
       <p>
         {modo === 'login'
-          ? 'Ingresa a tu cuenta para reservar tu próxima cita.'
-          : 'Regístrate para elegir tu barbería y reservar una hora.'}
+          ? area === 'negocio'
+            ? 'Ingresa con tu cuenta para acceder a los negocios de tu equipo.'
+            : 'Ingresa a tu cuenta para reservar tu próxima cita.'
+          : area === 'negocio'
+            ? 'Crea tu cuenta personal. El acceso a un negocio requiere una membresía activa.'
+            : 'Regístrate para elegir tu barbería y reservar una hora.'}
       </p>
 
       {aviso && (

@@ -21,6 +21,8 @@ model Barberia {
   miembros      MiembroBarberia[]
   zonaHoraria   String            @default("America/Santiago")
   reservas      Reserva[]
+  direccion String?
+  intervaloReservasMinutos Int @default(15)
 }
 
 model Profesional {
@@ -36,6 +38,7 @@ model Profesional {
   horarios  HorarioProfesional[]
   reservas  Reserva[]
   bloqueos  BloqueoProfesional[]
+  invitaciones InvitacionEquipo[]
 
   @@unique([id, barberiaId])
   @@index([barberiaId])
@@ -88,6 +91,8 @@ telefono        String?
   reservas                  Reserva[]
   membresias                MiembroBarberia[]
   reagendamientosRealizados ReagendamientoReserva[]
+  invitacionesCreadas InvitacionEquipo[] @relation("CreadorInvitacion")
+  invitacionesAceptadas InvitacionEquipo[] @relation("AceptadorInvitacion")
 }
 
 model MiembroBarberia {
@@ -185,4 +190,25 @@ model ReagendamientoReserva {
 
   @@index([reservaId, creadoEn])
   @@index([actorId])
+}
+
+model InvitacionEquipo {
+  id Int @id @default(autoincrement())
+  barberiaId Int
+  profesionalId Int
+  email String
+  tokenHash String @unique
+  creadorId Int
+  aceptadaPorId Int?
+  creadoEn DateTime @default(now()) @db.Timestamptz(3)
+  venceEn DateTime @db.Timestamptz(3)
+  aceptadaEn DateTime? @db.Timestamptz(3)
+  revocadaEn DateTime? @db.Timestamptz(3)
+
+  profesional Profesional @relation(fields: [profesionalId, barberiaId], references: [id, barberiaId], onDelete: Restrict, onUpdate: Restrict)
+  creador Usuario @relation("CreadorInvitacion", fields: [creadorId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  aceptadaPor Usuario? @relation("AceptadorInvitacion", fields: [aceptadaPorId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([barberiaId, profesionalId])
+  @@index([barberiaId, email])
 }

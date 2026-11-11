@@ -28,10 +28,12 @@ export type AggregateBarberia = {
 
 export type BarberiaAvgAggregateOutputType = {
   id: number | null
+  intervaloReservasMinutos: number | null
 }
 
 export type BarberiaSumAggregateOutputType = {
   id: number | null
+  intervaloReservasMinutos: number | null
 }
 
 export type BarberiaMinAggregateOutputType = {
@@ -39,6 +41,8 @@ export type BarberiaMinAggregateOutputType = {
   nombre: string | null
   ciudad: string | null
   zonaHoraria: string | null
+  direccion: string | null
+  intervaloReservasMinutos: number | null
 }
 
 export type BarberiaMaxAggregateOutputType = {
@@ -46,6 +50,8 @@ export type BarberiaMaxAggregateOutputType = {
   nombre: string | null
   ciudad: string | null
   zonaHoraria: string | null
+  direccion: string | null
+  intervaloReservasMinutos: number | null
 }
 
 export type BarberiaCountAggregateOutputType = {
@@ -53,16 +59,20 @@ export type BarberiaCountAggregateOutputType = {
   nombre: number
   ciudad: number
   zonaHoraria: number
+  direccion: number
+  intervaloReservasMinutos: number
   _all: number
 }
 
 
 export type BarberiaAvgAggregateInputType = {
   id?: true
+  intervaloReservasMinutos?: true
 }
 
 export type BarberiaSumAggregateInputType = {
   id?: true
+  intervaloReservasMinutos?: true
 }
 
 export type BarberiaMinAggregateInputType = {
@@ -70,6 +80,8 @@ export type BarberiaMinAggregateInputType = {
   nombre?: true
   ciudad?: true
   zonaHoraria?: true
+  direccion?: true
+  intervaloReservasMinutos?: true
 }
 
 export type BarberiaMaxAggregateInputType = {
@@ -77,6 +89,8 @@ export type BarberiaMaxAggregateInputType = {
   nombre?: true
   ciudad?: true
   zonaHoraria?: true
+  direccion?: true
+  intervaloReservasMinutos?: true
 }
 
 export type BarberiaCountAggregateInputType = {
@@ -84,6 +98,8 @@ export type BarberiaCountAggregateInputType = {
   nombre?: true
   ciudad?: true
   zonaHoraria?: true
+  direccion?: true
+  intervaloReservasMinutos?: true
   _all?: true
 }
 
@@ -178,6 +194,8 @@ export type BarberiaGroupByOutputType = {
   nombre: string
   ciudad: string
   zonaHoraria: string
+  direccion: string | null
+  intervaloReservasMinutos: number
   _count: BarberiaCountAggregateOutputType | null
   _avg: BarberiaAvgAggregateOutputType | null
   _sum: BarberiaSumAggregateOutputType | null
@@ -208,6 +226,8 @@ export type BarberiaWhereInput = {
   nombre?: Prisma.StringFilter<"Barberia"> | string
   ciudad?: Prisma.StringFilter<"Barberia"> | string
   zonaHoraria?: Prisma.StringFilter<"Barberia"> | string
+  direccion?: Prisma.StringNullableFilter<"Barberia"> | string | null
+  intervaloReservasMinutos?: Prisma.IntFilter<"Barberia"> | number
   profesionales?: Prisma.ProfesionalListRelationFilter
   servicios?: Prisma.ServicioListRelationFilter
   miembros?: Prisma.MiembroBarberiaListRelationFilter
@@ -219,6 +239,8 @@ export type BarberiaOrderByWithRelationInput = {
   nombre?: Prisma.SortOrder
   ciudad?: Prisma.SortOrder
   zonaHoraria?: Prisma.SortOrder
+  direccion?: Prisma.SortOrderInput | Prisma.SortOrder
+  intervaloReservasMinutos?: Prisma.SortOrder
   profesionales?: Prisma.ProfesionalOrderByRelationAggregateInput
   servicios?: Prisma.ServicioOrderByRelationAggregateInput
   miembros?: Prisma.MiembroBarberiaOrderByRelationAggregateInput
@@ -233,6 +255,8 @@ export type BarberiaWhereUniqueInput = Prisma.AtLeast<{
   nombre?: Prisma.StringFilter<"Barberia"> | string
   ciudad?: Prisma.StringFilter<"Barberia"> | string
   zonaHoraria?: Prisma.StringFilter<"Barberia"> | string
+  direccion?: Prisma.StringNullableFilter<"Barberia"> | string | null
+  intervaloReservasMinutos?: Prisma.IntFilter<"Barberia"> | number
   profesionales?: Prisma.ProfesionalListRelationFilter
   servicios?: Prisma.ServicioListRelationFilter
   miembros?: Prisma.MiembroBarberiaListRelationFilter
@@ -244,6 +268,8 @@ export type BarberiaOrderByWithAggregationInput = {
   nombre?: Prisma.SortOrder
   ciudad?: Prisma.SortOrder
   zonaHoraria?: Prisma.SortOrder
+  direccion?: Prisma.SortOrderInput | Prisma.SortOrder
+  intervaloReservasMinutos?: Prisma.SortOrder
   _count?: Prisma.BarberiaCountOrderByAggregateInput
   _avg?: Prisma.BarberiaAvgOrderByAggregateInput
   _max?: Prisma.BarberiaMaxOrderByAggregateInput
@@ -259,12 +285,16 @@ export type BarberiaScalarWhereWithAggregatesInput = {
   nombre?: Prisma.StringWithAggregatesFilter<"Barberia"> | string
   ciudad?: Prisma.StringWithAggregatesFilter<"Barberia"> | string
   zonaHoraria?: Prisma.StringWithAggregatesFilter<"Barberia"> | string
+  direccion?: Prisma.StringNullableWithAggregatesFilter<"Barberia"> | string | null
+  intervaloReservasMinutos?: Prisma.IntWithAggregatesFilter<"Barberia"> | number
 }
 
 export type BarberiaCreateInput = {
   nombre: string
   ciudad: string
   zonaHoraria?: string
+  direccion?: string | null
+  intervaloReservasMinutos?: number
   profesionales?: Prisma.ProfesionalCreateNestedManyWithoutBarberiaInput
   servicios?: Prisma.ServicioCreateNestedManyWithoutBarberiaInput
   miembros?: Prisma.MiembroBarberiaCreateNestedManyWithoutBarberiaInput
@@ -276,6 +306,8 @@ export type BarberiaUncheckedCreateInput = {
   nombre: string
   ciudad: string
   zonaHoraria?: string
+  direccion?: string | null
+  intervaloReservasMinutos?: number
   profesionales?: Prisma.ProfesionalUncheckedCreateNestedManyWithoutBarberiaInput
   servicios?: Prisma.ServicioUncheckedCreateNestedManyWithoutBarberiaInput
   miembros?: Prisma.MiembroBarberiaUncheckedCreateNestedManyWithoutBarberiaInput
@@ -286,6 +318,8 @@ export type BarberiaUpdateInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   ciudad?: Prisma.StringFieldUpdateOperationsInput | string
   zonaHoraria?: Prisma.StringFieldUpdateOperationsInput | string
+  direccion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  intervaloReservasMinutos?: Prisma.IntFieldUpdateOperationsInput | number
   profesionales?: Prisma.ProfesionalUpdateManyWithoutBarberiaNestedInput
   servicios?: Prisma.ServicioUpdateManyWithoutBarberiaNestedInput
   miembros?: Prisma.MiembroBarberiaUpdateManyWithoutBarberiaNestedInput
@@ -297,6 +331,8 @@ export type BarberiaUncheckedUpdateInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   ciudad?: Prisma.StringFieldUpdateOperationsInput | string
   zonaHoraria?: Prisma.StringFieldUpdateOperationsInput | string
+  direccion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  intervaloReservasMinutos?: Prisma.IntFieldUpdateOperationsInput | number
   profesionales?: Prisma.ProfesionalUncheckedUpdateManyWithoutBarberiaNestedInput
   servicios?: Prisma.ServicioUncheckedUpdateManyWithoutBarberiaNestedInput
   miembros?: Prisma.MiembroBarberiaUncheckedUpdateManyWithoutBarberiaNestedInput
@@ -308,12 +344,16 @@ export type BarberiaCreateManyInput = {
   nombre: string
   ciudad: string
   zonaHoraria?: string
+  direccion?: string | null
+  intervaloReservasMinutos?: number
 }
 
 export type BarberiaUpdateManyMutationInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   ciudad?: Prisma.StringFieldUpdateOperationsInput | string
   zonaHoraria?: Prisma.StringFieldUpdateOperationsInput | string
+  direccion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  intervaloReservasMinutos?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type BarberiaUncheckedUpdateManyInput = {
@@ -321,6 +361,8 @@ export type BarberiaUncheckedUpdateManyInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   ciudad?: Prisma.StringFieldUpdateOperationsInput | string
   zonaHoraria?: Prisma.StringFieldUpdateOperationsInput | string
+  direccion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  intervaloReservasMinutos?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type BarberiaCountOrderByAggregateInput = {
@@ -328,10 +370,13 @@ export type BarberiaCountOrderByAggregateInput = {
   nombre?: Prisma.SortOrder
   ciudad?: Prisma.SortOrder
   zonaHoraria?: Prisma.SortOrder
+  direccion?: Prisma.SortOrder
+  intervaloReservasMinutos?: Prisma.SortOrder
 }
 
 export type BarberiaAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  intervaloReservasMinutos?: Prisma.SortOrder
 }
 
 export type BarberiaMaxOrderByAggregateInput = {
@@ -339,6 +384,8 @@ export type BarberiaMaxOrderByAggregateInput = {
   nombre?: Prisma.SortOrder
   ciudad?: Prisma.SortOrder
   zonaHoraria?: Prisma.SortOrder
+  direccion?: Prisma.SortOrder
+  intervaloReservasMinutos?: Prisma.SortOrder
 }
 
 export type BarberiaMinOrderByAggregateInput = {
@@ -346,10 +393,13 @@ export type BarberiaMinOrderByAggregateInput = {
   nombre?: Prisma.SortOrder
   ciudad?: Prisma.SortOrder
   zonaHoraria?: Prisma.SortOrder
+  direccion?: Prisma.SortOrder
+  intervaloReservasMinutos?: Prisma.SortOrder
 }
 
 export type BarberiaSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  intervaloReservasMinutos?: Prisma.SortOrder
 }
 
 export type BarberiaScalarRelationFilter = {
@@ -359,6 +409,10 @@ export type BarberiaScalarRelationFilter = {
 
 export type StringFieldUpdateOperationsInput = {
   set?: string
+}
+
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
 }
 
 export type IntFieldUpdateOperationsInput = {
@@ -429,6 +483,8 @@ export type BarberiaCreateWithoutProfesionalesInput = {
   nombre: string
   ciudad: string
   zonaHoraria?: string
+  direccion?: string | null
+  intervaloReservasMinutos?: number
   servicios?: Prisma.ServicioCreateNestedManyWithoutBarberiaInput
   miembros?: Prisma.MiembroBarberiaCreateNestedManyWithoutBarberiaInput
   reservas?: Prisma.ReservaCreateNestedManyWithoutBarberiaInput
@@ -439,6 +495,8 @@ export type BarberiaUncheckedCreateWithoutProfesionalesInput = {
   nombre: string
   ciudad: string
   zonaHoraria?: string
+  direccion?: string | null
+  intervaloReservasMinutos?: number
   servicios?: Prisma.ServicioUncheckedCreateNestedManyWithoutBarberiaInput
   miembros?: Prisma.MiembroBarberiaUncheckedCreateNestedManyWithoutBarberiaInput
   reservas?: Prisma.ReservaUncheckedCreateNestedManyWithoutBarberiaInput
@@ -464,6 +522,8 @@ export type BarberiaUpdateWithoutProfesionalesInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   ciudad?: Prisma.StringFieldUpdateOperationsInput | string
   zonaHoraria?: Prisma.StringFieldUpdateOperationsInput | string
+  direccion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  intervaloReservasMinutos?: Prisma.IntFieldUpdateOperationsInput | number
   servicios?: Prisma.ServicioUpdateManyWithoutBarberiaNestedInput
   miembros?: Prisma.MiembroBarberiaUpdateManyWithoutBarberiaNestedInput
   reservas?: Prisma.ReservaUpdateManyWithoutBarberiaNestedInput
@@ -474,6 +534,8 @@ export type BarberiaUncheckedUpdateWithoutProfesionalesInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   ciudad?: Prisma.StringFieldUpdateOperationsInput | string
   zonaHoraria?: Prisma.StringFieldUpdateOperationsInput | string
+  direccion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  intervaloReservasMinutos?: Prisma.IntFieldUpdateOperationsInput | number
   servicios?: Prisma.ServicioUncheckedUpdateManyWithoutBarberiaNestedInput
   miembros?: Prisma.MiembroBarberiaUncheckedUpdateManyWithoutBarberiaNestedInput
   reservas?: Prisma.ReservaUncheckedUpdateManyWithoutBarberiaNestedInput
@@ -483,6 +545,8 @@ export type BarberiaCreateWithoutServiciosInput = {
   nombre: string
   ciudad: string
   zonaHoraria?: string
+  direccion?: string | null
+  intervaloReservasMinutos?: number
   profesionales?: Prisma.ProfesionalCreateNestedManyWithoutBarberiaInput
   miembros?: Prisma.MiembroBarberiaCreateNestedManyWithoutBarberiaInput
   reservas?: Prisma.ReservaCreateNestedManyWithoutBarberiaInput
@@ -493,6 +557,8 @@ export type BarberiaUncheckedCreateWithoutServiciosInput = {
   nombre: string
   ciudad: string
   zonaHoraria?: string
+  direccion?: string | null
+  intervaloReservasMinutos?: number
   profesionales?: Prisma.ProfesionalUncheckedCreateNestedManyWithoutBarberiaInput
   miembros?: Prisma.MiembroBarberiaUncheckedCreateNestedManyWithoutBarberiaInput
   reservas?: Prisma.ReservaUncheckedCreateNestedManyWithoutBarberiaInput
@@ -518,6 +584,8 @@ export type BarberiaUpdateWithoutServiciosInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   ciudad?: Prisma.StringFieldUpdateOperationsInput | string
   zonaHoraria?: Prisma.StringFieldUpdateOperationsInput | string
+  direccion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  intervaloReservasMinutos?: Prisma.IntFieldUpdateOperationsInput | number
   profesionales?: Prisma.ProfesionalUpdateManyWithoutBarberiaNestedInput
   miembros?: Prisma.MiembroBarberiaUpdateManyWithoutBarberiaNestedInput
   reservas?: Prisma.ReservaUpdateManyWithoutBarberiaNestedInput
@@ -528,6 +596,8 @@ export type BarberiaUncheckedUpdateWithoutServiciosInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   ciudad?: Prisma.StringFieldUpdateOperationsInput | string
   zonaHoraria?: Prisma.StringFieldUpdateOperationsInput | string
+  direccion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  intervaloReservasMinutos?: Prisma.IntFieldUpdateOperationsInput | number
   profesionales?: Prisma.ProfesionalUncheckedUpdateManyWithoutBarberiaNestedInput
   miembros?: Prisma.MiembroBarberiaUncheckedUpdateManyWithoutBarberiaNestedInput
   reservas?: Prisma.ReservaUncheckedUpdateManyWithoutBarberiaNestedInput
@@ -537,6 +607,8 @@ export type BarberiaCreateWithoutMiembrosInput = {
   nombre: string
   ciudad: string
   zonaHoraria?: string
+  direccion?: string | null
+  intervaloReservasMinutos?: number
   profesionales?: Prisma.ProfesionalCreateNestedManyWithoutBarberiaInput
   servicios?: Prisma.ServicioCreateNestedManyWithoutBarberiaInput
   reservas?: Prisma.ReservaCreateNestedManyWithoutBarberiaInput
@@ -547,6 +619,8 @@ export type BarberiaUncheckedCreateWithoutMiembrosInput = {
   nombre: string
   ciudad: string
   zonaHoraria?: string
+  direccion?: string | null
+  intervaloReservasMinutos?: number
   profesionales?: Prisma.ProfesionalUncheckedCreateNestedManyWithoutBarberiaInput
   servicios?: Prisma.ServicioUncheckedCreateNestedManyWithoutBarberiaInput
   reservas?: Prisma.ReservaUncheckedCreateNestedManyWithoutBarberiaInput
@@ -572,6 +646,8 @@ export type BarberiaUpdateWithoutMiembrosInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   ciudad?: Prisma.StringFieldUpdateOperationsInput | string
   zonaHoraria?: Prisma.StringFieldUpdateOperationsInput | string
+  direccion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  intervaloReservasMinutos?: Prisma.IntFieldUpdateOperationsInput | number
   profesionales?: Prisma.ProfesionalUpdateManyWithoutBarberiaNestedInput
   servicios?: Prisma.ServicioUpdateManyWithoutBarberiaNestedInput
   reservas?: Prisma.ReservaUpdateManyWithoutBarberiaNestedInput
@@ -582,6 +658,8 @@ export type BarberiaUncheckedUpdateWithoutMiembrosInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   ciudad?: Prisma.StringFieldUpdateOperationsInput | string
   zonaHoraria?: Prisma.StringFieldUpdateOperationsInput | string
+  direccion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  intervaloReservasMinutos?: Prisma.IntFieldUpdateOperationsInput | number
   profesionales?: Prisma.ProfesionalUncheckedUpdateManyWithoutBarberiaNestedInput
   servicios?: Prisma.ServicioUncheckedUpdateManyWithoutBarberiaNestedInput
   reservas?: Prisma.ReservaUncheckedUpdateManyWithoutBarberiaNestedInput
@@ -591,6 +669,8 @@ export type BarberiaCreateWithoutReservasInput = {
   nombre: string
   ciudad: string
   zonaHoraria?: string
+  direccion?: string | null
+  intervaloReservasMinutos?: number
   profesionales?: Prisma.ProfesionalCreateNestedManyWithoutBarberiaInput
   servicios?: Prisma.ServicioCreateNestedManyWithoutBarberiaInput
   miembros?: Prisma.MiembroBarberiaCreateNestedManyWithoutBarberiaInput
@@ -601,6 +681,8 @@ export type BarberiaUncheckedCreateWithoutReservasInput = {
   nombre: string
   ciudad: string
   zonaHoraria?: string
+  direccion?: string | null
+  intervaloReservasMinutos?: number
   profesionales?: Prisma.ProfesionalUncheckedCreateNestedManyWithoutBarberiaInput
   servicios?: Prisma.ServicioUncheckedCreateNestedManyWithoutBarberiaInput
   miembros?: Prisma.MiembroBarberiaUncheckedCreateNestedManyWithoutBarberiaInput
@@ -626,6 +708,8 @@ export type BarberiaUpdateWithoutReservasInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   ciudad?: Prisma.StringFieldUpdateOperationsInput | string
   zonaHoraria?: Prisma.StringFieldUpdateOperationsInput | string
+  direccion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  intervaloReservasMinutos?: Prisma.IntFieldUpdateOperationsInput | number
   profesionales?: Prisma.ProfesionalUpdateManyWithoutBarberiaNestedInput
   servicios?: Prisma.ServicioUpdateManyWithoutBarberiaNestedInput
   miembros?: Prisma.MiembroBarberiaUpdateManyWithoutBarberiaNestedInput
@@ -636,6 +720,8 @@ export type BarberiaUncheckedUpdateWithoutReservasInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   ciudad?: Prisma.StringFieldUpdateOperationsInput | string
   zonaHoraria?: Prisma.StringFieldUpdateOperationsInput | string
+  direccion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  intervaloReservasMinutos?: Prisma.IntFieldUpdateOperationsInput | number
   profesionales?: Prisma.ProfesionalUncheckedUpdateManyWithoutBarberiaNestedInput
   servicios?: Prisma.ServicioUncheckedUpdateManyWithoutBarberiaNestedInput
   miembros?: Prisma.MiembroBarberiaUncheckedUpdateManyWithoutBarberiaNestedInput
@@ -704,6 +790,8 @@ export type BarberiaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   nombre?: boolean
   ciudad?: boolean
   zonaHoraria?: boolean
+  direccion?: boolean
+  intervaloReservasMinutos?: boolean
   profesionales?: boolean | Prisma.Barberia$profesionalesArgs<ExtArgs>
   servicios?: boolean | Prisma.Barberia$serviciosArgs<ExtArgs>
   miembros?: boolean | Prisma.Barberia$miembrosArgs<ExtArgs>
@@ -716,6 +804,8 @@ export type BarberiaSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   nombre?: boolean
   ciudad?: boolean
   zonaHoraria?: boolean
+  direccion?: boolean
+  intervaloReservasMinutos?: boolean
 }, ExtArgs["result"]["barberia"]>
 
 export type BarberiaSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -723,6 +813,8 @@ export type BarberiaSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   nombre?: boolean
   ciudad?: boolean
   zonaHoraria?: boolean
+  direccion?: boolean
+  intervaloReservasMinutos?: boolean
 }, ExtArgs["result"]["barberia"]>
 
 export type BarberiaSelectScalar = {
@@ -730,9 +822,11 @@ export type BarberiaSelectScalar = {
   nombre?: boolean
   ciudad?: boolean
   zonaHoraria?: boolean
+  direccion?: boolean
+  intervaloReservasMinutos?: boolean
 }
 
-export type BarberiaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nombre" | "ciudad" | "zonaHoraria", ExtArgs["result"]["barberia"]>
+export type BarberiaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nombre" | "ciudad" | "zonaHoraria" | "direccion" | "intervaloReservasMinutos", ExtArgs["result"]["barberia"]>
 export type BarberiaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   profesionales?: boolean | Prisma.Barberia$profesionalesArgs<ExtArgs>
   servicios?: boolean | Prisma.Barberia$serviciosArgs<ExtArgs>
@@ -756,6 +850,8 @@ export type $BarberiaPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     nombre: string
     ciudad: string
     zonaHoraria: string
+    direccion: string | null
+    intervaloReservasMinutos: number
   }, ExtArgs["result"]["barberia"]>
   composites: {}
 }
@@ -1187,6 +1283,8 @@ export interface BarberiaFieldRefs {
   readonly nombre: Prisma.FieldRef<"Barberia", 'String'>
   readonly ciudad: Prisma.FieldRef<"Barberia", 'String'>
   readonly zonaHoraria: Prisma.FieldRef<"Barberia", 'String'>
+  readonly direccion: Prisma.FieldRef<"Barberia", 'String'>
+  readonly intervaloReservasMinutos: Prisma.FieldRef<"Barberia", 'Int'>
 }
     
 

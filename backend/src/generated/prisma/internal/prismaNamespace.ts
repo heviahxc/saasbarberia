@@ -406,7 +406,8 @@ export const ModelName = {
   HorarioProfesional: 'HorarioProfesional',
   Reserva: 'Reserva',
   BloqueoProfesional: 'BloqueoProfesional',
-  ReagendamientoReserva: 'ReagendamientoReserva'
+  ReagendamientoReserva: 'ReagendamientoReserva',
+  InvitacionEquipo: 'InvitacionEquipo'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -422,7 +423,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "barberia" | "profesional" | "servicio" | "profesionalServicio" | "usuario" | "miembroBarberia" | "horarioProfesional" | "reserva" | "bloqueoProfesional" | "reagendamientoReserva"
+    modelProps: "barberia" | "profesional" | "servicio" | "profesionalServicio" | "usuario" | "miembroBarberia" | "horarioProfesional" | "reserva" | "bloqueoProfesional" | "reagendamientoReserva" | "invitacionEquipo"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1166,6 +1167,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    InvitacionEquipo: {
+      payload: Prisma.$InvitacionEquipoPayload<ExtArgs>
+      fields: Prisma.InvitacionEquipoFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.InvitacionEquipoFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InvitacionEquipoPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.InvitacionEquipoFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InvitacionEquipoPayload>
+        }
+        findFirst: {
+          args: Prisma.InvitacionEquipoFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InvitacionEquipoPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.InvitacionEquipoFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InvitacionEquipoPayload>
+        }
+        findMany: {
+          args: Prisma.InvitacionEquipoFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InvitacionEquipoPayload>[]
+        }
+        create: {
+          args: Prisma.InvitacionEquipoCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InvitacionEquipoPayload>
+        }
+        createMany: {
+          args: Prisma.InvitacionEquipoCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.InvitacionEquipoCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InvitacionEquipoPayload>[]
+        }
+        delete: {
+          args: Prisma.InvitacionEquipoDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InvitacionEquipoPayload>
+        }
+        update: {
+          args: Prisma.InvitacionEquipoUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InvitacionEquipoPayload>
+        }
+        deleteMany: {
+          args: Prisma.InvitacionEquipoDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.InvitacionEquipoUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.InvitacionEquipoUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InvitacionEquipoPayload>[]
+        }
+        upsert: {
+          args: Prisma.InvitacionEquipoUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InvitacionEquipoPayload>
+        }
+        aggregate: {
+          args: Prisma.InvitacionEquipoAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateInvitacionEquipo>
+        }
+        groupBy: {
+          args: Prisma.InvitacionEquipoGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InvitacionEquipoGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.InvitacionEquipoCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InvitacionEquipoCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1209,7 +1284,9 @@ export const BarberiaScalarFieldEnum = {
   id: 'id',
   nombre: 'nombre',
   ciudad: 'ciudad',
-  zonaHoraria: 'zonaHoraria'
+  zonaHoraria: 'zonaHoraria',
+  direccion: 'direccion',
+  intervaloReservasMinutos: 'intervaloReservasMinutos'
 } as const
 
 export type BarberiaScalarFieldEnum = (typeof BarberiaScalarFieldEnum)[keyof typeof BarberiaScalarFieldEnum]
@@ -1329,6 +1406,23 @@ export const ReagendamientoReservaScalarFieldEnum = {
 } as const
 
 export type ReagendamientoReservaScalarFieldEnum = (typeof ReagendamientoReservaScalarFieldEnum)[keyof typeof ReagendamientoReservaScalarFieldEnum]
+
+
+export const InvitacionEquipoScalarFieldEnum = {
+  id: 'id',
+  barberiaId: 'barberiaId',
+  profesionalId: 'profesionalId',
+  email: 'email',
+  tokenHash: 'tokenHash',
+  creadorId: 'creadorId',
+  aceptadaPorId: 'aceptadaPorId',
+  creadoEn: 'creadoEn',
+  venceEn: 'venceEn',
+  aceptadaEn: 'aceptadaEn',
+  revocadaEn: 'revocadaEn'
+} as const
+
+export type InvitacionEquipoScalarFieldEnum = (typeof InvitacionEquipoScalarFieldEnum)[keyof typeof InvitacionEquipoScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1626,6 +1720,7 @@ export type GlobalOmitConfig = {
   reserva?: Prisma.ReservaOmit
   bloqueoProfesional?: Prisma.BloqueoProfesionalOmit
   reagendamientoReserva?: Prisma.ReagendamientoReservaOmit
+  invitacionEquipo?: Prisma.InvitacionEquipoOmit
 }
 
 /* Types for Logging */

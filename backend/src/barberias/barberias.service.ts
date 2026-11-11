@@ -6,7 +6,8 @@ import {
 
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CreateBarberiaDto } from './dto/create-barberia.dto.js';
-
+import { Prisma } from '../generated/prisma/client.js';
+import { ActualizarBarberiaDto } from './dto/actualizar-barberia.dto.js';
 @Injectable()
 export class BarberiasService {
   constructor(
@@ -51,6 +52,7 @@ export class BarberiasService {
       data: {
         nombre: createBarberiaDto.nombre,
         ciudad: createBarberiaDto.ciudad,
+        direccion: createBarberiaDto.direccion,
         miembros: {
           create: {
             usuarioId,
@@ -60,4 +62,40 @@ export class BarberiasService {
       },
     });
   }
+
+  async actualizar(
+  barberiaId: number,
+  dto: ActualizarBarberiaDto,
+) {
+  try {
+    return await this.prisma.barberia.update({
+      where: {
+        id: barberiaId,
+      },
+      data: {
+        nombre: dto.nombre,
+        ciudad: dto.ciudad,
+        direccion: dto.direccion,
+        intervaloReservasMinutos: dto.intervaloReservasMinutos,
+      },
+      select: {
+        id: true,
+        nombre: true,
+        ciudad: true,
+        direccion: true,
+        zonaHoraria: true,
+        intervaloReservasMinutos: true,
+      },
+    });
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === 'P2025'
+    ) {
+      throw new NotFoundException('La barbería no existe');
+    }
+
+    throw error;
+  }
+}
 }
