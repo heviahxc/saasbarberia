@@ -1,9 +1,9 @@
-import { useRef, useState } from 'react';
-import type { FormEvent } from 'react';
+import { useRef, useState } from "react";
+import type { FormEvent } from "react";
 
-import { useAuth } from '../../auth/auth-context.js';
-import { api, ApiError } from '../../../shared/lib/api.js';
-import { formatearFechaHora } from '../../../shared/lib/formatos.js';
+import { useAuth } from "../../auth/auth-context.js";
+import { api, ApiError } from "../../../shared/lib/api.js";
+import { formatearFechaHora } from "../../../shared/lib/formatos.js";
 
 type Opcion = {
   horaLocal: string;
@@ -43,13 +43,13 @@ export default function ReagendarCitaEquipo({
   const { sesion } = useAuth();
   const token = sesion?.accessToken;
 
-  const [fecha, setFecha] = useState('');
-  const [motivo, setMotivo] = useState('');
+  const [fecha, setFecha] = useState("");
+  const [motivo, setMotivo] = useState("");
   const [datos, setDatos] = useState<Disponibilidad | null>(null);
   const [seleccionada, setSeleccionada] = useState<Opcion | null>(null);
   const [ocupado, setOcupado] = useState(false);
   const [incierto, setIncierto] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const enCurso = useRef(false);
   const ruta = `/barberias/${barberiaId}/reservas/${reservaId}`;
@@ -61,7 +61,7 @@ export default function ReagendarCitaEquipo({
 
     enCurso.current = true;
     setOcupado(true);
-    setError('');
+    setError("");
     setDatos(null);
     setSeleccionada(null);
 
@@ -78,7 +78,7 @@ export default function ReagendarCitaEquipo({
       setError(
         fallo instanceof Error
           ? fallo.message
-          : 'No se pudieron consultar los horarios.',
+          : "No se pudieron consultar los horarios.",
       );
     } finally {
       enCurso.current = false;
@@ -94,17 +94,17 @@ export default function ReagendarCitaEquipo({
     const motivoLimpio = motivo.trim();
 
     if (motivoLimpio.length < 5 || motivoLimpio.length > 300) {
-      setError('El motivo debe tener entre 5 y 300 caracteres.');
+      setError("El motivo debe tener entre 5 y 300 caracteres.");
       return;
     }
 
     enCurso.current = true;
     setOcupado(true);
-    setError('');
+    setError("");
 
     try {
       const resultado = await api<Resultado>(`${ruta}/reagendar`, {
-        method: 'PATCH',
+        method: "PATCH",
         token,
         body: {
           inicio: seleccionada.inicio,
@@ -127,7 +127,7 @@ export default function ReagendarCitaEquipo({
       } else {
         setIncierto(true);
         setError(
-          'No pudimos confirmar el resultado. Vuelve a la agenda y revisa la cita antes de intentar otro cambio.',
+          "No pudimos confirmar el resultado. Vuelve a la agenda y revisa la cita antes de intentar otro cambio.",
         );
       }
     } finally {
@@ -171,13 +171,13 @@ export default function ReagendarCitaEquipo({
               setFecha(event.target.value);
               setDatos(null);
               setSeleccionada(null);
-              setError('');
+              setError("");
             }}
           />
         </div>
 
         <button type="submit" disabled={ocupado || incierto}>
-          {ocupado ? 'Procesando…' : 'Consultar horarios'}
+          {ocupado ? "Procesando…" : "Consultar horarios"}
         </button>
       </form>
 
@@ -190,13 +190,13 @@ export default function ReagendarCitaEquipo({
       {datos && (
         <>
           <p>
-            Cita actual:{' '}
+            Cita actual:{" "}
             {formatearFechaHora(datos.inicioActual, datos.zonaHoraria)}
           </p>
 
           <p className="nota-resumen">
-            Duración acordada: {datos.duracionMinutos} minutos.
-            Horas de la barbería: {datos.zonaHoraria}.
+            Duración acordada: {datos.duracionMinutos} minutos. Horas de la
+            barbería: {datos.zonaHoraria}.
           </p>
 
           {datos.opciones.length === 0 ? (
@@ -214,7 +214,7 @@ export default function ReagendarCitaEquipo({
                     aria-pressed={seleccionada?.inicio === opcion.inicio}
                     onClick={() => {
                       setSeleccionada(opcion);
-                      setError('');
+                      setError("");
                     }}
                   >
                     {opcion.horaLocal}
@@ -227,12 +227,9 @@ export default function ReagendarCitaEquipo({
           {seleccionada && (
             <form className="formulario" onSubmit={confirmar}>
               <p>
-                Nuevo horario:{' '}
+                Nuevo horario:{" "}
                 <strong>
-                  {formatearFechaHora(
-                    seleccionada.inicio,
-                    datos.zonaHoraria,
-                  )}
+                  {formatearFechaHora(seleccionada.inicio, datos.zonaHoraria)}
                 </strong>
               </p>
 
@@ -257,7 +254,7 @@ export default function ReagendarCitaEquipo({
               </div>
 
               <button type="submit" disabled={ocupado}>
-                {ocupado ? 'Guardando…' : 'Confirmar reagendamiento'}
+                {ocupado ? "Guardando…" : "Confirmar reagendamiento"}
               </button>
             </form>
           )}

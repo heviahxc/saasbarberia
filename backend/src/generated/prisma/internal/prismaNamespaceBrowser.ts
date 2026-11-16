@@ -62,7 +62,8 @@ export const ModelName = {
   BloqueoProfesional: 'BloqueoProfesional',
   ReagendamientoReserva: 'ReagendamientoReserva',
   InvitacionEquipo: 'InvitacionEquipo',
-  CancelacionReserva: 'CancelacionReserva'
+  CancelacionReserva: 'CancelacionReserva',
+  CierreReserva: 'CierreReserva'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -236,6 +237,17 @@ export const CancelacionReservaScalarFieldEnum = {
 } as const
 
 export type CancelacionReservaScalarFieldEnum = (typeof CancelacionReservaScalarFieldEnum)[keyof typeof CancelacionReservaScalarFieldEnum]
+
+
+export const CierreReservaScalarFieldEnum = {
+  id: 'id',
+  reservaId: 'reservaId',
+  actorId: 'actorId',
+  estado: 'estado',
+  creadoEn: 'creadoEn'
+} as const
+
+export type CierreReservaScalarFieldEnum = (typeof CierreReservaScalarFieldEnum)[keyof typeof CierreReservaScalarFieldEnum]
 
 
 export const SortOrder = {

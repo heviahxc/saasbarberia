@@ -408,7 +408,8 @@ export const ModelName = {
   BloqueoProfesional: 'BloqueoProfesional',
   ReagendamientoReserva: 'ReagendamientoReserva',
   InvitacionEquipo: 'InvitacionEquipo',
-  CancelacionReserva: 'CancelacionReserva'
+  CancelacionReserva: 'CancelacionReserva',
+  CierreReserva: 'CierreReserva'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -424,7 +425,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "barberia" | "profesional" | "servicio" | "profesionalServicio" | "usuario" | "miembroBarberia" | "horarioProfesional" | "reserva" | "bloqueoProfesional" | "reagendamientoReserva" | "invitacionEquipo" | "cancelacionReserva"
+    modelProps: "barberia" | "profesional" | "servicio" | "profesionalServicio" | "usuario" | "miembroBarberia" | "horarioProfesional" | "reserva" | "bloqueoProfesional" | "reagendamientoReserva" | "invitacionEquipo" | "cancelacionReserva" | "cierreReserva"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1316,6 +1317,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    CierreReserva: {
+      payload: Prisma.$CierreReservaPayload<ExtArgs>
+      fields: Prisma.CierreReservaFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CierreReservaFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CierreReservaPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CierreReservaFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CierreReservaPayload>
+        }
+        findFirst: {
+          args: Prisma.CierreReservaFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CierreReservaPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CierreReservaFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CierreReservaPayload>
+        }
+        findMany: {
+          args: Prisma.CierreReservaFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CierreReservaPayload>[]
+        }
+        create: {
+          args: Prisma.CierreReservaCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CierreReservaPayload>
+        }
+        createMany: {
+          args: Prisma.CierreReservaCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CierreReservaCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CierreReservaPayload>[]
+        }
+        delete: {
+          args: Prisma.CierreReservaDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CierreReservaPayload>
+        }
+        update: {
+          args: Prisma.CierreReservaUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CierreReservaPayload>
+        }
+        deleteMany: {
+          args: Prisma.CierreReservaDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CierreReservaUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CierreReservaUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CierreReservaPayload>[]
+        }
+        upsert: {
+          args: Prisma.CierreReservaUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CierreReservaPayload>
+        }
+        aggregate: {
+          args: Prisma.CierreReservaAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCierreReserva>
+        }
+        groupBy: {
+          args: Prisma.CierreReservaGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CierreReservaGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CierreReservaCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CierreReservaCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1510,6 +1585,17 @@ export const CancelacionReservaScalarFieldEnum = {
 } as const
 
 export type CancelacionReservaScalarFieldEnum = (typeof CancelacionReservaScalarFieldEnum)[keyof typeof CancelacionReservaScalarFieldEnum]
+
+
+export const CierreReservaScalarFieldEnum = {
+  id: 'id',
+  reservaId: 'reservaId',
+  actorId: 'actorId',
+  estado: 'estado',
+  creadoEn: 'creadoEn'
+} as const
+
+export type CierreReservaScalarFieldEnum = (typeof CierreReservaScalarFieldEnum)[keyof typeof CierreReservaScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1809,6 +1895,7 @@ export type GlobalOmitConfig = {
   reagendamientoReserva?: Prisma.ReagendamientoReservaOmit
   invitacionEquipo?: Prisma.InvitacionEquipoOmit
   cancelacionReserva?: Prisma.CancelacionReservaOmit
+  cierreReserva?: Prisma.CierreReservaOmit
 }
 
 /* Types for Logging */

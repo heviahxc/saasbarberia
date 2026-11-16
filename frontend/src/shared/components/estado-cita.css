@@ -1,0 +1,8 @@
+.estado-atendida {
+  background: #dceefb;
+  color: #17517d;
+}
+.estado-ausente {
+  background: #fff0d6;
+  color: #805000;
+}

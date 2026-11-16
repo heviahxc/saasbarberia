@@ -120,3 +120,31 @@
 .cancelar-cita-equipo .grupo-acciones {
   flex-wrap: wrap;
 }
+
+.historial-eventos {
+  display: grid;
+  gap: 16px;
+  padding: 0;
+  list-style: none;
+}
+
+.historial-evento {
+  margin: 16px 0;
+  padding: 20px;
+  border: 1px solid #dce2eb;
+  border-radius: 12px;
+  background: #f8f9fc;
+  overflow-wrap: anywhere;
+}
+
+.historial-evento p {
+  margin: 8px 0;
+}
+.cierre-cita {
+  margin-top: 12px;
+  min-width: 220px;
+  max-width: 360px;
+}
+.cierre-cita .grupo-acciones {
+  flex-wrap: wrap;
+}

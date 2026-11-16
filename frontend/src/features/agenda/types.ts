@@ -1,3 +1,4 @@
+import type { EstadoReserva } from "../../shared/lib/estados-reserva.js";
 export type CitaAgenda = {
   id: number;
   inicio: string;
@@ -5,7 +6,7 @@ export type CitaAgenda = {
   nombreServicio: string;
   duracionMinutos: number;
   precioAcordado: string;
-  estado: "CONFIRMADA" | "CANCELADA";
+  estado: EstadoReserva;
   cliente: { id: number; nombre: string };
   profesional: { id: number; nombre: string };
 };

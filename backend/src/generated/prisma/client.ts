@@ -101,3 +101,8 @@ export type InvitacionEquipo = Prisma.InvitacionEquipoModel
  * 
  */
 export type CancelacionReserva = Prisma.CancelacionReservaModel
+/**
+ * Model CierreReserva
+ * 
+ */
+export type CierreReserva = Prisma.CierreReservaModel

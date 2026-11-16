@@ -93,8 +93,8 @@ model Usuario {
   reagendamientosRealizados ReagendamientoReserva[]
   invitacionesCreadas       InvitacionEquipo[]      @relation("CreadorInvitacion")
   invitacionesAceptadas     InvitacionEquipo[]      @relation("AceptadorInvitacion")
-
-  cancelacionReservas CancelacionReserva[]
+  cierresRealizados         CierreReserva[]
+  cancelacionReservas       CancelacionReserva[]
 }
 
 model MiembroBarberia {
@@ -129,6 +129,8 @@ model HorarioProfesional {
 enum EstadoReserva {
   CONFIRMADA
   CANCELADA
+  ATENDIDA
+  NO_ASISTIO
 }
 
 model Reserva {
@@ -145,6 +147,7 @@ model Reserva {
   nombreServicio  String
   zonaHoraria     String
   cancelacion     CancelacionReserva?
+  cierre          CierreReserva?
   estado          EstadoReserva       @default(CONFIRMADA)
   creadoEn        DateTime            @default(now()) @db.Timestamptz(3)
   canceladoEn     DateTime?           @db.Timestamptz(3)
@@ -222,6 +225,20 @@ model CancelacionReserva {
 
   motivo   String?  @db.VarChar(300)
   creadoEn DateTime @default(now()) @db.Timestamptz(3)
+
+  reserva Reserva @relation(fields: [reservaId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  actor   Usuario @relation(fields: [actorId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([actorId])
+}
+
+model CierreReserva {
+  id        Int @id @default(autoincrement())
+  reservaId Int @unique
+  actorId   Int
+
+  estado   EstadoReserva
+  creadoEn DateTime      @default(now()) @db.Timestamptz(3)
 
   reserva Reserva @relation(fields: [reservaId], references: [id], onDelete: Restrict, onUpdate: Restrict)
   actor   Usuario @relation(fields: [actorId], references: [id], onDelete: Restrict, onUpdate: Restrict)

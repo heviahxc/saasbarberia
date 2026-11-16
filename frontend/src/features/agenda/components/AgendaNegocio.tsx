@@ -1,3 +1,5 @@
+import CerrarCitaEquipo from "./CerrarCitaEquipo.js";
+import EstadoCita from "../../../shared/components/EstadoCita.js";
 import BloqueosAgenda from "./BloqueosAgenda.js";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../auth/auth-context.js";
@@ -10,6 +12,8 @@ import "../../reservas/reservas.css";
 import "../agenda.css";
 import CancelarCitaEquipo from "./CancelarCitaEquipo.js";
 import ReagendarCitaEquipo from "./ReagendarCitaEquipo.js";
+import HistorialCitaEquipo from "./HistorialCitaEquipo.js";
+
 type Props = {
   barberiaId: number;
   nombreBarberia: string;
@@ -46,6 +50,9 @@ export default function AgendaNegocio({
   const [aviso, setAviso] = useState("");
   const [ahora, setAhora] = useState(() => Date.now());
   const [citaParaReagendar, setCitaParaReagendar] = useState<CitaAgenda | null>(
+    null,
+  );
+  const [historialReservaId, setHistorialReservaId] = useState<number | null>(
     null,
   );
   useEffect(() => {
@@ -115,6 +122,16 @@ export default function AgendaNegocio({
     };
   }, []);
 
+  if (historialReservaId !== null) {
+    return (
+      <HistorialCitaEquipo
+        key={historialReservaId}
+        barberiaId={barberiaId}
+        reservaId={historialReservaId}
+        onVolver={() => setHistorialReservaId(null)}
+      />
+    );
+  }
   if (citaParaReagendar) {
     return (
       <ReagendarCitaEquipo
@@ -181,6 +198,8 @@ export default function AgendaNegocio({
             <option value="TODAS">Todas</option>
             <option value="CONFIRMADA">Confirmadas</option>
             <option value="CANCELADA">Canceladas</option>
+            <option value="ATENDIDA">Atendidas</option>
+            <option value="NO_ASISTIO">No asistió</option>
           </select>
         </label>
         <div className="grupo-acciones">
@@ -264,15 +283,29 @@ export default function AgendaNegocio({
                     {administrador && <td>{cita.profesional.nombre}</td>}
                     <td>{formatearPrecio(cita.precioAcordado)}</td>
                     <td>
-                      <span
-                        className={`estado-reserva ${cita.estado === "CONFIRMADA" ? "estado-confirmada" : "estado-cancelada"}`}
-                      >
-                        {cita.estado === "CONFIRMADA"
-                          ? "Confirmada"
-                          : "Cancelada"}
-                      </span>
+                      <EstadoCita estado={cita.estado} />
                     </td>
                     <td>
+                      <button
+                        type="button"
+                        className="boton-secundario"
+                        onClick={() => setHistorialReservaId(cita.id)}
+                      >
+                        Ver historial
+                      </button>
+                      {cita.estado === "CONFIRMADA" &&
+                        new Date(cita.fin).getTime() <= ahora && (
+                          <CerrarCitaEquipo
+                            barberiaId={barberiaId}
+                            reservaId={cita.id}
+                            nombreCliente={cita.cliente.nombre}
+                            onCerrada={(mensaje) => {
+                              setAviso(mensaje);
+                              setAgenda(null);
+                              setIntento((i) => i + 1);
+                            }}
+                          />
+                        )}
                       {cita.estado === "CONFIRMADA" &&
                       new Date(cita.inicio).getTime() > ahora ? (
                         <div className="grupo-acciones">
@@ -300,9 +333,7 @@ export default function AgendaNegocio({
                             }}
                           />
                         </div>
-                      ) : (
-                        <span className="nota-resumen">Sin acciones</span>
-                      )}
+                      ) : null}
                     </td>
                   </tr>
                 ))}

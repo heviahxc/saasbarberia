@@ -1,3 +1,4 @@
+import type { EstadoReserva } from "../../shared/lib/estados-reserva.js";
 export type Reserva = {
   id: number;
   inicio: string;
@@ -6,7 +7,7 @@ export type Reserva = {
   precioAcordado: string;
   nombreServicio: string;
   zonaHoraria: string;
-  estado: 'CONFIRMADA' | 'CANCELADA';
+  estado: EstadoReserva;
   creadoEn: string;
   canceladoEn: string | null;
   barberia: {

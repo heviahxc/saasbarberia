@@ -1,8 +1,8 @@
-import { useRef, useState } from 'react';
-import type { FormEvent } from 'react';
+import { useRef, useState } from "react";
+import type { FormEvent } from "react";
 
-import { useAuth } from '../../auth/auth-context.js';
-import { api } from '../../../shared/lib/api.js';
+import { useAuth } from "../../auth/auth-context.js";
+import { api } from "../../../shared/lib/api.js";
 
 type Props = {
   barberiaId: number;
@@ -20,9 +20,9 @@ export default function CancelarCitaEquipo({
   const { sesion } = useAuth();
 
   const [abierto, setAbierto] = useState(false);
-  const [motivo, setMotivo] = useState('');
+  const [motivo, setMotivo] = useState("");
   const [guardando, setGuardando] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const enCurso = useRef(false);
 
@@ -34,32 +34,29 @@ export default function CancelarCitaEquipo({
     const motivoLimpio = motivo.trim();
 
     if (motivoLimpio.length < 5 || motivoLimpio.length > 300) {
-      setError('El motivo debe tener entre 5 y 300 caracteres.');
+      setError("El motivo debe tener entre 5 y 300 caracteres.");
       return;
     }
 
     enCurso.current = true;
     setGuardando(true);
-    setError('');
+    setError("");
 
     try {
-      await api(
-        `/barberias/${barberiaId}/reservas/${reservaId}/cancelar`,
-        {
-          method: 'PATCH',
-          token: sesion.accessToken,
-          body: { motivo: motivoLimpio },
-        },
-      );
+      await api(`/barberias/${barberiaId}/reservas/${reservaId}/cancelar`, {
+        method: "PATCH",
+        token: sesion.accessToken,
+        body: { motivo: motivoLimpio },
+      });
 
       setAbierto(false);
-      setMotivo('');
+      setMotivo("");
       onCancelada();
     } catch (fallo) {
       setError(
         fallo instanceof Error
           ? fallo.message
-          : 'No se pudo confirmar la cancelación. Actualiza la agenda para comprobar el estado.',
+          : "No se pudo confirmar la cancelación. Actualiza la agenda para comprobar el estado.",
       );
     } finally {
       enCurso.current = false;
@@ -74,7 +71,7 @@ export default function CancelarCitaEquipo({
         className="boton-secundario"
         aria-label={`Cancelar la cita de ${nombreCliente}`}
         onClick={() => {
-          setError('');
+          setError("");
           setAbierto(true);
         }}
       >
@@ -119,7 +116,7 @@ export default function CancelarCitaEquipo({
 
       <div className="grupo-acciones">
         <button type="submit" disabled={guardando}>
-          {guardando ? 'Cancelando…' : 'Confirmar cancelación'}
+          {guardando ? "Cancelando…" : "Confirmar cancelación"}
         </button>
 
         <button
@@ -128,8 +125,8 @@ export default function CancelarCitaEquipo({
           disabled={guardando}
           onClick={() => {
             setAbierto(false);
-            setMotivo('');
-            setError('');
+            setMotivo("");
+            setError("");
           }}
         >
           Conservar cita

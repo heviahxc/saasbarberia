@@ -242,6 +242,107 @@ export class ReservasService {
       orderBy: [{ inicio: 'desc' }, { id: 'desc' }],
     });
   }
+    async cerrarDesdeEquipo(
+    barberiaId: number,
+    reservaId: number,
+    actorId: number,
+    estado: 'ATENDIDA' | 'NO_ASISTIO',
+  ) {
+    if (estado !== 'ATENDIDA' && estado !== 'NO_ASISTIO') {
+      throw new BadRequestException(
+        'El estado debe ser ATENDIDA o NO_ASISTIO',
+      );
+    }
+
+    return this.prisma.$transaction(
+      async (tx) => {
+        const membresias = await tx.$queryRaw<
+          {
+            rol: string;
+            activo: boolean;
+            profesionalId: number | null;
+          }[]
+        >`
+          SELECT "rol", "activo", "profesionalId"
+          FROM "public"."MiembroBarberia"
+          WHERE "usuarioId" = ${actorId}
+            AND "barberiaId" = ${barberiaId}
+          FOR SHARE
+        `;
+
+        const membresia = membresias[0];
+
+        if (!membresia?.activo) {
+          throw new ForbiddenException(
+            'No tienes acceso a esta barbería',
+          );
+        }
+
+        const reservas = await tx.$queryRaw<Reserva[]>`
+          SELECT *
+          FROM "public"."Reserva"
+          WHERE "id" = ${reservaId}
+            AND "barberiaId" = ${barberiaId}
+          FOR UPDATE
+        `;
+
+        const reserva = reservas[0];
+
+        if (!reserva) {
+          throw new NotFoundException('La reserva no existe');
+        }
+
+        if (
+          membresia.rol !== 'ADMINISTRADOR' &&
+          membresia.profesionalId !== reserva.profesionalId
+        ) {
+          throw new ForbiddenException(
+            'Solo puedes cerrar las citas de tu profesional',
+          );
+        }
+
+        const actualizadas = await tx.$queryRaw<
+          Pick<Reserva, 'id' | 'estado'>[]
+        >`
+          UPDATE "public"."Reserva"
+          SET "estado" = ${estado}::"public"."EstadoReserva"
+          WHERE "id" = ${reservaId}
+            AND "barberiaId" = ${barberiaId}
+            AND "estado" = 'CONFIRMADA'
+            AND "fin" <= clock_timestamp()
+          RETURNING "id", "estado"
+        `;
+
+        const actualizada = actualizadas[0];
+
+        if (!actualizada) {
+          throw new ConflictException(
+            'Solo puedes cerrar citas confirmadas cuyo horario ya terminó',
+          );
+        }
+
+        const cierre = await tx.cierreReserva.create({
+          data: {
+            reservaId,
+            actorId,
+            estado,
+          },
+          select: {
+            creadoEn: true,
+          },
+        });
+
+        return {
+          ...actualizada,
+          cerradoEn: cierre.creadoEn,
+        };
+      },
+      {
+        isolationLevel:
+          Prisma.TransactionIsolationLevel.ReadCommitted,
+      },
+    );
+  }
   async cancelarDesdeEquipo(
     barberiaId: number,
     reservaId: number,
@@ -1181,19 +1282,38 @@ export class ReservasService {
     return reserva;
   }
 
-  async findHistorialAdministrativo(barberiaId: number, reservaId: number) {
-    if (
-      !Number.isInteger(reservaId) ||
-      reservaId < 1 ||
-      reservaId > 2147483647
-    ) {
-      throw new BadRequestException('El ID de reserva no es válido');
+  async findHistorialAdministrativo(
+    barberiaId: number,
+    reservaId: number,
+    actorId: number,
+  ) {
+    const membresia = await this.prisma.miembroBarberia.findUnique({
+      where: {
+        usuarioId_barberiaId: {
+          usuarioId: actorId,
+          barberiaId,
+        },
+      },
+      select: {
+        activo: true,
+        rol: true,
+        profesionalId: true,
+      },
+    });
+
+    if (!membresia?.activo) {
+      throw new ForbiddenException(
+        'No tienes acceso a esta barbería',
+      );
     }
 
     const reserva = await this.prisma.reserva.findFirst({
       where: {
         id: reservaId,
         barberiaId,
+        ...(membresia.rol === 'ADMINISTRADOR'
+          ? {}
+          : { profesionalId: membresia.profesionalId ?? 0 }),
       },
       select: {
         id: true,
@@ -1215,13 +1335,9 @@ export class ReservasService {
             nombre: true,
           },
         },
-        reagendamientos: {
+        cancelacion: {
           select: {
-            id: true,
-            inicioAnterior: true,
-            finAnterior: true,
-            inicioNuevo: true,
-            finNuevo: true,
+            motivo: true,
             creadoEn: true,
             actor: {
               select: {
@@ -1230,15 +1346,47 @@ export class ReservasService {
               },
             },
           },
-          orderBy: [{ creadoEn: 'asc' }, { id: 'asc' }],
+        },        cierre: {
+          select: {
+            estado: true,
+            creadoEn: true,
+            actor: {
+              select: {
+                id: true,
+                nombre: true,
+              },
+            },
+          },
+        },
+        reagendamientos: {
+          select: {
+            id: true,
+            inicioAnterior: true,
+            finAnterior: true,
+            inicioNuevo: true,
+            finNuevo: true,
+            motivo: true,
+            creadoEn: true,
+            actor: {
+              select: {
+                id: true,
+                nombre: true,
+              },
+            },
+          },
+          orderBy: [{ creadoEn: 'desc' }, { id: 'desc' }],
         },
       },
     });
 
     if (!reserva) {
-      throw new NotFoundException('La reserva no existe en esta barbería');
+      throw new NotFoundException(
+        'La reserva no existe o no tienes acceso a ella',
+      );
     }
 
     return reserva;
   }
+
+  
 }

@@ -119,12 +119,15 @@ describe('Invitaciones del equipo', () => {
           await tx.profesionalServicio.deleteMany({
             where: { barberiaId: { in: negocios } },
           });
-                    await tx.cancelacionReserva.deleteMany({
+          await tx.cancelacionReserva.deleteMany({
             where: {
               reserva: {
                 barberiaId: { in: negocios },
               },
             },
+          });
+          await tx.cierreReserva.deleteMany({
+            where: { reserva: { barberiaId: { in: negocios } } },
           });
           await tx.reserva.deleteMany({
             where: { barberiaId: { in: negocios } },
@@ -660,14 +663,14 @@ describe('Invitaciones del equipo', () => {
       .expect(204);
     await reservar('2030-01-10T16:00:00Z').expect(201);
   });
-    it.each(['administrador', 'profesional'] as const)(
+  it.each(['administrador', 'profesional'] as const)(
     'permite gestionar citas al %s y rechaza cuentas sin permiso',
     async (tipoActor) => {
       const { barberiaId, profesionalId } = await preparar();
 
-      await aceptar(
-        (await generar(barberiaId, profesionalId)).token,
-      ).expect(200);
+      await aceptar((await generar(barberiaId, profesionalId)).token).expect(
+        200,
+      );
 
       // El cliente es otra persona: así comprobamos que el historial
       // registra al miembro del equipo, no al dueño de la reserva.
@@ -711,8 +714,7 @@ describe('Invitaciones del equipo', () => {
         },
       });
 
-      const tokenActor =
-        tipoActor === 'administrador' ? admin : invitado;
+      const tokenActor = tipoActor === 'administrador' ? admin : invitado;
 
       const actorId =
         tipoActor === 'administrador'
@@ -767,7 +769,7 @@ describe('Invitaciones del equipo', () => {
 
       const reservaId = creada.body.id as number;
       const ruta = `/barberias/${barberiaId}/reservas/${reservaId}`;
-
+      await request(app.getHttpServer()).get(`${ruta}/historial`).expect(401);
       const original = await prisma.reserva.findUniqueOrThrow({
         where: { id: reservaId },
       });
@@ -816,7 +818,20 @@ describe('Invitaciones del equipo', () => {
           .send(cancelacion)
           .expect(403);
       }
+      // El compañero pertenece al negocio, pero no atiende esta cita.
+      // La consulta devuelve 404 para no exponer su historial.
+      await request(app.getHttpServer())
+        .get(`${ruta}/historial`)
+        .auth(companero.token, { type: 'bearer' })
+        .expect(404);
 
+      // Estas cuentas no tienen membresía en esta barbería.
+      for (const token of [ajeno, cliente.token]) {
+        await request(app.getHttpServer())
+          .get(`${ruta}/historial`)
+          .auth(token, { type: 'bearer' })
+          .expect(403);
+      }
       // Los intentos rechazados no deben modificar ni auditar la cita.
       const sinCambios = await prisma.reserva.findUniqueOrThrow({
         where: { id: reservaId },
@@ -886,8 +901,9 @@ describe('Invitaciones del equipo', () => {
       });
 
       expect(reagendada.inicio.toISOString()).toBe(nuevoInicio);
-      expect(reagendada.fin.getTime() - reagendada.inicio.getTime())
-        .toBe(30 * 60 * 1000);
+      expect(reagendada.fin.getTime() - reagendada.inicio.getTime()).toBe(
+        30 * 60 * 1000,
+      );
       expect(reagendada.duracionMinutos).toBe(30);
       expect(reagendada.precioAcordado.toString()).toBe('12000');
       expect(reagendada.profesionalId).toBe(profesionalId);
@@ -906,6 +922,23 @@ describe('Invitaciones del equipo', () => {
         finAnterior: original.fin,
         inicioNuevo: reagendada.inicio,
         finNuevo: reagendada.fin,
+      });
+
+      const historialReagendado = await request(app.getHttpServer())
+        .get(`${ruta}/historial`)
+        .auth(tokenActor, { type: 'bearer' })
+        .expect(200);
+
+      expect(historialReagendado.body.id).toBe(reservaId);
+      expect(historialReagendado.body.estado).toBe('CONFIRMADA');
+      expect(historialReagendado.body.cancelacion).toBeNull();
+      expect(historialReagendado.body.reagendamientos).toHaveLength(1);
+
+      expect(historialReagendado.body.reagendamientos[0]).toMatchObject({
+        motivo: cambio.motivo,
+        actor: { id: actorId },
+        inicioAnterior: original.inicio.toISOString(),
+        inicioNuevo: reagendada.inicio.toISOString(),
       });
 
       // El mismo actor puede cancelar y queda registrada su identidad.
@@ -928,6 +961,21 @@ describe('Invitaciones del equipo', () => {
 
       expect(registro.actorId).toBe(actorId);
       expect(registro.motivo).toBe(cancelacion.motivo);
+      const historialCancelado = await request(app.getHttpServer())
+        .get(`${ruta}/historial`)
+        .auth(tokenActor, { type: 'bearer' })
+        .expect(200);
+
+      expect(historialCancelado.body.estado).toBe('CANCELADA');
+      expect(historialCancelado.body.canceladoEn).not.toBeNull();
+
+      expect(historialCancelado.body.cancelacion).toMatchObject({
+        motivo: cancelacion.motivo,
+        actor: { id: actorId },
+      });
+
+      // Cancelar no debe borrar el historial anterior.
+      expect(historialCancelado.body.reagendamientos).toHaveLength(1);
 
       // Repetir la cancelación no debe generar un segundo registro.
       await request(app.getHttpServer())
@@ -941,6 +989,161 @@ describe('Invitaciones del equipo', () => {
           where: { reservaId },
         }),
       ).toBe(1);
+
+      // Revocar el acceso después de comprobar la cancelación repetida.
+      await prisma.miembroBarberia.update({
+        where: {
+          usuarioId_barberiaId: {
+            usuarioId: actorId,
+            barberiaId,
+          },
+        },
+        data: {
+          activo: false,
+        },
+      });
+
+      await request(app.getHttpServer())
+        .get(`${ruta}/historial`)
+        .auth(tokenActor, { type: 'bearer' })
+        .expect(403);
+    },
+  );
+  it.each(['ATENDIDA', 'NO_ASISTIO'] as const)(
+    'cierra una cita como %s con permisos, plazo e historial',
+    async (estado) => {
+      const { barberiaId, profesionalId } = await preparar();
+      await aceptar((await generar(barberiaId, profesionalId)).token).expect(
+        200,
+      );
+      const cliente = await registrar(`cierre-${estado}`);
+      const servicio = await prisma.servicio.create({
+        data: {
+          barberiaId,
+          nombre: 'Corte',
+          precio: 12000,
+          duracionMinutos: 30,
+        },
+      });
+      const otro = await prisma.profesional.create({
+        data: { barberiaId, nombre: 'Compañero' },
+      });
+      const crear = (prof: number, inicio: Date, cancelada = false) =>
+        prisma.reserva.create({
+          data: {
+            barberiaId,
+            profesionalId: prof,
+            clienteId: cliente.id,
+            servicioId: servicio.id,
+            inicio,
+            fin: new Date(inicio.getTime() + 30 * 60000),
+            duracionMinutos: 30,
+            precioAcordado: 12000,
+            nombreServicio: 'Corte',
+            zonaHoraria: 'America/Santiago',
+            estado: cancelada ? 'CANCELADA' : 'CONFIRMADA',
+            canceladoEn: cancelada ? new Date() : null,
+          },
+        });
+      const pasada = await crear(
+        profesionalId,
+        new Date(Date.now() - 3 * 3600000),
+      );
+      const url = (id: number) =>
+        `/barberias/${barberiaId}/reservas/${id}/cierre`;
+      const cerrar = (id: number, token: string) =>
+        request(app.getHttpServer())
+          .patch(url(id))
+          .auth(token, { type: 'bearer' })
+          .send({ estado });
+      await request(app.getHttpServer())
+        .patch(url(pasada.id))
+        .send({ estado })
+        .expect(401);
+      await cerrar(pasada.id, cliente.token).expect(403);
+      await cerrar(pasada.id, ajeno).expect(403);
+      const deOtro = await crear(otro.id, pasada.inicio);
+      await cerrar(deOtro.id, invitado).expect(403);
+      const futura = await crear(
+        profesionalId,
+        new Date(Date.now() + 86400000),
+      );
+      await cerrar(futura.id, invitado).expect(409);
+      const enCurso = await crear(
+        profesionalId,
+        new Date(Date.now() - 5 * 60000),
+      );
+      await cerrar(enCurso.id, invitado).expect(409);
+      const cancelada = await crear(
+        profesionalId,
+        new Date(Date.now() - 6 * 3600000),
+        true,
+      );
+      await cerrar(cancelada.id, invitado).expect(409);
+      await request(app.getHttpServer())
+        .patch(url(pasada.id))
+        .auth(invitado, { type: 'bearer' })
+        .send({ estado: 'CANCELADA' })
+        .expect(400);
+      expect(
+        await prisma.cierreReserva.count({
+          where: { reserva: { barberiaId } },
+        }),
+      ).toBe(0);
+      const resultados = await Promise.all([
+        cerrar(pasada.id, invitado),
+        cerrar(pasada.id, invitado),
+      ]);
+      expect(resultados.map((r) => r.status).sort((a, b) => a - b)).toEqual([
+        200, 409,
+      ]);
+      expect(
+        await prisma.cierreReserva.count({ where: { reservaId: pasada.id } }),
+      ).toBe(1);
+      const registro = await prisma.cierreReserva.findUniqueOrThrow({
+        where: { reservaId: pasada.id },
+      });
+      expect(registro).toMatchObject({ actorId: usuarioInvitado, estado });
+      const guardada = await prisma.reserva.findUniqueOrThrow({
+        where: { id: pasada.id },
+      });
+      expect(guardada.estado).toBe(estado);
+      expect(guardada.inicio).toEqual(pasada.inicio);
+      expect(guardada.fin).toEqual(pasada.fin);
+      expect(guardada.precioAcordado.toString()).toBe('12000');
+      const historial = await request(app.getHttpServer())
+        .get(`/barberias/${barberiaId}/reservas/${pasada.id}/historial`)
+        .auth(invitado, { type: 'bearer' })
+        .expect(200);
+      expect(historial.body.cierre).toMatchObject({
+        estado,
+        actor: { id: usuarioInvitado },
+      });
+      const mias = await request(app.getHttpServer())
+        .get('/reservas/mias')
+        .auth(cliente.token, { type: 'bearer' })
+        .expect(200);
+      expect(
+        mias.body.find((r: { id: number }) => r.id === pasada.id).estado,
+      ).toBe(estado);
+      await cerrar(deOtro.id, admin).expect(200);
+      const membresiaAdmin = await prisma.miembroBarberia.findFirstOrThrow({
+        where: { barberiaId, rol: 'ADMINISTRADOR' },
+      });
+      expect(
+        (
+          await prisma.cierreReserva.findUniqueOrThrow({
+            where: { reservaId: deOtro.id },
+          })
+        ).actorId,
+      ).toBe(membresiaAdmin.usuarioId);
+      await prisma.miembroBarberia.update({
+        where: {
+          usuarioId_barberiaId: { usuarioId: usuarioInvitado, barberiaId },
+        },
+        data: { activo: false },
+      });
+      await cerrar(futura.id, invitado).expect(403);
     },
   );
 });

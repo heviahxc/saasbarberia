@@ -1,6 +1,7 @@
-import type { Reserva } from '../types.js';
-import { formatearPrecio } from '../../../shared/lib/formatos.js';
-import '../reservas.css';
+import EstadoCita from "../../../shared/components/EstadoCita.js";
+import type { Reserva } from "../types.js";
+import { formatearPrecio } from "../../../shared/lib/formatos.js";
+import "../reservas.css";
 
 type Props = {
   reservas: Reserva[];
@@ -8,34 +9,17 @@ type Props = {
 };
 
 function fechaCompacta(reserva: Reserva): string {
-  return new Intl.DateTimeFormat('es-CL', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
+  return new Intl.DateTimeFormat("es-CL", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
     timeZone: reserva.zonaHoraria,
   }).format(new Date(reserva.inicio));
 }
 
-function EstadoReserva({ reserva }: { reserva: Reserva }) {
-  return (
-    <span
-      className={`estado-reserva ${
-        reserva.estado === 'CONFIRMADA'
-          ? 'estado-confirmada'
-          : 'estado-cancelada'
-      }`}
-    >
-      {reserva.estado === 'CONFIRMADA' ? 'Confirmada' : 'Cancelada'}
-    </span>
-  );
-}
-
-export default function ListadoReservas({
-  reservas,
-  onVerDetalle,
-}: Props) {
+export default function ListadoReservas({ reservas, onVerDetalle }: Props) {
   return (
     <div className="listado-reservas">
       <p className="nota-resumen">
@@ -44,9 +28,7 @@ export default function ListadoReservas({
 
       <div className="reservas-escritorio">
         <table className="tabla-reservas">
-          <caption className="solo-lectores">
-            Tus reservas
-          </caption>
+          <caption className="solo-lectores">Tus reservas</caption>
 
           <thead>
             <tr>
@@ -81,7 +63,7 @@ export default function ListadoReservas({
                 <td>{formatearPrecio(reserva.precioAcordado)}</td>
 
                 <td>
-                  <EstadoReserva reserva={reserva} />
+                  <EstadoCita estado={reserva.estado} />
                 </td>
 
                 <td>
@@ -104,10 +86,8 @@ export default function ListadoReservas({
         {reservas.map((reserva) => (
           <li key={reserva.id} className="reserva-compacta">
             <div className="reserva-compacta-cabecera">
-              <time dateTime={reserva.inicio}>
-                {fechaCompacta(reserva)}
-              </time>
-              <EstadoReserva reserva={reserva} />
+              <time dateTime={reserva.inicio}>{fechaCompacta(reserva)}</time>
+              <EstadoCita estado={reserva.estado} />
             </div>
 
             <h3>{reserva.nombreServicio}</h3>
@@ -116,9 +96,7 @@ export default function ListadoReservas({
             </p>
 
             <div className="reserva-compacta-pie">
-              <strong>
-                {formatearPrecio(reserva.precioAcordado)}
-              </strong>
+              <strong>{formatearPrecio(reserva.precioAcordado)}</strong>
 
               <button
                 type="button"

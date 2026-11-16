@@ -19,7 +19,9 @@ export type RolBarberia = (typeof RolBarberia)[keyof typeof RolBarberia]
 
 export const EstadoReserva = {
   CONFIRMADA: 'CONFIRMADA',
-  CANCELADA: 'CANCELADA'
+  CANCELADA: 'CANCELADA',
+  ATENDIDA: 'ATENDIDA',
+  NO_ASISTIO: 'NO_ASISTIO'
 } as const
 
 export type EstadoReserva = (typeof EstadoReserva)[keyof typeof EstadoReserva]
